@@ -26,12 +26,12 @@
 "		split 			 vertical or horozontal split
 "
 "		nav  			   navigation
+"		jmp					 jumplist
 "		find
 "		mov					page movement
 "						 		 scroll cursor
 "							   scroll page
-"		mouse				 mouse/cursor use
-"								 mouse/cursor use
+"		mouse				 mouse/cursor use "								 mouse/cursor use
 "
 "		edit				Editting section
 "			egc				edit with grouping characters ({["'
@@ -43,7 +43,11 @@
 "			bvf					Buffer View Formatting
 "			stat_bar	Status Bar formatting
 "
+"		Dictionary
+"		  dict		adding words to dict
+"
 "		nmc 			Normal Mode Commands
+"		  wc			curretn file stats
 "			~			flip letter casing
 "			command history pane
 "			increment number
@@ -51,6 +55,9 @@
 "	Insert mode Commands _imc
 "		replace expression with evaluation
 
+" _help TODO
+"   - comment box
+"   - 
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
 
@@ -316,7 +323,7 @@ call matchadd('ColorColumn','\%81v',100)
 "	:qa
 "		close all tabs and exit vim
 "
-
+ 
 " Command Mode:
 " 	<control> d
 " 		decrement page down
@@ -358,6 +365,8 @@ call matchadd('ColorColumn','\%81v',100)
 " Yank y (copy) take a movement command following
 " 
 " 
+
+
 
 " 
 " Vim Script Snippets with Functions:		_fx
@@ -411,7 +420,7 @@ call matchadd('ColorColumn','\%81v',100)
 "		the equal will appear at the command line and proceede to type
 "		an arithmetic expression like 2+2  OR a shell call like 
 "		system('ls')<enter> and the results are inserted at the cursor in the
-"		curtrent buffer
+"		curtrent buffer  
 "
 "Registers
 "	copy one register contents to another is like variable assignment with let. 
@@ -452,12 +461,15 @@ call matchadd('ColorColumn','\%81v',100)
 "		to see the list of search results :cwindow
 "		
 "Word Count/Total Words
-"	normal mode command g<C>g
+"	normal mode command g<C>g  "press 'g' then let go, then dols down ^ with 'g' 
 "		Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
 "
-"Look up manual page for word
+"Look up manual page for word			_wc
 "	when cursor is over the word in normal mode
 "		<Shift>k
 "		takes you to the manual page
 "
-
+" JumpList 			_jmp
+" 	 below are both normal mode commands 
+" 	g;			 cycle backward thru jumplist
+" 	g,			 cycle foward thru jumplist

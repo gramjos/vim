@@ -121,6 +121,10 @@ set ls=2
 set noerrorbells
 set vb t_vb=
 
+" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
+" to bring back
+noremap <leader>z  :stop<CR>
+
 " run selected in vimscript
 	" the code is hightlghted. 
 	" store in register z

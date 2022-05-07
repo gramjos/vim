@@ -1,63 +1,62 @@
 " .vimrc file - vim run commands. 
 "               'run these commands at the start of each vim instance'
+"
 "Sections of this RC file:
 "  _+jmp-code			descripion
+" help		 		 unimplemented ideas			'_help jumps to this section'
+" tempts 		   language templates
+"	.py ext
+"	.c
+"	.java
+" abb 				abbreviations
+" macro			  recording macro
+" fx					vim builtin functions
+" 							term, TOhtml, put readfile,
+" org 		 		File/buffer Organization
+"  win					windows 	
+"								resize
+"								rotate
+"	fold  			code folding
+"	tab 				page tabs
+"	split 			vertical or horozontal split
+"	nav  			  navigation
+"	jmp					jumplist
+"	find
+"	mov					page movement
+"					 		 scroll cursor
+"						   scroll page
+"	mouse				 mouse/cursor use "			
+"	edit				Editting section
+"		egc				 edit with grouping characters ({["'
+"	  s&r			   search and replace
+"		cp		     copy pasting yanking to registers
 "
-"	 help		 		 unimplemented ideas			'_help jumps to this section'
+"		change_wrd
+"		bvf				 Buffer View Formatting
+"	stat_bar	  Status Bar formatting
+"	
+"##########################################################
+"	nmc 			  Normal Mode Commands
+"	 dict		    adding words to Dictionary
+"	 wc				  curretn file stats
+"	 ~				  flip letter casing
+"		          command history pane
+"		          increment number
 "
-"	 tempts 		 language templates
-"		.py ext
-"		.c
-"		.java
+"##########################################################
+" cc					Command Line Mode (Colon or Ex Commands) 
+"	 dt					 dump terminal results into vim buffer
+"	 dig				 Digraphs
 "
-"	 abb 				abbreviations
-"	 macro			recording macro
-"	 fx					vim builtin functions
-"	 							term, TOhtml, put readfile,
-"	 org 		 		File/buffer Organization
-"	  win					windows 	
-"									resize
-"									rotate
-"
-"		fold  			code folding
-"
-"		tab 				 page tabs
-"
-"		split 			 vertical or horozontal split
-"
-"		nav  			   navigation
-"		jmp					 jumplist
-"		find
-"		mov					page movement
-"						 		 scroll cursor
-"							   scroll page
-"		mouse				 mouse/cursor use "								 mouse/cursor use
-"
-"		edit				Editting section
-"			egc				edit with grouping characters ({["'
-"		  s&r			  search and replace
-"			
-"			cp		     copy pasting yanking to registers
-"
-"			change_wrd
-"			bvf					Buffer View Formatting
-"			stat_bar	Status Bar formatting
-"
-"		Dictionary
-"		  dict		adding words to dict
-"
-"		nmc 			Normal Mode Commands
-"		  wc			curretn file stats
-"			~			flip letter casing
-"			command history pane
-"			increment number
-"
-"	Insert mode Commands _imc
+"##########################################################
+"	imc 				Insert mode Commands 
 "		replace expression with evaluation
-
+"
 " _help TODO
 "   - comment box
-"   - 
+"   - orginize this buffers table of contents
+"   	+ make real jump links
+"   - turn on auto insert mode when creating a new buffer
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
 
@@ -100,6 +99,7 @@ set encoding=utf-8
 
 " set the dictionary paths. to activate pop-up window. Control xk. 
 " Control buton = ^
+
 set dictionary+=/usr/share/dict/web2
 
 " finding files:  Display all matching files when we tab complete
@@ -470,6 +470,20 @@ call matchadd('ColorColumn','\%81v',100)
 "		takes you to the manual page
 "
 " JumpList 			_jmp
+" 	 Contains cursor positions
 " 	 below are both normal mode commands 
 " 	g;			 cycle backward thru jumplist
 " 	g,			 cycle foward thru jumplist
+"
+"
+"##########################################################
+"Command Mode Commands (Ex or Colon Commands)  _cc
+"
+" Digraphs 			_dig
+"  insert special charaters from :dig menu with i_ctrl-k {char}{2}
+"  while in insert press control k and a question mark should appear over the
+"  cursor position. Type two characters(letter,number,punctuation). The two
+"  character codes are on the left side of the blue digraph in the :dig menu
+"  9S ⁹  8313 ... zh ㄓ 12563
+"
+" 

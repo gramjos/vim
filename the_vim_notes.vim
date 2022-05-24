@@ -34,6 +34,7 @@
 "		change_wrd
 "		bvf				 Buffer View Formatting
 "	stat_bar	  Status Bar formatting
+"	meta				meta characters
 "	
 "##########################################################
 "	nmc 			  Normal Mode Commands
@@ -48,6 +49,7 @@
 "	 dt					 dump terminal results into vim buffer
 "	 dig				 Digraphs
 "
+" term 				vertical split terminal
 "##########################################################
 "	imc 				Insert mode Commands 
 "		replace expression with evaluation
@@ -273,10 +275,6 @@ call matchadd('ColorColumn','\%81v',100)
 "		ci' change inside the single quotes 
 "				or: (,[,{
 
-" Substitution Command ( search and replace s&r )
-"	:range s[ubstitute]/pattern/string/cgiI
-"		/ forward slashes delimating sections can be substituted by a : colon 
-"			or ! exclamation mark
 "
 "	:%s:\~/Desktop/term_color::g
 "		\~/Desktop/term_color
@@ -291,7 +289,15 @@ call matchadd('ColorColumn','\%81v',100)
 " 		append highlighted section to reg k
 "	"kp
 "		paste from reg k
-
+"
+"	relative yank from cursor position
+"	:-13y
+"	relative range yank
+"	:+8,+14y		
+"		yanks ahead
+" :-2,+2y
+" 	yank around cursor
+"
 
 " Movement:		_mov
 " in command mode:
@@ -377,7 +383,7 @@ call matchadd('ColorColumn','\%81v',100)
 "		:TOhtml
 "		save new .html in current directory 
 
-" Terminal 
+" Terminal 		_term
 " :term
 " 	emulate a terminal horizontally
 " :vert term
@@ -385,7 +391,13 @@ call matchadd('ColorColumn','\%81v',100)
 " :term ls
 " 	runs the ls command and puts the output in a buffer
 "
-"
+"	 Scrolling in new buffered :term 
+"	 	^w N	(control w capital n)
+"	 	turn the term buffer into a file buffer
+"	 	i	character will escape from file buffer view Back to term buffer
+"	 	
+"	 	tnoremap <Esc> <C-W>N
+"	 		'terminal non recursive mapping'
 
 
 
@@ -455,14 +467,14 @@ call matchadd('ColorColumn','\%81v',100)
 " 	echo $TERM  -> xterm-color256
 " 	
 "Help 
-"	:helpgrep [search_term]
-"	this brings you to the first occurenece of [search_term] 
+"	:helpgrep [search term]
+"	this brings you to the first occurenece of [search term] 
 "		Broweser thru results use +quickfix commanss
 "		to see the list of search results :cwindow
 "		
 "Word Count/Total Words
-"	normal mode command g<C>g  "press 'g' then let go, then dols down ^ with 'g' 
-"		Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
+"	normal mode command g<C>g  "press 'g' then let go, then hold down ^ with 'g' 
+"	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
 "
 "Look up manual page for word			_wc
 "	when cursor is over the word in normal mode
@@ -486,4 +498,7 @@ call matchadd('ColorColumn','\%81v',100)
 "  character codes are on the left side of the blue digraph in the :dig menu
 "  9S ⁹  8313 ... zh ㄓ 12563
 "
-" 
+"When working with Meta-charaters
+" control v 	"to access meta character mode"
+" control m		"inputs " replace m with any meta
+"

@@ -53,12 +53,14 @@
 "##########################################################
 "	imc 				Insert mode Commands 
 "		replace expression with evaluation
-"
+"		escape to do one normal mode commond
 " _help TODO
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
 "   - turn on auto insert mode when creating a new buffer
+"   - use the qkv alias with a leader mapping to open file
+"   		that the cursor is under
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
 
@@ -124,6 +126,15 @@ autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
 
 " Marking
 " _mark
+" in comand mode :
+" 	ma
+" 		will mark (m) at (a)
+" 	'a
+" 		will return you back to that marker
+"
+" ** local markers defined with lower case a-z
+" ** global markers use upper case A-Z
+" 
 "	in command mode:
 "		''
 "		two single quotes. takes you back to the start of the line of 
@@ -222,11 +233,35 @@ highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn','\%81v',100)
 " '\%81v' -> regex "once at the 81st column virtually"
 
-"paste highlight
+" Repeat multiple lines of text at visual block 
 " Insert characters into Visual Block
 " 	<ctrl>v to enter Visual Blcok mode. After selecting a block
 "		press <shift>i then, type the fill in sequence followed
 "		<esc> twice
+"
+"	_nmc
+"
+"Word Count/Total Words
+"	normal mode command g<C>g  "press 'g' then let go, then hold down ^ with 'g' 
+"	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
+"
+"Look up manual page for word			_wc
+"	when cursor is over the word in normal mode
+"		<Shift>k
+"		takes you to the manual page
+"
+" JumpList 			_jmp
+" 	 Contains cursor positions
+" 	 below are both normal mode commands 
+"			g;			 cycle backward thru jumplist
+"			g,			 cycle foward thru jumplist
+"
+"		Buffer Jump List 
+"			<ctrl>o
+"				go backwards on the buffer jump list
+"			<ctrl>i
+"				go forewards on the buffer jump list
+"				
 "
 "_win
 "Windows
@@ -427,12 +462,21 @@ call matchadd('ColorColumn','\%81v',100)
 "			 adjust window panes with mouse
 "
 " Insert mode Command _imc
+" <Ctrl>k
+" 	___S
+" 		where the three under scores are characters/digits that wiil
+" 			be 'S'uperscripted
+" 		*aside* <ctrl>k enters meta charater mode. 
+"
 "	<Ctrl>r =	
 "		"ctrl and r key toegether and then press ="
 "		the equal will appear at the command line and proceede to type
 "		an arithmetic expression like 2+2  OR a shell call like 
 "		system('ls')<enter> and the results are inserted at the cursor in the
 "		curtrent buffer  
+"
+" Leave insert mode to do one normal mode command
+" 	<ctrl>o
 "
 "Registers
 "	copy one register contents to another is like variable assignment with let. 
@@ -472,21 +516,7 @@ call matchadd('ColorColumn','\%81v',100)
 "		Broweser thru results use +quickfix commanss
 "		to see the list of search results :cwindow
 "		
-"Word Count/Total Words
-"	normal mode command g<C>g  "press 'g' then let go, then hold down ^ with 'g' 
-"	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
-"
-"Look up manual page for word			_wc
-"	when cursor is over the word in normal mode
-"		<Shift>k
-"		takes you to the manual page
-"
-" JumpList 			_jmp
-" 	 Contains cursor positions
-" 	 below are both normal mode commands 
-" 	g;			 cycle backward thru jumplist
-" 	g,			 cycle foward thru jumplist
-"
+"						
 "
 "##########################################################
 "Command Mode Commands (Ex or Colon Commands)  _cc

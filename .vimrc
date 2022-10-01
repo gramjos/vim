@@ -1,26 +1,34 @@
-"Vundle packager setup
-set nocompatible							" always switch to VIM from VI
+set ff=unix
+set nocompatible						
 filetype off                 
-" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-	" alternatively, pass a path where Vundle should install plugins
-	"call vundle#begin('~/some/path/here')
 	Plugin 	'VundleVim/Vundle.vim'
 	Plugin	'metakirby5/codi.vim'
 cal vundle#end()
 filetype plugin on
 
-"testing for double leader namspace
+let mapleader=" "
 
-" Leader key - namespace for customised keyboard shortcuts
-let mapleader=' '
+" insert upward or downward return while staying in command mode
+noremap <leader>j o<esc>
+noremap <leader>k O<esc>
+
+nnoremap <leader>ev :!evr<cr>
+nnoremap <leader>sv :!source /Users/g_joss/.vimrc<cr>
 
 nnoremap <leader><tab> i<tab><esc>
 
+nnoremap <leader><CR> i<CR><esc>
+
+" terminal mapping, bufferize sub shell for scroll
+tnoremap <esc> <C-W>N	
+
+nmap <leader>w viw " Select word
+
 "Search Hightlighting
 set hlsearch 
-"toggle off after a search
+"toggle off highlighting after a search
 nnoremap <leader>hl :noh<CR>
 
 " NETRW config
@@ -63,7 +71,7 @@ function! FixLastSpellingError()
 endfunction
 nnoremap <leader>sp :call FixLastSpellingError()<CR>
 
-autocmd BufNewFile *.txt		set spell spelllang=en_us
+autocmd BufNewFile *.txt set spell spelllang=en_us
 
 " Normal Mode Mapping - spell check for this file
 :nmap <F5> :setlocal spell! spelllang=en_us<CR>
@@ -85,12 +93,14 @@ set relativenumber		" show current line number with surrounding offsets
 set number						" static numbering OFF
 set tags=tags				"setting up ctags
 " persist code fold
-autocmd BufWinLeave *.*\|.* mkview
-autocmd BufWinEnter *.*\|.* silent loadview
+augroup Left_Off
+	autocmd BufWinLeave *.*\|.* mkview
+	autocmd BufWinEnter *.*\|.* silent loadview
+augroup END
 
 " Tab/Indent Sizes
 set autoindent          " copy indent from current line when 
-												"   starting a new line
+						"   starting a new line
 set smartindent
 set shiftwidth=4        " number of spaces to use for auto indent
 set tabstop=4           " use 4 spaces to represent tab
@@ -142,3 +152,19 @@ xmap vs :call g:VimIt()<CR>
 " Move the contents of the unnamed register to the 
 	" global clipboard
 nnoremap <leader>gc :let @*=@0<cr>
+
+
+ " Open Help in Docs in a Tab
+function! g:HelpInTab() abort 
+	normal <C-W>T
+endfunction 
+
+nnoremap <silent> <leader>ht :call g:HelpInTab()<cr>
+" Bugs: `<leader>tc`
+	" if calling this command in a new, unsaved buffer THEN returning back
+	" there will be error messages. Solution: turn off autocmd in those cases
+nnoremap <silent> <leader>tc :tabclose<cr>
+
+augroup SomeHelpTab
+	au BufEnter *.txt  if &buftype == 'help' | :call HelpInTab() | endif
+augroup END

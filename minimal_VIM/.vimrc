@@ -1,7 +1,3 @@
-set ff=unix
-set nocompatible						
-filetype off                 
-
 let mapleader=" "
 
 " insert upward or downward return while staying in command mode
@@ -98,19 +94,5 @@ set vb t_vb=
 " normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
 " to bring back
 noremap <leader>z  :stop<CR>
-
-" run selected in vimscript
-	" the code is hightlghted. 
-	" store in register z
-
-
-xmap vs :call g:VimIt()<CR>
-
-" always turn on .vimrc syntax
-"autocmd 
-
-" Move the contents of the unnamed register to the 
-	" global clipboard
-nnoremap <leader>gc :let @*=@0<cr>
 
 

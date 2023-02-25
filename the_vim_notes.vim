@@ -3,7 +3,8 @@
 "
 "Sections of this RC file:
 "  _+jmp-code			descripion
-" help		 		 unimplemented ideas			'_help jumps to this section'
+" i*					 unimplemented ideas			 
+" help		 		 '_help jumps to this section'
 " tempts 		   language templates
 "	.py ext
 "	.c

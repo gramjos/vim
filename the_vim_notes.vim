@@ -30,6 +30,7 @@
 "		egc				 edit with grouping characters ({["'
 "	  s&r			   search and replace
 "		cp		     copy pasting yanking to registers
+"		d^				Delete 'Special Character' 
 "
 "		change_wrd
 "		bvf				 Buffer View Formatting
@@ -129,8 +130,8 @@ autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
 " in comand mode :
 " 	ma
 " 		will mark (m) at (a)
-" 	'a
-" 		will return you back to that marker
+" 	`a
+" 		will return you back to that marker (back tick)
 "
 " ** local markers defined with lower case a-z
 " ** global markers use upper case A-Z
@@ -309,6 +310,19 @@ call matchadd('ColorColumn','\%81v',100)
 "		y% copy 				'		'		'		'
 "		ci' change inside the single quotes 
 "				or: (,[,{
+"
+"		_d^
+"		In noraml mode, d^  to Delete Backwards til FirstCharOnLine (relative)
+"		or d0 delete til the first position on line (absolute)
+"		or d| same effects do not know it works
+"
+"		*NOTE*
+"		^, | and 0 are defined as exclusive in Vim
+"		dv_		where _ is ^, 0, or | 
+"			v is flag for inclusive bounds on motion 
+
+" 	CTRL-u
+" 	In insert mode, control u to delete from cursor to beginning of the line
 
 "
 "	:%s:\~/Desktop/term_color::g
@@ -448,7 +462,15 @@ call matchadd('ColorColumn','\%81v',100)
 " Normal Mode Commands _normal_mode_commands
 " Command Line history to appear. Can edit previous commands inside of window
 " Normal Mode q: 
-
+"
+" The command mode counter for the above command
+" 	while in command mode (colon mode) ctrl+f
+" 	to bring up previous commands. navigate the line, either execute
+" 	that command right away with <enter> or edit then execute
+" 
+" *** no matter which one enters the command history pane ( from command mode
+" or normal) use / to search that list
+"
 " Normal mode command 
 " <control>a over a number will increment it 
 "

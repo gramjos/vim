@@ -1,3 +1,4 @@
+set relativenumber		" show current line number with surrounding offsets
 set ff=unix
 set nocompatible						
 filetype off                 
@@ -10,12 +11,19 @@ filetype plugin on
 
 let mapleader=" "
 
+" quick pound sign - 'mark at r, front of line in insert (I) mode, enter
+	"character then back to normal mode5
+nnoremap <leader>c mrI#<ESC>`r
+
 " insert upward or downward return while staying in command mode
 noremap <leader>j o<esc>
 noremap <leader>k O<esc>
 
+" p for push the spaces above and below. stay in command mode
+noremap <leader>p i<cr><cr><esc>k
+
 nnoremap <leader>ev :!evr<cr>
-nnoremap <leader>sv :!source /Users/g_joss/.vimrc<cr>
+nnoremap <leader>so :source %:p<cr>
 
 nnoremap <leader><tab> i<tab><esc>
 
@@ -78,7 +86,9 @@ autocmd BufNewFile *.txt set spell spelllang=en_us
 
 :nmap ;e :execute 'next ' . expand('<cfile>')<CR>
 "go to file cursor is over (must be a full path)
-" a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
+" a normal mode mapping. when ;e is hit when the cursor is on a path. 
+" go to path
+
 " <control> o takes bake to previous buffer. 
 " aside :ls to view available buffers. :b _some_buff_
 
@@ -89,7 +99,7 @@ set spellcapcheck=<CR>
 set ruler               " show line and column number
 syntax enable           " syntax highlighting
 set showcmd             " show (partial) command in status line
-set relativenumber		" show current line number with surrounding offsets
+" set relativenumber		" show current line number with surrounding offsets
 set number						" static numbering OFF
 set tags=tags				"setting up ctags
 " persist code fold

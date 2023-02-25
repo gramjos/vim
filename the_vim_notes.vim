@@ -1,10 +1,12 @@
-" .vimrc file - vim run commands. 
-"               'run these commands at the start of each vim instance'
-"
+"vim run commands. run these commands at the start of each vim instance'
 "Sections of this RC file:
-"  _+jmp-code			descripion
-" i*					 unimplemented ideas			 
-" help		 		 '_help jumps to this section'
+"  
+"   _help jumps to this section where help is one of the abreviations on left
+"   column
+"
+" 	_+jmp-code		 descripion
+" 					 
+" help		 		unimplemented ideas			 
 " tempts 		   language templates
 "	.py ext
 "	.c

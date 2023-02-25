@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>~/Documents/Computation/vim/the_vim_notes.vim.html</title>
+<meta name="Generator" content="Vim/9.0">
+<meta name="plugin-version" content="vim8.1_v2">
+<meta name="syntax" content="vim">
+<meta name="settings" content="number_lines,use_css,pre_wrap,no_foldcolumn,expand_tabs,line_ids,prevent_copy=,use_input_for_pc=fallback">
+<meta name="colorscheme" content="none">
+<style>
+<!--
+pre { white-space: pre-wrap; font-family: monospace; color: #ffffff; background-color: #000000; }
+body { font-family: monospace; color: #ffffff; background-color: #000000; }
+* { font-size: 1em; }
+.Statement { color: #ffff00; }
+.PreProc { color: #5fd7ff; }
+.Type { color: #87ffaf; }
+.Todo { color: #000000; background-color: #ffff00; padding-bottom: 1px; }
+.LineNr { color: #ffff00; }
+.Comment { color: #00ffff; }
+.Constant { color: #ff40ff; }
+.Special { color: #ffd7d7; }
+.Identifier { color: #00ffff; font-weight: bold; }
+-->
+</style>
+
+<script>
+<!--
+
+/* function to open any folds containing a jumped-to line before jumping to it */
+function JumpToLine()
+{
+  var lineNum;
+  lineNum = window.location.hash;
+  lineNum = lineNum.substr(1); /* strip off '#' */
+
+  if (lineNum.indexOf('L') == -1) {
+    lineNum = 'L'+lineNum;
+  }
+  var lineElem = document.getElementById(lineNum);
+  /* Always jump to new location even if the line was hidden inside a fold, or
+   * we corrected the raw number to a line ID.
+   */
+  if (lineElem) {
+    lineElem.scrollIntoView(true);
+  }
+  return true;
+}
+if ('onhashchange' in window) {
+  window.onhashchange = JumpToLine;
+}
+
+-->
+</script>
+</head>
+<body onload='JumpToLine();'>
+<pre id='vimCodeElement'>
+<span id="L1" class="LineNr">  1 </span><span class="Comment">&quot; .vimrc file - vim run commands. </span>
+<span id="L2" class="LineNr">  2 </span><span class="Comment">&quot;               'run these commands at the start of each vim instance'</span>
+<span id="L3" class="LineNr">  3 </span><span class="Comment">&quot;</span>
+<span id="L4" class="LineNr">  4 </span><span class="Comment">&quot;Sections of this RC file:</span>
+<span id="L5" class="LineNr">  5 </span><span class="Comment">&quot;  _+jmp-code     descripion</span>
+<span id="L6" class="LineNr">  6 </span><span class="Comment">&quot; help         unimplemented ideas      '_help jumps to this section'</span>
+<span id="L7" class="LineNr">  7 </span><span class="Comment">&quot; tempts       language templates</span>
+<span id="L8" class="LineNr">  8 </span><span class="Comment">&quot; .py ext</span>
+<span id="L9" class="LineNr">  9 </span><span class="Comment">&quot; .c</span>
+<span id="L10" class="LineNr"> 10 </span><span class="Comment">&quot; .java</span>
+<span id="L11" class="LineNr"> 11 </span><span class="Comment">&quot; abb         abbreviations</span>
+<span id="L12" class="LineNr"> 12 </span><span class="Comment">&quot; macro       recording macro</span>
+<span id="L13" class="LineNr"> 13 </span><span class="Comment">&quot; fx          vim builtin functions</span>
+<span id="L14" class="LineNr"> 14 </span><span class="Comment">&quot;               term, TOhtml, put readfile,</span>
+<span id="L15" class="LineNr"> 15 </span><span class="Comment">&quot; org         File/buffer Organization</span>
+<span id="L16" class="LineNr"> 16 </span><span class="Comment">&quot;  win          windows   </span>
+<span id="L17" class="LineNr"> 17 </span><span class="Comment">&quot;               resize</span>
+<span id="L18" class="LineNr"> 18 </span><span class="Comment">&quot;               rotate</span>
+<span id="L19" class="LineNr"> 19 </span><span class="Comment">&quot; fold        code folding</span>
+<span id="L20" class="LineNr"> 20 </span><span class="Comment">&quot; tab         page tabs</span>
+<span id="L21" class="LineNr"> 21 </span><span class="Comment">&quot; split       vertical or horozontal split</span>
+<span id="L22" class="LineNr"> 22 </span><span class="Comment">&quot; nav         navigation</span>
+<span id="L23" class="LineNr"> 23 </span><span class="Comment">&quot; jmp         jumplist</span>
+<span id="L24" class="LineNr"> 24 </span><span class="Comment">&quot; find</span>
+<span id="L25" class="LineNr"> 25 </span><span class="Comment">&quot; mov         page movement</span>
+<span id="L26" class="LineNr"> 26 </span><span class="Comment">&quot;              scroll cursor</span>
+<span id="L27" class="LineNr"> 27 </span><span class="Comment">&quot;              scroll page</span>
+<span id="L28" class="LineNr"> 28 </span><span class="Comment">&quot; mouse        mouse/cursor use &quot;     </span>
+<span id="L29" class="LineNr"> 29 </span><span class="Comment">&quot; edit        Editting section</span>
+<span id="L30" class="LineNr"> 30 </span><span class="Comment">&quot;   egc        edit with grouping characters ({[&quot;'</span>
+<span id="L31" class="LineNr"> 31 </span><span class="Comment">&quot;   s&amp;r        search and replace</span>
+<span id="L32" class="LineNr"> 32 </span><span class="Comment">&quot;   cp         copy pasting yanking to registers</span>
+<span id="L33" class="LineNr"> 33 </span><span class="Comment">&quot;   d^        Delete 'Special Character' </span>
+<span id="L34" class="LineNr"> 34 </span><span class="Comment">&quot;</span>
+<span id="L35" class="LineNr"> 35 </span><span class="Comment">&quot;   change_wrd</span>
+<span id="L36" class="LineNr"> 36 </span><span class="Comment">&quot;   bvf        Buffer View Formatting</span>
+<span id="L37" class="LineNr"> 37 </span><span class="Comment">&quot; stat_bar    Status Bar formatting</span>
+<span id="L38" class="LineNr"> 38 </span><span class="Comment">&quot; meta        meta characters</span>
+<span id="L39" class="LineNr"> 39 </span><span class="Comment">&quot; </span>
+<span id="L40" class="LineNr"> 40 </span><span class="Comment">&quot;##########################################################</span>
+<span id="L41" class="LineNr"> 41 </span><span class="Comment">&quot; nmc         Normal Mode Commands</span>
+<span id="L42" class="LineNr"> 42 </span><span class="Comment">&quot;  dict       adding words to Dictionary</span>
+<span id="L43" class="LineNr"> 43 </span><span class="Comment">&quot;  wc         curretn file stats</span>
+<span id="L44" class="LineNr"> 44 </span><span class="Comment">&quot;  ~          flip letter casing</span>
+<span id="L45" class="LineNr"> 45 </span><span class="Comment">&quot;             command history pane</span>
+<span id="L46" class="LineNr"> 46 </span><span class="Comment">&quot;             increment number</span>
+<span id="L47" class="LineNr"> 47 </span><span class="Comment">&quot;</span>
+<span id="L48" class="LineNr"> 48 </span><span class="Comment">&quot;##########################################################</span>
+<span id="L49" class="LineNr"> 49 </span><span class="Comment">&quot; cc          Command Line Mode (Colon or Ex Commands) </span>
+<span id="L50" class="LineNr"> 50 </span><span class="Comment">&quot;  dt          dump terminal results into vim buffer</span>
+<span id="L51" class="LineNr"> 51 </span><span class="Comment">&quot;  dig         Digraphs</span>
+<span id="L52" class="LineNr"> 52 </span><span class="Comment">&quot;</span>
+<span id="L53" class="LineNr"> 53 </span><span class="Comment">&quot; term        vertical split terminal</span>
+<span id="L54" class="LineNr"> 54 </span><span class="Comment">&quot;##########################################################</span>
+<span id="L55" class="LineNr"> 55 </span><span class="Comment">&quot; imc         Insert mode Commands </span>
+<span id="L56" class="LineNr"> 56 </span><span class="Comment">&quot;   replace expression with evaluation</span>
+<span id="L57" class="LineNr"> 57 </span><span class="Comment">&quot;   escape to do one normal mode commond</span>
+<span id="L58" class="LineNr"> 58 </span><span class="Comment">&quot; _help </span><span class="Todo">TODO</span>
+<span id="L59" class="LineNr"> 59 </span><span class="Comment">&quot;   - comment box</span>
+<span id="L60" class="LineNr"> 60 </span><span class="Comment">&quot;   - orginize this buffers table of contents</span>
+<span id="L61" class="LineNr"> 61 </span><span class="Comment">&quot;     + make real jump links</span>
+<span id="L62" class="LineNr"> 62 </span><span class="Comment">&quot;   - turn on auto insert mode when creating a new buffer</span>
+<span id="L63" class="LineNr"> 63 </span><span class="Comment">&quot;   - use the qkv alias with a leader mapping to open file</span>
+<span id="L64" class="LineNr"> 64 </span><span class="Comment">&quot;       that the cursor is under</span>
+<span id="L65" class="LineNr"> 65 </span><span class="Comment">&quot; Change Vim's shell from bash to zsh</span>
+<span id="L66" class="LineNr"> 66 </span><span class="Statement">set</span> <span class="PreProc">shell</span>=/usr/local/bin/zsh
+<span id="L67" class="LineNr"> 67 </span>
+<span id="L68" class="LineNr"> 68 </span><span class="Comment">&quot; Status Bar</span>
+<span id="L69" class="LineNr"> 69 </span><span class="Comment">&quot; _stat_bar</span>
+<span id="L70" class="LineNr"> 70 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>=
+<span id="L71" class="LineNr"> 71 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#DiffAdd#%{(mode()=='n')?'\ \ NORMAL\ '<span class="Statement">:</span>''}
+<span id="L72" class="LineNr"> 72 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#DiffChange#%{(mode()=='i')?'\ \ INSERT\ '<span class="Statement">:</span>''}
+<span id="L73" class="LineNr"> 73 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#DiffDelete#%{(mode()=='r')?'\ \ RPLACE\ '<span class="Statement">:</span>''}
+<span id="L74" class="LineNr"> 74 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#Cursor#%{(mode()=='v')?'\ \ VISUAL\ '<span class="Statement">:</span>''}
+<span id="L75" class="LineNr"> 75 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=\ %n\           <span class="Comment">&quot; buffer number</span>
+<span id="L76" class="LineNr"> 76 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#Visual#       <span class="Comment">&quot; colour</span>
+<span id="L77" class="LineNr"> 77 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%{&amp;paste?'\ PASTE\ '<span class="Statement">:</span>''}
+<span id="L78" class="LineNr"> 78 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%{&amp;spell?'\ SPELL\ '<span class="Statement">:</span>''}
+<span id="L79" class="LineNr"> 79 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#CursorIM#     <span class="Comment">&quot; colour</span>
+<span id="L80" class="LineNr"> 80 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%R                        <span class="Comment">&quot; readonly flag</span>
+<span id="L81" class="LineNr"> 81 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%M                        <span class="Comment">&quot; modified [+] flag</span>
+<span id="L82" class="LineNr"> 82 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#Cursor#               <span class="Comment">&quot; colour</span>
+<span id="L83" class="LineNr"> 83 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#CursorLine#     <span class="Comment">&quot; colour</span>
+<span id="L84" class="LineNr"> 84 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=\ %t\                   <span class="Comment">&quot; short file name</span>
+<span id="L85" class="LineNr"> 85 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%=                          <span class="Comment">&quot; right align</span>
+<span id="L86" class="LineNr"> 86 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#CursorLine#   <span class="Comment">&quot; colour</span>
+<span id="L87" class="LineNr"> 87 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=\ %Y\                   <span class="Comment">&quot; file type</span>
+<span id="L88" class="LineNr"> 88 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#CursorIM#     <span class="Comment">&quot; colour</span>
+<span id="L89" class="LineNr"> 89 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=\ %3l<span class="Statement">:</span>%-2c\         <span class="Comment">&quot; line + column</span>
+<span id="L90" class="LineNr"> 90 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=%#Cursor#       <span class="Comment">&quot; colour</span>
+<span id="L91" class="LineNr"> 91 </span><span class="Statement">set</span> <span class="PreProc">statusline</span>+=\ %3p%%\                <span class="Comment">&quot; percentage</span>
+<span id="L92" class="LineNr"> 92 </span>
+<span id="L93" class="LineNr"> 93 </span>
+<span id="L94" class="LineNr"> 94 </span>
+<span id="L95" class="LineNr"> 95 </span><span class="Comment">&quot; :registers to see what is currently being stored</span>
+<span id="L96" class="LineNr"> 96 </span><span class="Comment">&quot; or :reg</span>
+<span id="L97" class="LineNr"> 97 </span><span class="Comment">&quot; x&quot;p   </span>
+<span id="L98" class="LineNr"> 98 </span><span class="Comment">&quot; paste from reg x</span>
+<span id="L99" class="LineNr"> 99 </span>
+<span id="L100" class="LineNr">100 </span><span class="Comment">&quot; Leader key - namespace for customised keyboard shortcuts</span>
+<span id="L101" class="LineNr">101 </span><span class="Statement">let</span> <span class="Identifier">mapleader</span><span class="Statement">=</span><span class="Constant">' '</span>
+<span id="L102" class="LineNr">102 </span>
+<span id="L103" class="LineNr">103 </span><span class="Statement">set</span> <span class="PreProc">encoding</span>=utf-8
+<span id="L104" class="LineNr">104 </span>
+<span id="L105" class="LineNr">105 </span><span class="Comment">&quot; set the dictionary paths. to activate pop-up window. Control xk. </span>
+<span id="L106" class="LineNr">106 </span><span class="Comment">&quot; Control buton = ^</span>
+<span id="L107" class="LineNr">107 </span>
+<span id="L108" class="LineNr">108 </span><span class="Statement">set</span> <span class="PreProc">dictionary</span>+=/usr/share/dict/web2
+<span id="L109" class="LineNr">109 </span>
+<span id="L110" class="LineNr">110 </span><span class="Comment">&quot; finding files:  Display all matching files when we tab complete</span>
+<span id="L111" class="LineNr">111 </span><span class="Statement">set</span> <span class="PreProc">wildmenu</span>
+<span id="L112" class="LineNr">112 </span>
+<span id="L113" class="LineNr">113 </span><span class="Comment">&quot; always switch to VIM from VI</span>
+<span id="L114" class="LineNr">114 </span><span class="Statement">set</span> <span class="PreProc">nocompatible</span>
+<span id="L115" class="LineNr">115 </span>
+<span id="L116" class="LineNr">116 </span><span class="Statement">set</span> <span class="PreProc">belloff</span>=all
+<span id="L117" class="LineNr">117 </span>
+<span id="L118" class="LineNr">118 </span><span class="Comment">&quot; Templates C Java HTML _tempts </span>
+<span id="L119" class="LineNr">119 </span><span class="Comment">&quot; create a template for c files</span>
+<span id="L120" class="LineNr">120 </span><span class="Statement">autocmd</span> <span class="Type">BufNewFile</span> *.c <span class="Constant">0</span>r ~/<span class="Statement">.</span><span class="Statement">vim</span>/templates/<span class="Statement">c</span><span class="Statement">.</span>skel
+<span id="L121" class="LineNr">121 </span>
+<span id="L122" class="LineNr">122 </span><span class="Comment">&quot; † figure out † auto fill in class name same as given filename ___.java</span>
+<span id="L123" class="LineNr">123 </span><span class="Comment">&quot; create a template for java files</span>
+<span id="L124" class="LineNr">124 </span><span class="Statement">autocmd</span> <span class="Type">BufNewFile</span> *.java <span class="Constant">0</span>r ~/<span class="Statement">.</span><span class="Statement">vim</span>/templates/java<span class="Statement">.</span>skel
+<span id="L125" class="LineNr">125 </span>
+<span id="L126" class="LineNr">126 </span><span class="Statement">autocmd</span> <span class="Type">BufNewFile</span> *.html <span class="Constant">0</span>r ~/<span class="Statement">.</span><span class="Statement">vim</span>/templates/html<span class="Statement">.</span>skel
+<span id="L127" class="LineNr">127 </span>
+<span id="L128" class="LineNr">128 </span><span class="Comment">&quot; Marking</span>
+<span id="L129" class="LineNr">129 </span><span class="Comment">&quot; _mark</span>
+<span id="L130" class="LineNr">130 </span><span class="Comment">&quot; in comand mode :</span>
+<span id="L131" class="LineNr">131 </span><span class="Comment">&quot;   ma</span>
+<span id="L132" class="LineNr">132 </span><span class="Comment">&quot;     will mark (m) at (a)</span>
+<span id="L133" class="LineNr">133 </span><span class="Comment">&quot;   `a</span>
+<span id="L134" class="LineNr">134 </span><span class="Comment">&quot;     will return you back to that marker (back tick)</span>
+<span id="L135" class="LineNr">135 </span><span class="Comment">&quot;</span>
+<span id="L136" class="LineNr">136 </span><span class="Comment">&quot; ** local markers defined with lower case a-z</span>
+<span id="L137" class="LineNr">137 </span><span class="Comment">&quot; ** global markers use upper case A-Z</span>
+<span id="L138" class="LineNr">138 </span><span class="Comment">&quot; </span>
+<span id="L139" class="LineNr">139 </span><span class="Comment">&quot; in command mode:</span>
+<span id="L140" class="LineNr">140 </span><span class="Comment">&quot;   ''</span>
+<span id="L141" class="LineNr">141 </span><span class="Comment">&quot;   two single quotes. takes you back to the start of the line of </span>
+<span id="L142" class="LineNr">142 </span><span class="Comment">&quot;     where you were</span>
+<span id="L143" class="LineNr">143 </span><span class="Comment">&quot;   ``</span>
+<span id="L144" class="LineNr">144 </span><span class="Comment">&quot;   two backticks. take you back to the location on the line of </span>
+<span id="L145" class="LineNr">145 </span><span class="Comment">&quot;     where you were</span>
+<span id="L146" class="LineNr">146 </span><span class="Comment">&quot; :help mark-motions</span>
+<span id="L147" class="LineNr">147 </span><span class="Comment">&quot; :help jump-motions</span>
+<span id="L148" class="LineNr">148 </span>
+<span id="L149" class="LineNr">149 </span><span class="Comment">&quot; </span>
+<span id="L150" class="LineNr">150 </span><span class="Comment">&quot; when opening a text file set spell check on</span>
+<span id="L151" class="LineNr">151 </span><span class="Comment">&quot; In command mode </span>
+<span id="L152" class="LineNr">152 </span><span class="Comment">&quot; [s and ]s </span>
+<span id="L153" class="LineNr">153 </span><span class="Comment">&quot;   will move back and forth, respectively thru misspelled words </span>
+<span id="L154" class="LineNr">154 </span><span class="Comment">&quot; z=</span>
+<span id="L155" class="LineNr">155 </span><span class="Comment">&quot;   once cursor on a misspelled word. Brings up options </span>
+<span id="L156" class="LineNr">156 </span><span class="Comment">&quot;   hit enter w/o a digit to leave options with no change made</span>
+<span id="L157" class="LineNr">157 </span><span class="Comment">&quot; ** once on mispelled word 'short circuit' option selection </span>
+<span id="L158" class="LineNr">158 </span><span class="Comment">&quot;     1z=   'take first option'</span>
+<span id="L159" class="LineNr">159 </span><span class="Comment">&quot; zg</span>
+<span id="L160" class="LineNr">160 </span><span class="Comment">&quot;   word the cursors on,add this word to dictionary </span>
+<span id="L161" class="LineNr">161 </span><span class="Comment">&quot; zw</span>
+<span id="L162" class="LineNr">162 </span><span class="Comment">&quot;   word the cursors on,delete this word from dictionary </span>
+<span id="L163" class="LineNr">163 </span><span class="Comment">&quot;</span>
+<span id="L164" class="LineNr">164 </span><span class="Comment">&quot; a normal mode function:</span>
+<span id="L165" class="LineNr">165 </span><span class="Comment">&quot; m  mark this location. the second m is the varible name of the marking</span>
+<span id="L166" class="LineNr">166 </span><span class="Comment">&quot; [s go to previous misspelled word</span>
+<span id="L167" class="LineNr">167 </span><span class="Comment">&quot; 1z= take first suggestion for the misspelled word</span>
+<span id="L168" class="LineNr">168 </span><span class="Comment">&quot; ` go back to a marked location of m</span>
+<span id="L169" class="LineNr">169 </span><span class="Comment">&quot; from <a href="https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error">https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error</a></span>
+<span id="L170" class="LineNr">170 </span><span class="Statement">function</span>! FixLastSpellingError<span class="Special">()</span>
+<span id="L171" class="LineNr">171 </span>  <span class="Statement">normal!</span> mm[s1z=`m
+<span id="L172" class="LineNr">172 </span><span class="Statement">endfunction</span>
+<span id="L173" class="LineNr">173 </span><span class="Statement">nnoremap</span> <span class="Special">&lt;</span><span class="Special">leader</span><span class="Special">&gt;</span>sp :call FixLastSpellingError()<span class="Special">&lt;</span><span class="Special">cr</span><span class="Special">&gt;</span>
+<span id="L174" class="LineNr">174 </span>
+<span id="L175" class="LineNr">175 </span><span class="Statement">autocmd</span> <span class="Type">BufNewFile</span> *.txt    <span class="Statement">set</span> <span class="PreProc">spell</span> <span class="PreProc">spelllang</span>=en_us
+<span id="L176" class="LineNr">176 </span>
+<span id="L177" class="LineNr">177 </span><span class="Comment">&quot; Normal Mode Mapping - spell check for this file</span>
+<span id="L178" class="LineNr">178 </span>:<span class="Statement">nmap</span> <span class="Special">&lt;</span><span class="Special">F5</span><span class="Special">&gt;</span> :setlocal spell! spelllang=en_us<span class="Special">&lt;</span><span class="Special">CR</span><span class="Special">&gt;</span>
+<span id="L179" class="LineNr">179 </span>
+<span id="L180" class="LineNr">180 </span>
+<span id="L181" class="LineNr">181 </span><span class="Comment">&quot;go to file cursor is over (must be a full path)</span>
+<span id="L182" class="LineNr">182 </span>:<span class="Statement">nmap</span> ;e :execute 'next ' . expand('<span class="Special">&lt;</span><span class="Special">cfile</span><span class="Special">&gt;</span>')<span class="Special">&lt;</span><span class="Special">CR</span><span class="Special">&gt;</span>
+<span id="L183" class="LineNr">183 </span><span class="Comment">&quot; a normal mode mapping. when ;e is hit when the cursor is on a path. go to path</span>
+<span id="L184" class="LineNr">184 </span><span class="Comment">&quot; &lt;control&gt; o takes bake to previous buffer. </span>
+<span id="L185" class="LineNr">185 </span><span class="Comment">&quot; aside :ls to view available buffers. :b _some_buff_</span>
+<span id="L186" class="LineNr">186 </span>
+<span id="L187" class="LineNr">187 </span><span class="Comment">&quot; turn off capitalization </span>
+<span id="L188" class="LineNr">188 </span><span class="Statement">set</span> <span class="PreProc">spellcapcheck</span>=<span class="Special">&lt;CR&gt;</span>
+<span id="L189" class="LineNr">189 </span>
+<span id="L190" class="LineNr">190 </span><span class="Comment">&quot; ruler: displays the line number, the column number, the virtual column </span>
+<span id="L191" class="LineNr">191 </span><span class="Comment">&quot; number,and the relative position of the cursor in the file (as a percentage)</span>
+<span id="L192" class="LineNr">192 </span><span class="Statement">set</span> <span class="PreProc">ruler</span>               <span class="Comment">&quot; show line and column number</span>
+<span id="L193" class="LineNr">193 </span>
+<span id="L194" class="LineNr">194 </span><span class="Statement">syntax</span> <span class="Type">enable</span>           <span class="Comment">&quot; syntax highlighting</span>
+<span id="L195" class="LineNr">195 </span><span class="Statement">set</span> <span class="PreProc">showcmd</span>             <span class="Comment">&quot; show (partial) command in status line</span>
+<span id="L196" class="LineNr">196 </span><span class="Statement">set</span> <span class="PreProc">autoindent</span>          <span class="Comment">&quot; copy indent from current line when </span>
+<span id="L197" class="LineNr">197 </span><span class="Comment">            &quot;   starting a new line</span>
+<span id="L198" class="LineNr">198 </span><span class="Statement">set</span> <span class="PreProc">smartindent</span>
+<span id="L199" class="LineNr">199 </span><span class="Statement">set</span> <span class="PreProc">shiftwidth</span>=4        <span class="Comment">&quot; number of spaces to use for auto indent</span>
+<span id="L200" class="LineNr">200 </span><span class="Statement">set</span> <span class="PreProc">tabstop</span>=4           <span class="Comment">&quot; use 4 spaces to represent tab</span>
+<span id="L201" class="LineNr">201 </span><span class="Statement">set</span> <span class="PreProc">relativenumber</span>    <span class="Comment">&quot; show current line number with surrounding offsets</span>
+<span id="L202" class="LineNr">202 </span><span class="Statement">set</span> <span class="PreProc">number</span>        <span class="Comment">&quot; static numbering OFF</span>
+<span id="L203" class="LineNr">203 </span>
+<span id="L204" class="LineNr">204 </span><span class="Comment">&quot; Snippet</span>
+<span id="L205" class="LineNr">205 </span><span class="Comment">&quot; n     -&gt; Normal Mode. Snippet for when in n</span>
+<span id="L206" class="LineNr">206 </span><span class="Comment">&quot; nore  -&gt; Not Recursive.</span>
+<span id="L207" class="LineNr">207 </span><span class="Comment">&quot; map   -&gt; The key binding function</span>
+<span id="L208" class="LineNr">208 </span><span class="Comment">&quot; &lt;F4&gt;  -&gt; when &lt;F4&gt; is pressed in normal mode</span>
+<span id="L209" class="LineNr">209 </span><span class="Comment">&quot; :-1read ~/pt.txt </span>
+<span id="L210" class="LineNr">210 </span><span class="Comment">&quot;       read in contents from file with a -1 offset when inputting</span>
+<span id="L211" class="LineNr">211 </span><span class="Comment">&quot; &lt;CR&gt; enter pressed</span>
+<span id="L212" class="LineNr">212 </span><span class="Comment">&quot;when in normal mode hit F4 and it will read in the contents of pt.txt</span>
+<span id="L213" class="LineNr">213 </span><span class="Comment">&quot;nnoremap &lt;F4&gt; :read ~/pt.txt&lt;CR&gt;</span>
+<span id="L214" class="LineNr">214 </span>
+<span id="L215" class="LineNr">215 </span><span class="Comment">&quot; short cut back to Normal mode </span>
+<span id="L216" class="LineNr">216 </span><span class="Statement">imap</span> ;; <span class="Special">&lt;</span><span class="Special">Esc</span><span class="Special">&gt;</span>
+<span id="L217" class="LineNr">217 </span>
+<span id="L218" class="LineNr">218 </span><span class="Comment">&quot; Abbreviations _abb</span>
+<span id="L219" class="LineNr">219 </span><span class="Comment">&quot; insert mode. when 'this' typed replace it with 'that'</span>
+<span id="L220" class="LineNr">220 </span><span class="Comment">&quot;  ab this that</span>
+<span id="L221" class="LineNr">221 </span><span class="Statement">ab</span> hwg here we go
+<span id="L222" class="LineNr">222 </span>
+<span id="L223" class="LineNr">223 </span><span class="Comment">&quot;insert mode abbreviation. get the prev line and put here</span>
+<span id="L224" class="LineNr">224 </span><span class="Statement">iabbr</span> <span class="Special">&lt;</span><span class="Special">expr</span><span class="Special">&gt;</span> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
+<span id="L225" class="LineNr">225 </span>
+<span id="L226" class="LineNr">226 </span><span class="Comment">&quot; python main section. no need for &lt;CR&gt; after colon b/c</span>
+<span id="L227" class="LineNr">227 </span><span class="Comment">  &quot; of usage preferences. i plan to hit &lt;CR&gt; after the</span>
+<span id="L228" class="LineNr">228 </span><span class="Comment">  &quot; n in _pymn_ </span>
+<span id="L229" class="LineNr">229 </span><span class="Statement">ab</span> pymn if __name__ == &quot;__main__&quot;:
+<span id="L230" class="LineNr">230 </span>
+<span id="L231" class="LineNr">231 </span>
+<span id="L232" class="LineNr">232 </span><span class="Comment">&quot; To standardize width. Make the 81st column magenta </span>
+<span id="L233" class="LineNr">233 </span><span class="Statement">highlight</span> <span class="Type">ColorColumn</span> <span class="Type">ctermbg</span>=magenta
+<span id="L234" class="LineNr">234 </span><span class="Statement">call</span> <span class="Identifier">matchadd</span><span class="Special">(</span><span class="Constant">'ColorColumn'</span>,<span class="Constant">'\%81v'</span>,<span class="Constant">100</span><span class="Special">)</span>
+<span id="L235" class="LineNr">235 </span><span class="Comment">&quot; '\%81v' -&gt; regex </span><span class="Constant">&quot;once at the 81st column virtually&quot;</span>
+<span id="L236" class="LineNr">236 </span>
+<span id="L237" class="LineNr">237 </span><span class="Comment">&quot; Repeat multiple lines of text at visual block </span>
+<span id="L238" class="LineNr">238 </span><span class="Comment">&quot; Insert characters into Visual Block</span>
+<span id="L239" class="LineNr">239 </span><span class="Comment">&quot;   &lt;ctrl&gt;v to enter Visual Blcok mode. After selecting a block</span>
+<span id="L240" class="LineNr">240 </span><span class="Comment">&quot;   press &lt;shift&gt;i then, type the fill in sequence followed</span>
+<span id="L241" class="LineNr">241 </span><span class="Comment">&quot;   &lt;esc&gt; twice</span>
+<span id="L242" class="LineNr">242 </span><span class="Comment">&quot;</span>
+<span id="L243" class="LineNr">243 </span><span class="Comment">&quot; _nmc</span>
+<span id="L244" class="LineNr">244 </span><span class="Comment">&quot;</span>
+<span id="L245" class="LineNr">245 </span><span class="Comment">&quot;Word Count/Total Words</span>
+<span id="L246" class="LineNr">246 </span><span class="Comment">&quot; normal mode command g&lt;C&gt;g  &quot;press 'g' then let go, then hold down ^ with 'g' </span>
+<span id="L247" class="LineNr">247 </span><span class="Comment">&quot; Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792</span>
+<span id="L248" class="LineNr">248 </span><span class="Comment">&quot;</span>
+<span id="L249" class="LineNr">249 </span><span class="Comment">&quot;Look up manual page for word     _wc</span>
+<span id="L250" class="LineNr">250 </span><span class="Comment">&quot; when cursor is over the word in normal mode</span>
+<span id="L251" class="LineNr">251 </span><span class="Comment">&quot;   &lt;Shift&gt;k</span>
+<span id="L252" class="LineNr">252 </span><span class="Comment">&quot;   takes you to the manual page</span>
+<span id="L253" class="LineNr">253 </span><span class="Comment">&quot;</span>
+<span id="L254" class="LineNr">254 </span><span class="Comment">&quot; JumpList      _jmp</span>
+<span id="L255" class="LineNr">255 </span><span class="Comment">&quot;    Contains cursor positions</span>
+<span id="L256" class="LineNr">256 </span><span class="Comment">&quot;    below are both normal mode commands </span>
+<span id="L257" class="LineNr">257 </span><span class="Comment">&quot;     g;       cycle backward thru jumplist</span>
+<span id="L258" class="LineNr">258 </span><span class="Comment">&quot;     g,       cycle foward thru jumplist</span>
+<span id="L259" class="LineNr">259 </span><span class="Comment">&quot;</span>
+<span id="L260" class="LineNr">260 </span><span class="Comment">&quot;   Buffer Jump List </span>
+<span id="L261" class="LineNr">261 </span><span class="Comment">&quot;     &lt;ctrl&gt;o</span>
+<span id="L262" class="LineNr">262 </span><span class="Comment">&quot;       go backwards on the buffer jump list</span>
+<span id="L263" class="LineNr">263 </span><span class="Comment">&quot;     &lt;ctrl&gt;i</span>
+<span id="L264" class="LineNr">264 </span><span class="Comment">&quot;       go forewards on the buffer jump list</span>
+<span id="L265" class="LineNr">265 </span><span class="Comment">&quot;       </span>
+<span id="L266" class="LineNr">266 </span><span class="Comment">&quot;</span>
+<span id="L267" class="LineNr">267 </span><span class="Comment">&quot;_win</span>
+<span id="L268" class="LineNr">268 </span><span class="Comment">&quot;Windows</span>
+<span id="L269" class="LineNr">269 </span><span class="Comment">&quot; &lt;C&gt;w w    toggle windoes focus</span>
+<span id="L270" class="LineNr">270 </span><span class="Comment">&quot; &lt;C&gt;w r    rotate windows</span>
+<span id="L271" class="LineNr">271 </span><span class="Comment">&quot; &lt;C&gt;w n    new horizontally split buffer</span>
+<span id="L272" class="LineNr">272 </span><span class="Comment">&quot;           :new            </span>
+<span id="L273" class="LineNr">273 </span><span class="Comment">&quot; Normal mode command _nmc</span>
+<span id="L274" class="LineNr">274 </span><span class="Comment">&quot;   z{n}&lt;CR&gt;</span>
+<span id="L275" class="LineNr">275 </span><span class="Comment">&quot;     where {n} is a positive integer. Increase current window height</span>
+<span id="L276" class="LineNr">276 </span><span class="Comment">&quot;     by n.</span>
+<span id="L277" class="LineNr">277 </span><span class="Comment">&quot;</span>
+<span id="L278" class="LineNr">278 </span><span class="Comment">&quot; fold code lines _fold</span>
+<span id="L279" class="LineNr">279 </span><span class="Comment">&quot; zf#j creates a fold from the cursor down # lines.</span>
+<span id="L280" class="LineNr">280 </span><span class="Comment">&quot; zj moves the cursor to the next fold.</span>
+<span id="L281" class="LineNr">281 </span><span class="Comment">&quot; zk moves the cursor to the previous fold.</span>
+<span id="L282" class="LineNr">282 </span><span class="Comment">&quot; za toggle a fold at the cursor.</span>
+<span id="L283" class="LineNr">283 </span><span class="Comment">&quot; zo opens a fold at the cursor.</span>
+<span id="L284" class="LineNr">284 </span><span class="Comment">&quot; zO opens all folds at the cursor.</span>
+<span id="L285" class="LineNr">285 </span><span class="Comment">&quot; zc closes a fold under cursor. </span>
+<span id="L286" class="LineNr">286 </span><span class="Comment">&quot; zm increases the foldlevel by one.</span>
+<span id="L287" class="LineNr">287 </span><span class="Comment">&quot; zM closes all open folds.</span>
+<span id="L288" class="LineNr">288 </span><span class="Comment">&quot; zr decreases the foldlevel by one.</span>
+<span id="L289" class="LineNr">289 </span><span class="Comment">&quot; zR decreases the foldlevel to zero -- all folds will be open.</span>
+<span id="L290" class="LineNr">290 </span><span class="Comment">&quot; zd deletes the fold at the cursor.</span>
+<span id="L291" class="LineNr">291 </span><span class="Comment">&quot; zE deletes all folds.</span>
+<span id="L292" class="LineNr">292 </span><span class="Comment">&quot; [z move to start of open fold.</span>
+<span id="L293" class="LineNr">293 </span><span class="Comment">&quot; ]z move to end of open fold.</span>
+<span id="L294" class="LineNr">294 </span>
+<span id="L295" class="LineNr">295 </span><span class="Comment">&quot;Record Macro _macro</span>
+<span id="L296" class="LineNr">296 </span><span class="Comment">&quot;in normal mode press q then the register to store the macro (n)</span>
+<span id="L297" class="LineNr">297 </span><span class="Comment">&quot;do the series of key then to end macro recording while in normal</span>
+<span id="L298" class="LineNr">298 </span><span class="Comment">&quot;mode press q</span>
+<span id="L299" class="LineNr">299 </span><span class="Comment">&quot;to preform macro @n</span>
+<span id="L300" class="LineNr">300 </span>
+<span id="L301" class="LineNr">301 </span><span class="Comment">&quot;Eddting Section _edit</span>
+<span id="L302" class="LineNr">302 </span><span class="Comment">&quot; .   'to repeat an edit' (period)</span>
+<span id="L303" class="LineNr">303 </span><span class="Comment">&quot;   in the scenario of going between insert mode and command</span>
+<span id="L304" class="LineNr">304 </span><span class="Comment">&quot;   (edit) mode. to repeat the most previous set of insert mode commands while</span>
+<span id="L305" class="LineNr">305 </span><span class="Comment">&quot;   in command(edit) mode</span>
+<span id="L306" class="LineNr">306 </span><span class="Comment">&quot;</span>
+<span id="L307" class="LineNr">307 </span><span class="Comment">&quot;   Editting with grouping chracters _egc</span>
+<span id="L308" class="LineNr">308 </span><span class="Comment">&quot;   Parenthesis, Square Brackets, Curly braces, Quotes</span>
+<span id="L309" class="LineNr">309 </span><span class="Comment">&quot;   d% deletes to the next parenthesis, brackets, braces</span>
+<span id="L310" class="LineNr">310 </span><span class="Comment">&quot;   y% copy         '   '   '   '</span>
+<span id="L311" class="LineNr">311 </span><span class="Comment">&quot;   ci' change inside the single quotes </span>
+<span id="L312" class="LineNr">312 </span><span class="Comment">&quot;       or: (,[,{</span>
+<span id="L313" class="LineNr">313 </span><span class="Comment">&quot;</span>
+<span id="L314" class="LineNr">314 </span><span class="Comment">&quot;   _d^</span>
+<span id="L315" class="LineNr">315 </span><span class="Comment">&quot;   In noraml mode, d^  to Delete Backwards til FirstCharOnLine (relative)</span>
+<span id="L316" class="LineNr">316 </span><span class="Comment">&quot;   or d0 delete til the first position on line (absolute)</span>
+<span id="L317" class="LineNr">317 </span><span class="Comment">&quot;   or d| same effects do not know it works</span>
+<span id="L318" class="LineNr">318 </span><span class="Comment">&quot;</span>
+<span id="L319" class="LineNr">319 </span><span class="Comment">&quot;   *NOTE*</span>
+<span id="L320" class="LineNr">320 </span><span class="Comment">&quot;   ^, | and 0 are defined as exclusive in Vim</span>
+<span id="L321" class="LineNr">321 </span><span class="Comment">&quot;   dv_   where _ is ^, 0, or | </span>
+<span id="L322" class="LineNr">322 </span><span class="Comment">&quot;     v is flag for inclusive bounds on motion </span>
+<span id="L323" class="LineNr">323 </span>
+<span id="L324" class="LineNr">324 </span><span class="Comment">&quot;   CTRL-u</span>
+<span id="L325" class="LineNr">325 </span><span class="Comment">&quot;   In insert mode, control u to delete from cursor to beginning of the line</span>
+<span id="L326" class="LineNr">326 </span>
+<span id="L327" class="LineNr">327 </span><span class="Comment">&quot;</span>
+<span id="L328" class="LineNr">328 </span><span class="Comment">&quot; :%s:\~/Desktop/term_color::g</span>
+<span id="L329" class="LineNr">329 </span><span class="Comment">&quot;   \~/Desktop/term_color</span>
+<span id="L330" class="LineNr">330 </span><span class="Comment">&quot;     using a different delimiter than / fowards slashes helps</span>
+<span id="L331" class="LineNr">331 </span><span class="Comment">&quot;       avoid back slahing hell but still have to escape out of the</span>
+<span id="L332" class="LineNr">332 </span><span class="Comment">&quot;       special ~ tilde character</span>
+<span id="L333" class="LineNr">333 </span><span class="Comment">&quot;</span>
+<span id="L334" class="LineNr">334 </span><span class="Comment">&quot; yanking to registers _cp</span>
+<span id="L335" class="LineNr">335 </span><span class="Comment">&quot; &quot;kyy </span>
+<span id="L336" class="LineNr">336 </span><span class="Comment">&quot;   yank full line to reg k</span>
+<span id="L337" class="LineNr">337 </span><span class="Comment">&quot; &quot;Ky</span>
+<span id="L338" class="LineNr">338 </span><span class="Comment">&quot;     append highlighted section to reg k</span>
+<span id="L339" class="LineNr">339 </span><span class="Comment">&quot; &quot;kp</span>
+<span id="L340" class="LineNr">340 </span><span class="Comment">&quot;   paste from reg k</span>
+<span id="L341" class="LineNr">341 </span><span class="Comment">&quot;</span>
+<span id="L342" class="LineNr">342 </span><span class="Comment">&quot; relative yank from cursor position</span>
+<span id="L343" class="LineNr">343 </span><span class="Comment">&quot; :-13y</span>
+<span id="L344" class="LineNr">344 </span><span class="Comment">&quot; relative range yank</span>
+<span id="L345" class="LineNr">345 </span><span class="Comment">&quot; :+8,+14y    </span>
+<span id="L346" class="LineNr">346 </span><span class="Comment">&quot;   yanks ahead</span>
+<span id="L347" class="LineNr">347 </span><span class="Comment">&quot; :-2,+2y</span>
+<span id="L348" class="LineNr">348 </span><span class="Comment">&quot;   yank around cursor</span>
+<span id="L349" class="LineNr">349 </span><span class="Comment">&quot;</span>
+<span id="L350" class="LineNr">350 </span>
+<span id="L351" class="LineNr">351 </span><span class="Comment">&quot;</span> <span class="PreProc">Movement:</span><span class="Comment">   _mov</span>
+<span id="L352" class="LineNr">352 </span><span class="Comment">&quot; in command mode:</span>
+<span id="L353" class="LineNr">353 </span><span class="Comment">  &quot; &lt;shift&gt;l    move cursor to bottom of page</span>
+<span id="L354" class="LineNr">354 </span><span class="Comment">  &quot; &lt;shift&gt;h      ' '    top     '</span>
+<span id="L355" class="LineNr">355 </span><span class="Comment">  &quot; z.  adjust scrolling in the frame. cursor to middle of page</span>
+<span id="L356" class="LineNr">356 </span><span class="Comment">  &quot; z-    adjust scrolling in the frame. cursor to bottom of page</span>
+<span id="L357" class="LineNr">357 </span><span class="Comment">  &quot; zt    adjust scrolling in the frame. cursor to top of page</span>
+<span id="L358" class="LineNr">358 </span>
+<span id="L359" class="LineNr">359 </span><span class="Comment">&quot; Split Editor - same file and same edits happen in both panes</span>
+<span id="L360" class="LineNr">360 </span><span class="Comment">&quot; :sp     horizontal split</span>
+<span id="L361" class="LineNr">361 </span><span class="Comment">&quot; :vs   vertical</span>
+<span id="L362" class="LineNr">362 </span><span class="Comment">&quot; &lt;crt&gt;w 'm'</span>
+<span id="L363" class="LineNr">363 </span><span class="Comment">&quot; control w then 'm' stands for movement command like hjkl</span>
+<span id="L364" class="LineNr">364 </span><span class="Comment">&quot; :q    close current pane</span>
+<span id="L365" class="LineNr">365 </span><span class="Comment">&quot; :qa   close all panes</span>
+<span id="L366" class="LineNr">366 </span>
+<span id="L367" class="LineNr">367 </span><span class="Comment">&quot; Tabs for files(buffers)</span>
+<span id="L368" class="LineNr">368 </span><span class="Comment">&quot; :tabnew [new_buffer(file_name)]</span>
+<span id="L369" class="LineNr">369 </span><span class="Comment">&quot;   creates a new tab(buffer/file)</span>
+<span id="L370" class="LineNr">370 </span><span class="Comment">&quot;</span>
+<span id="L371" class="LineNr">371 </span><span class="Comment">&quot; in commmand mode with many tabs up</span>
+<span id="L372" class="LineNr">372 </span><span class="Comment">&quot;   gt</span>
+<span id="L373" class="LineNr">373 </span><span class="Comment">&quot;     next tab</span>
+<span id="L374" class="LineNr">374 </span><span class="Comment">&quot;   gT</span>
+<span id="L375" class="LineNr">375 </span><span class="Comment">&quot;     prev tab</span>
+<span id="L376" class="LineNr">376 </span><span class="Comment">&quot;   ngt</span>
+<span id="L377" class="LineNr">377 </span><span class="Comment">&quot;     where n is a number. go to nth tab</span>
+<span id="L378" class="LineNr">378 </span><span class="Comment">&quot; :qa</span>
+<span id="L379" class="LineNr">379 </span><span class="Comment">&quot;   close all tabs and exit vim</span>
+<span id="L380" class="LineNr">380 </span><span class="Comment">&quot;</span>
+<span id="L381" class="LineNr">381 </span>
+<span id="L382" class="LineNr">382 </span><span class="Comment">&quot;</span> <span class="PreProc">Command Mode:</span>
+<span id="L383" class="LineNr">383 </span><span class="Comment">&quot;   &lt;control&gt; d</span>
+<span id="L384" class="LineNr">384 </span><span class="Comment">&quot;     decrement page down</span>
+<span id="L385" class="LineNr">385 </span><span class="Comment">&quot;   &lt;control&gt; u</span>
+<span id="L386" class="LineNr">386 </span><span class="Comment">&quot;     increment page up</span>
+<span id="L387" class="LineNr">387 </span><span class="Comment">&quot; </span>
+<span id="L388" class="LineNr">388 </span><span class="Comment">&quot;   &lt;control&gt; e</span>
+<span id="L389" class="LineNr">389 </span><span class="Comment">&quot;     decrement line down</span>
+<span id="L390" class="LineNr">390 </span><span class="Comment">&quot;   &lt;control&gt; y</span>
+<span id="L391" class="LineNr">391 </span><span class="Comment">&quot;     increment line up</span>
+<span id="L392" class="LineNr">392 </span><span class="Comment">&quot;</span>
+<span id="L393" class="LineNr">393 </span><span class="Comment">&quot;Finding a chracter in the same line _find</span>
+<span id="L394" class="LineNr">394 </span><span class="Comment">&quot;   f_</span>
+<span id="L395" class="LineNr">395 </span><span class="Comment">&quot;     where _ is a single character. move cursor to next occurence</span>
+<span id="L396" class="LineNr">396 </span><span class="Comment">&quot;       of character _ on current line</span>
+<span id="L397" class="LineNr">397 </span><span class="Comment">&quot;   F_</span>
+<span id="L398" class="LineNr">398 </span><span class="Comment">&quot;     find backwards</span>
+<span id="L399" class="LineNr">399 </span><span class="Comment">&quot;   t_</span>
+<span id="L400" class="LineNr">400 </span><span class="Comment">&quot;     same as f_ but stops cursor a column before</span>
+<span id="L401" class="LineNr">401 </span><span class="Comment">&quot;   T_</span>
+<span id="L402" class="LineNr">402 </span><span class="Comment">&quot;   to repeat a find command use semi-colon  ;  </span>
+<span id="L403" class="LineNr">403 </span><span class="Comment">&quot; </span>
+<span id="L404" class="LineNr">404 </span><span class="Comment">&quot; Deleting while in Command Mode:</span>
+<span id="L405" class="LineNr">405 </span><span class="Comment">&quot;   lowercase d means delete</span>
+<span id="L406" class="LineNr">406 </span><span class="Comment">&quot;   d needs to be combined with movment command to know where and to</span>
+<span id="L407" class="LineNr">407 </span><span class="Comment">&quot;     delete</span>
+<span id="L408" class="LineNr">408 </span><span class="Comment">&quot;   d will keep you in command mode</span>
+<span id="L409" class="LineNr">409 </span><span class="Comment">&quot;   de</span>
+<span id="L410" class="LineNr">410 </span><span class="Comment">&quot;     delete til end of word</span>
+<span id="L411" class="LineNr">411 </span><span class="Comment">&quot;   db</span>
+<span id="L412" class="LineNr">412 </span><span class="Comment">&quot;     delete backward til end of word</span>
+<span id="L413" class="LineNr">413 </span><span class="Comment">&quot; </span>
+<span id="L414" class="LineNr">414 </span><span class="Comment">&quot; Change while in command then leaves you in Insert mode</span>
+<span id="L415" class="LineNr">415 </span><span class="Comment">&quot;   change c takes movement like d</span>
+<span id="L416" class="LineNr">416 </span><span class="Comment">&quot; </span>
+<span id="L417" class="LineNr">417 </span><span class="Comment">&quot; &lt;control&gt;r</span>
+<span id="L418" class="LineNr">418 </span><span class="Comment">&quot;   redo</span>
+<span id="L419" class="LineNr">419 </span><span class="Comment">&quot; </span>
+<span id="L420" class="LineNr">420 </span><span class="Comment">&quot; Yank y (copy) take a movement command following</span>
+<span id="L421" class="LineNr">421 </span><span class="Comment">&quot; </span>
+<span id="L422" class="LineNr">422 </span><span class="Comment">&quot; </span>
+<span id="L423" class="LineNr">423 </span>
+<span id="L424" class="LineNr">424 </span>
+<span id="L425" class="LineNr">425 </span>
+<span id="L426" class="LineNr">426 </span><span class="Comment">&quot; </span>
+<span id="L427" class="LineNr">427 </span><span class="Comment">&quot; Vim Script Snippets with Functions:   _fx</span>
+<span id="L428" class="LineNr">428 </span><span class="Comment">  &quot; :put =readfile('/path/to/foo/foo.c')[146:226]</span>
+<span id="L429" class="LineNr">429 </span><span class="Comment">  &quot; sorta of like a paste from other file w/in line numbers</span>
+<span id="L430" class="LineNr">430 </span>
+<span id="L431" class="LineNr">431 </span><span class="Comment">&quot;Convert page to HTML</span>
+<span id="L432" class="LineNr">432 </span><span class="Comment">&quot;   :TOhtml</span>
+<span id="L433" class="LineNr">433 </span><span class="Comment">&quot;   save new .html in current directory </span>
+<span id="L434" class="LineNr">434 </span>
+<span id="L435" class="LineNr">435 </span><span class="Comment">&quot; Terminal    _term</span>
+<span id="L436" class="LineNr">436 </span><span class="Comment">&quot; :term</span>
+<span id="L437" class="LineNr">437 </span><span class="Comment">&quot;   emulate a terminal horizontally</span>
+<span id="L438" class="LineNr">438 </span><span class="Comment">&quot; :vert term</span>
+<span id="L439" class="LineNr">439 </span><span class="Comment">&quot;</span>
+<span id="L440" class="LineNr">440 </span><span class="Comment">&quot; :term ls</span>
+<span id="L441" class="LineNr">441 </span><span class="Comment">&quot;   runs the ls command and puts the output in a buffer</span>
+<span id="L442" class="LineNr">442 </span><span class="Comment">&quot;</span>
+<span id="L443" class="LineNr">443 </span><span class="Comment">&quot;  Scrolling in new buffered :term </span>
+<span id="L444" class="LineNr">444 </span><span class="Comment">&quot;   ^w N  (control w capital n)</span>
+<span id="L445" class="LineNr">445 </span><span class="Comment">&quot;   turn the term buffer into a file buffer</span>
+<span id="L446" class="LineNr">446 </span><span class="Comment">&quot;   i character will escape from file buffer view Back to term buffer</span>
+<span id="L447" class="LineNr">447 </span><span class="Comment">&quot;   </span>
+<span id="L448" class="LineNr">448 </span><span class="Comment">&quot;   tnoremap &lt;Esc&gt; &lt;C-W&gt;N</span>
+<span id="L449" class="LineNr">449 </span><span class="Comment">&quot;     'terminal non recursive mapping'</span>
+<span id="L450" class="LineNr">450 </span>
+<span id="L451" class="LineNr">451 </span>
+<span id="L452" class="LineNr">452 </span>
+<span id="L453" class="LineNr">453 </span>
+<span id="L454" class="LineNr">454 </span><span class="Comment">&quot;Select from current buffer and copy into new file</span>
+<span id="L455" class="LineNr">455 </span><span class="Comment">&quot; :5,50 w newfile </span>
+<span id="L456" class="LineNr">456 </span><span class="Comment">&quot;     to create a new file containing the text from line 5 to line 50</span>
+<span id="L457" class="LineNr">457 </span><span class="Comment">&quot;</span>
+<span id="L458" class="LineNr">458 </span><span class="Comment">&quot; :'a,'b w newfile </span>
+<span id="L459" class="LineNr">459 </span><span class="Comment">&quot;     to create a new file containing the text from mark a to mark b</span>
+<span id="L460" class="LineNr">460 </span><span class="Comment">&quot; set your marks by using ma and mb where ever you like</span>
+<span id="L461" class="LineNr">461 </span>
+<span id="L462" class="LineNr">462 </span><span class="Comment">&quot; Normal Mode Commands _normal_mode_commands</span>
+<span id="L463" class="LineNr">463 </span><span class="Comment">&quot; Command Line history to appear. Can edit previous commands inside of window</span>
+<span id="L464" class="LineNr">464 </span><span class="Comment">&quot; Normal Mode q: </span>
+<span id="L465" class="LineNr">465 </span><span class="Comment">&quot;</span>
+<span id="L466" class="LineNr">466 </span><span class="Comment">&quot; The command mode counter for the above command</span>
+<span id="L467" class="LineNr">467 </span><span class="Comment">&quot;   while in command mode (colon mode) ctrl+f</span>
+<span id="L468" class="LineNr">468 </span><span class="Comment">&quot;   to bring up previous commands. navigate the line, either execute</span>
+<span id="L469" class="LineNr">469 </span><span class="Comment">&quot;   that command right away with &lt;enter&gt; or edit then execute</span>
+<span id="L470" class="LineNr">470 </span><span class="Comment">&quot; </span>
+<span id="L471" class="LineNr">471 </span><span class="Comment">&quot; *** no matter which one enters the command history pane ( from command mode</span>
+<span id="L472" class="LineNr">472 </span><span class="Comment">&quot; or normal) use / to search that list</span>
+<span id="L473" class="LineNr">473 </span><span class="Comment">&quot;</span>
+<span id="L474" class="LineNr">474 </span><span class="Comment">&quot; Normal mode command </span>
+<span id="L475" class="LineNr">475 </span><span class="Comment">&quot; &lt;control&gt;a over a number will increment it </span>
+<span id="L476" class="LineNr">476 </span><span class="Comment">&quot;</span>
+<span id="L477" class="LineNr">477 </span><span class="Comment">&quot; ~</span>
+<span id="L478" class="LineNr">478 </span><span class="Comment">&quot;   tilde will flip the casing of the letter the cursor is on</span>
+<span id="L479" class="LineNr">479 </span><span class="Comment">&quot;     or flip casing of a highlighted section</span>
+<span id="L480" class="LineNr">480 </span><span class="Comment">&quot;</span>
+<span id="L481" class="LineNr">481 </span><span class="Comment">&quot;Mouse control</span>
+<span id="L482" class="LineNr">482 </span><span class="Comment">&quot; set mouse=a</span>
+<span id="L483" class="LineNr">483 </span><span class="Comment">&quot;     visualy sellect wiht cursor/mouse</span>
+<span id="L484" class="LineNr">484 </span><span class="Comment">&quot;      adjust window panes with mouse</span>
+<span id="L485" class="LineNr">485 </span><span class="Comment">&quot;</span>
+<span id="L486" class="LineNr">486 </span><span class="Comment">&quot; Insert mode Command _imc</span>
+<span id="L487" class="LineNr">487 </span><span class="Comment">&quot; &lt;Ctrl&gt;k</span>
+<span id="L488" class="LineNr">488 </span><span class="Comment">&quot;   ___S</span>
+<span id="L489" class="LineNr">489 </span><span class="Comment">&quot;     where the three under scores are characters/digits that wiil</span>
+<span id="L490" class="LineNr">490 </span><span class="Comment">&quot;       be 'S'uperscripted</span>
+<span id="L491" class="LineNr">491 </span><span class="Comment">&quot;     *aside* &lt;ctrl&gt;k enters meta charater mode. </span>
+<span id="L492" class="LineNr">492 </span><span class="Comment">&quot;</span>
+<span id="L493" class="LineNr">493 </span><span class="Comment">&quot; &lt;Ctrl&gt;r = </span>
+<span id="L494" class="LineNr">494 </span><span class="Comment">&quot;   </span><span class="Constant">&quot;ctrl and r key toegether and then press =&quot;</span>
+<span id="L495" class="LineNr">495 </span><span class="Comment">&quot;   the equal will appear at the command line and proceede to type</span>
+<span id="L496" class="LineNr">496 </span><span class="Comment">&quot;   an arithmetic expression like 2+2  OR a shell call like </span>
+<span id="L497" class="LineNr">497 </span><span class="Comment">&quot;   system('ls')&lt;enter&gt; and the results are inserted at the cursor in the</span>
+<span id="L498" class="LineNr">498 </span><span class="Comment">&quot;   curtrent buffer  </span>
+<span id="L499" class="LineNr">499 </span><span class="Comment">&quot;</span>
+<span id="L500" class="LineNr">500 </span><span class="Comment">&quot; Leave insert mode to do one normal mode command</span>
+<span id="L501" class="LineNr">501 </span><span class="Comment">&quot;   &lt;ctrl&gt;o</span>
+<span id="L502" class="LineNr">502 </span><span class="Comment">&quot;</span>
+<span id="L503" class="LineNr">503 </span><span class="Comment">&quot;Registers</span>
+<span id="L504" class="LineNr">504 </span><span class="Comment">&quot; copy one register contents to another is like variable assignment with let. </span>
+<span id="L505" class="LineNr">505 </span><span class="Comment">&quot;   :let @&quot;=@*</span>
+<span id="L506" class="LineNr">506 </span><span class="Comment">&quot;     &quot;the unnamed register now has the contents of register *</span>
+<span id="L507" class="LineNr">507 </span><span class="Comment">&quot;     </span>
+<span id="L508" class="LineNr">508 </span><span class="Comment">&quot;   :echo getreg('&quot;')</span>
+<span id="L509" class="LineNr">509 </span><span class="Comment">&quot;   : let @a = getreg('&quot;')</span>
+<span id="L510" class="LineNr">510 </span><span class="Comment">&quot;</span>
+<span id="L511" class="LineNr">511 </span><span class="Comment">&quot;Visual Line mode</span>
+<span id="L512" class="LineNr">512 </span><span class="Comment">&quot; select text then hit colon to enter command mode</span>
+<span id="L513" class="LineNr">513 </span><span class="Comment">&quot; you will see</span>
+<span id="L514" class="LineNr">514 </span><span class="Comment">&quot;         :'&lt;,'&gt;</span>
+<span id="L515" class="LineNr">515 </span><span class="Comment">&quot;         this repersents the selected text</span>
+<span id="L516" class="LineNr">516 </span><span class="Comment">&quot;         :'&lt;,'&gt;!python</span>
+<span id="L517" class="LineNr">517 </span><span class="Comment">&quot;         this will execute the selected code snippet and REPLACE</span>
+<span id="L518" class="LineNr">518 </span><span class="Comment">&quot;           the selected with the results of the snippet</span>
+<span id="L519" class="LineNr">519 </span><span class="Comment">&quot;</span>
+<span id="L520" class="LineNr">520 </span><span class="Comment">&quot;Yanking from register to vim command line</span>
+<span id="L521" class="LineNr">521 </span><span class="Comment">&quot;   &lt;C&gt;r reg_ref&lt;CR&gt;</span>
+<span id="L522" class="LineNr">522 </span><span class="Comment">&quot;     after &lt;C&gt;r is hit a double will appear on the vim command line</span>
+<span id="L523" class="LineNr">523 </span><span class="Comment">&quot;       then procede to enter the register refernece </span>
+<span id="L524" class="LineNr">524 </span><span class="Comment">&quot;       </span>
+<span id="L525" class="LineNr">525 </span><span class="Comment">&quot;Insert mode Command _imc</span>
+<span id="L526" class="LineNr">526 </span><span class="Comment">&quot; while in insert mode execute ONE normal command and automatically </span>
+<span id="L527" class="LineNr">527 </span><span class="Comment">&quot;   go back to insert mode.</span>
+<span id="L528" class="LineNr">528 </span><span class="Comment">&quot;   &lt;C&gt;O</span>
+<span id="L529" class="LineNr">529 </span><span class="Comment">&quot;     'control uppercase oh'</span>
+<span id="L530" class="LineNr">530 </span><span class="Comment">&quot;     insert a line above </span>
+<span id="L531" class="LineNr">531 </span>
+<span id="L532" class="LineNr">532 </span><span class="Comment">&quot; Term information</span>
+<span id="L533" class="LineNr">533 </span><span class="Comment">&quot;   echo $TERM  -&gt; xterm-color256</span>
+<span id="L534" class="LineNr">534 </span><span class="Comment">&quot;   </span>
+<span id="L535" class="LineNr">535 </span><span class="Comment">&quot;Help </span>
+<span id="L536" class="LineNr">536 </span><span class="Comment">&quot; :helpgrep [search term]</span>
+<span id="L537" class="LineNr">537 </span><span class="Comment">&quot; this brings you to the first occurenece of [search term] </span>
+<span id="L538" class="LineNr">538 </span><span class="Comment">&quot;   Broweser thru results use +quickfix commanss</span>
+<span id="L539" class="LineNr">539 </span><span class="Comment">&quot;   to see the list of search results :cwindow</span>
+<span id="L540" class="LineNr">540 </span><span class="Comment">&quot;   </span>
+<span id="L541" class="LineNr">541 </span><span class="Comment">&quot;           </span>
+<span id="L542" class="LineNr">542 </span><span class="Comment">&quot;</span>
+<span id="L543" class="LineNr">543 </span><span class="Comment">&quot;##########################################################</span>
+<span id="L544" class="LineNr">544 </span><span class="Comment">&quot;Command Mode Commands (Ex or Colon Commands)  _cc</span>
+<span id="L545" class="LineNr">545 </span><span class="Comment">&quot;</span>
+<span id="L546" class="LineNr">546 </span><span class="Comment">&quot; Digraphs      _dig</span>
+<span id="L547" class="LineNr">547 </span><span class="Comment">&quot;  insert special charaters from :dig menu with i_ctrl-k {char}{2}</span>
+<span id="L548" class="LineNr">548 </span><span class="Comment">&quot;  while in insert press control k and a question mark should appear over the</span>
+<span id="L549" class="LineNr">549 </span><span class="Comment">&quot;  cursor position. Type two characters(letter,number,punctuation). The two</span>
+<span id="L550" class="LineNr">550 </span><span class="Comment">&quot;  character codes are on the left side of the blue digraph in the :dig menu</span>
+<span id="L551" class="LineNr">551 </span><span class="Comment">&quot;  9S ⁹  8313 ... zh ㄓ 12563</span>
+<span id="L552" class="LineNr">552 </span><span class="Comment">&quot;</span>
+<span id="L553" class="LineNr">553 </span><span class="Comment">&quot;When working with Meta-charaters</span>
+<span id="L554" class="LineNr">554 </span><span class="Comment">&quot; control v   </span><span class="Constant">&quot;to access meta character mode&quot;</span>
+<span id="L555" class="LineNr">555 </span><span class="Comment">&quot; control m   </span><span class="Constant">&quot;inputs ^M&quot;</span><span class="Comment"> replace m with any meta</span>
+<span id="L556" class="LineNr">556 </span><span class="Comment">&quot;</span>
+</pre>
+</body>
+</html>
+<!-- vim: set foldmethod=manual : -->

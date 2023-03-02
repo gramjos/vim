@@ -19,6 +19,7 @@
 "  win					windows 	
 "								resize
 "								rotate
+"	form				re-format lines
 "	fold  			code folding
 "	tab 				page tabs
 "	split 			vertical or horozontal split
@@ -65,6 +66,7 @@
 "   - turn on auto insert mode when creating a new buffer
 "   - use the qkv alias with a leader mapping to open file
 "   		that the cursor is under
+"		- write a mapping to delete the current the file and exit
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
 
@@ -164,29 +166,6 @@ autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
 "	zw
 "		word the cursors on,delete this word from dictionary 
 "
-" a normal mode function:
-" m  mark this location. the second m is the varible name of the marking
-" [s go to previous misspelled word
-" 1z= take first suggestion for the misspelled word
-" ` go back to a marked location of m
-" from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
-function! FixLastSpellingError()
-  normal! mm[s1z=`m
-endfunction
-nnoremap <leader>sp :call FixLastSpellingError()<cr>
-
-autocmd BufNewFile *.txt		set spell spelllang=en_us
-
-" Normal Mode Mapping - spell check for this file
-:nmap <F5> :setlocal spell! spelllang=en_us<CR>
-
-
-"go to file cursor is over (must be a full path)
-:nmap ;e :execute 'next ' . expand('<cfile>')<CR>
-" a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
-" <control> o takes bake to previous buffer. 
-" aside :ls to view available buffers. :b _some_buff_
-
 " turn off capitalization 
 set spellcapcheck=<CR>
 
@@ -245,6 +224,47 @@ call matchadd('ColorColumn','\%81v',100)
 "
 "	_nmc
 "
+"
+" a normal mode function:
+" m  mark this location. the second m is the varible name of the marking
+" [s go to previous misspelled word
+" 1z= take first suggestion for the misspelled word
+" ` go back to a marked location of m
+" from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
+function! FixLastSpellingError()
+  normal! mm[s1z=`m
+endfunction
+nnoremap <leader>sp :call FixLastSpellingError()<cr>
+
+autocmd BufNewFile *.txt		set spell spelllang=en_us
+
+" Normal Mode Mapping - spell check for this file
+:nmap <F5> :setlocal spell! spelllang=en_us<CR>
+
+" quick open and put process in the backgorund
+function! Qkv()
+  let curse_word = expand('<cfile>')
+  execute '!qkv' curse_word '&'
+endfunction
+
+nnoremap <leader>qv :call Qkv()<CR>
+
+function! Pkv()
+  let curse_word = expand('<cfile>')
+  execute '!open -a "Preview" ' curse_word '&'
+endfunction
+
+"	Two ways to skin a cat: 1.) builtin  2.) nmap
+"	jump to an editor session for the file that the cursor is on
+gf
+"go to file cursor is over (must be a full path)
+:nmap ;e :execute 'next ' . expand('<cfile>')<CR>
+" a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
+" <control> o takes bake to previous buffer. 
+" aside :ls to view available buffers. :b _some_buff_
+
+" 
+"
 "Word Count/Total Words
 "	normal mode command g<C>g  "press 'g' then let go, then hold down ^ with 'g' 
 "	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
@@ -295,6 +315,10 @@ call matchadd('ColorColumn','\%81v',100)
 " [z move to start of open fold.
 " ]z move to end of open fold.
 
+" _form Re-Formmat Lines
+" 	visual select the lines then the normal sequence gw to adjust trailing
+" 	lines. If this is not aesthetic try nicemice.net/par
+
 "Record Macro	_macro
 "in normal mode press q then the register to store the macro (n)
 "do the series of key then to end macro recording while in normal
@@ -328,13 +352,16 @@ call matchadd('ColorColumn','\%81v',100)
 " 	In insert mode, control u to delete from cursor to beginning of the line
 
 "
+"	Search and replace Example. In this case, replace with nothing
 "	:%s:\~/Desktop/term_color::g
-"		\~/Desktop/term_color
-"			using a different delimiter than / fowards slashes helps
+"		deletes the string (happens to be a file path)
+"		~/Desktop/term_color
+"			using a different delimiter(:) than / fowards slashes helps
 "				avoid back slahing hell but still have to escape out of the
 "				special ~ tilde character
 "
-" yanking to registers _cp
+" _cp
+" yanking to registers 
 "	"kyy 
 "		yank full line to reg k
 "	"Ky
@@ -421,11 +448,6 @@ call matchadd('ColorColumn','\%81v',100)
 " 	redo
 " 
 " Yank y (copy) take a movement command following
-" 
-" 
-
-
-
 " 
 " Vim Script Snippets with Functions:		_fx
 	" :put =readfile('/path/to/foo/foo.c')[146:226]
@@ -545,6 +567,9 @@ call matchadd('ColorColumn','\%81v',100)
 "
 "##########################################################
 "Command Mode Commands (Ex or Colon Commands)  _cc
+"
+" insert the standard out of <cmd> into current buffer buffer where cursor is
+:.!<cmd>
 "
 " Digraphs 			_dig
 "  insert special charaters from :dig menu with i_ctrl-k {char}{2}

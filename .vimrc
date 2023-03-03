@@ -9,6 +9,11 @@ call vundle#begin()
 cal vundle#end()
 filetype plugin on
 
+" tell it to use an undo file
+set undofile
+" set a directory to store the undo history
+set undodir=/home/yourname/.vimundo/
+
 let mapleader=" "
 
 " quick pound sign - 'mark at r, front of line in insert (I) mode, enter
@@ -83,6 +88,22 @@ autocmd BufNewFile *.txt set spell spelllang=en_us
 
 " Normal Mode Mapping - spell check for this file
 :nmap <F5> :setlocal spell! spelllang=en_us<CR>
+
+
+function! Qkv()
+  let curse_word = expand('<cfile>')
+  execute '!qkv' curse_word '&'
+endfunction
+
+nnoremap <leader>qv :call Qkv()<CR>
+
+function! Pkv()
+  let curse_word = expand('<cfile>')
+  execute '!open -a "Preview" ' curse_word '&'
+endfunction
+
+nnoremap <leader>pv :call Pkv()<CR>
+
 
 :nmap ;e :execute 'next ' . expand('<cfile>')<CR>
 "go to file cursor is over (must be a full path)

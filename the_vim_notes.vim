@@ -14,7 +14,7 @@
 " abb 				abbreviations
 " macro			  recording macro
 " fx					vim builtin functions
-" 							term, TOhtml, put readfile,
+" 				term, TOhtml, put readfile,
 " org 		 		File/buffer Organization
 "  win					windows 	
 "								resize

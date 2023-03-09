@@ -26,6 +26,7 @@
 "	nav  			  navigation
 "	jmp					jumplist
 "	find
+"	netew				create file
 "	mov					page movement
 "					 		 scroll cursor
 "						   scroll page
@@ -63,9 +64,7 @@
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
-"   - turn on auto insert mode when creating a new buffer
-"   - use the qkv alias with a leader mapping to open file
-"   		that the cursor is under
+"   - turn on auto insert mode when creating a NEW buffer
 "		- write a mapping to delete the current the file and exit
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
@@ -501,12 +500,16 @@ gf
 "
 " ~
 " 	tilde will flip the casing of the letter the cursor is on
-" 		or flip casing of a highlighted section
+" 		or flip casing of a highlighted sectionn
 "
+" Netrw _netrw
+" 	netrw is activated press % to create a new file
+
+" _mouse
 "Mouse control
 " set mouse=a
 "			visualy sellect wiht cursor/mouse
-"			 adjust window panes with mouse
+"			 adjust window panes with mmouse
 "
 " Insert mode Command _imc
 " <Ctrl>k

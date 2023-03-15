@@ -15,29 +15,37 @@ set undofile
 set undodir=/home/yourname/.vimundo/
 
 let mapleader=" "
+" key(s) in use:
+"	c j k so <tab> ev hl sp pv qv z gc
 
-" quick pound sign - 'mark at r, front of line in insert (I) mode, enter
-	"character then back to normal mode5
+" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
+" to bring back
+noremap <leader>z  :stop<CR>
+
+" Move the contents of the unnamed register to the 
+	" global clipboard
+nnoremap <leader>gc :let @*=@0<cr>
+
+" yank line/selection to sys paste bin, whether in Normal/Visual mode
+nnoremap <leader>y yy:let @*=@0<cr>
+vnoremap <leader>y :let @*='<,'><cr>
+
+" quick pound sign - mark at r, front of line in insert (I) mode, enter
+"	# character then back to normal mode, jump to mark r
 nnoremap <leader>c mrI#<ESC>`r
 
 " insert upward or downward return while staying in command mode
 noremap <leader>j o<esc>
 noremap <leader>k O<esc>
 
-" p for push the spaces above and below. stay in command mode
-noremap <leader>p i<cr><cr><esc>k
-
 nnoremap <leader>ev :!evr<cr>
 nnoremap <leader>so :source %:p<cr>
 
 nnoremap <leader><tab> i<tab><esc>
 
-nnoremap <leader><CR> i<CR><esc>
-
-" terminal mapping, bufferize sub shell for scroll
+" terminal mapping, bufferize sub shell for scroll 
+"	(any route to insert mode triggers sub shell)
 tnoremap <esc> <C-W>N	
-
-nmap <leader>w viw " Select word
 
 "Search Hightlighting
 set hlsearch 
@@ -56,6 +64,8 @@ set shell=/usr/local/bin/zsh
 " Search down into subfolders
 " provides tab completion for all file realted tasks
 set path+=**
+" add a relative search path for find commands (start searching from current
+" dir)
 
 " Status Bar
 "set statusline=
@@ -136,6 +146,16 @@ set smartindent
 set shiftwidth=4        " number of spaces to use for auto indent
 set tabstop=4           " use 4 spaces to represent tab
 
+" python specific format from PEP 8 
+au BufNewFile,BufRead *.py
+    \ set tabstop=4 |      
+    \ set softtabstop=4|
+    \ set shiftwidth=4|
+    \ set textwidth=79|
+    \ set expandtab|
+    \ set autoindent|
+    \ set fileformat=unix
+
 " short cut back to Normal mode 
 imap ;; <Esc>
 
@@ -146,9 +166,14 @@ ab pymn if __name__ == "__main__":
 
 " Color Margin
 " To standardize width. Make the 81st column magenta 
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn','\%81v',100)
+highlight ColorColumn ctermbg=LightGrey
+let &colorcolumn="81,".join(range(100,999),",")
+"call matchadd('ColorColumn','\%>80c',100)
 " '\%81v' -> regex "once at the 81st column virtually"
+
+highlight FindMe ctermbg=green guibg=green
+call matchadd("FindMe", "Graham Joss")
+
 
 " set mouse as clickable. to drag window size of :vert term 
 	" and when in term mode from insise of vim i can scroll up thru the page not
@@ -162,40 +187,7 @@ set ls=2
 set noerrorbells
 set vb t_vb=
 
-" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
-" to bring back
-noremap <leader>z  :stop<CR>
 
-" run selected in vimscript
-	" the code is hightlghted. 
-	" store in register z
-
-function g:VimIt()
-	y
-	@0
-endfunction
-
-xmap vs :call g:VimIt()<CR>
-
-" always turn on .vimrc syntax
-"autocmd 
-
-" Move the contents of the unnamed register to the 
-	" global clipboard
-nnoremap <leader>gc :let @*=@0<cr>
-
-
- " Open Help in Docs in a Tab
-function! g:HelpInTab() abort 
-	normal <C-W>T
-endfunction 
-
-nnoremap <silent> <leader>ht :call g:HelpInTab()<cr>
-" Bugs: `<leader>tc`
-	" if calling this command in a new, unsaved buffer THEN returning back
-	" there will be error messages. Solution: turn off autocmd in those cases
-nnoremap <silent> <leader>tc :tabclose<cr>
-
-augroup SomeHelpTab
-	au BufEnter *.txt  if &buftype == 'help' | :call HelpInTab() | endif
-augroup END
+" defaults for :sp and :vs respectively 
+set splitbelow
+set splitright   

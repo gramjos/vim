@@ -41,6 +41,11 @@
 "		bvf				 Buffer View Formatting
 "	stat_bar	  Status Bar formatting
 "	meta				meta characters
+"
+"	pvp					Profiling Vim's performance 
+"								:scriptnames					
+"
+"	py					python vim api
 "	
 "##########################################################
 "	nmc 			  Normal Mode Commands
@@ -61,6 +66,7 @@
 "		replace expression with evaluation
 "		escape to do one normal mode commond
 " _help TODO
+"   - yank the line or selection put into system paste bin
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
@@ -387,6 +393,19 @@ gf
 
 " Split Editor - same file and same edits happen in both panes
 " :sp 		horizontal split
+"
+" : sp <file>
+" 		creates new file in a split pane
+" 		or type % the tab to auto complete from current path
+"
+" " defaults for :sp and :vs respectively 
+" set splitbelow
+" set splitright   
+
+" :sf - split find. split pane and find file/dir
+"
+" :tabfind
+
 " :vs		vertical
 " <crt>w 'm'
 "	control w then 'm' stands for movement command like hjkl
@@ -566,8 +585,6 @@ gf
 "		Broweser thru results use +quickfix commanss
 "		to see the list of search results :cwindow
 "		
-"						
-"
 "##########################################################
 "Command Mode Commands (Ex or Colon Commands)  _cc
 "
@@ -584,4 +601,13 @@ gf
 "When working with Meta-charaters
 " control v 	"to access meta character mode"
 " control m		"inputs " replace m with any meta
+"
+"
+"Performace 
+"	:sciptnames
+"		displays what files are sourced at vim's startup
+"
+" _py Python's Vim API
+" :pydo 			'do python expression every line with builtins like line number
+" and line contents (line,linenr)
 "

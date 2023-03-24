@@ -16,7 +16,21 @@ set undodir=/home/yourname/.vimundo/
 
 let mapleader=" "
 " key(s) in use:
-"	c j k so <tab> ev hl sp pv qv z gc
+"	c d D j k n N u U w W z ev gc hl pv qv so sp <tab>
+
+" quick resize
+" upward - enlarge
+noremap <leader>u :res +2<CR> 
+noremap <leader>U :res +6<CR> 
+" downward - shrink
+noremap <leader>d :res -2<CR> 
+noremap <leader>D :res -6<CR> 
+" wider - enlarge
+noremap <leader>w :vert res +2<CR> 
+noremap <leader>W :vert res +6<CR> 
+" narrower - shrink
+noremap <leader>n :vert res -2<CR> 
+noremap <leader>N :vert res -6<CR> 
 
 " normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
 " to bring back
@@ -28,7 +42,7 @@ nnoremap <leader>gc :let @*=@0<cr>
 
 " yank line/selection to sys paste bin, whether in Normal/Visual mode
 nnoremap <leader>y yy:let @*=@0<cr>
-vnoremap <leader>y :let @*='<,'><cr>
+vnoremap <leader>y yy:let @*=@0<cr>
 
 " quick pound sign - mark at r, front of line in insert (I) mode, enter
 "	# character then back to normal mode, jump to mark r

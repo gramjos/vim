@@ -180,9 +180,9 @@ ab pymn if __name__ == "__main__":
 
 " Color Margin
 " To standardize width. Make the 81st column magenta 
-highlight ColorColumn ctermbg=LightGrey
-let &colorcolumn="81,".join(range(100,999),",")
-"call matchadd('ColorColumn','\%>80c',100)
+" highlight ColorColumn ctermbg=LightGrey
+"let &colorcolumn="81,".join(range(100,999),",")
+call matchadd('ColorColumn','%80v')
 " '\%81v' -> regex "once at the 81st column virtually"
 
 highlight FindMe ctermbg=green guibg=green
@@ -190,7 +190,7 @@ call matchadd("FindMe", "Graham Joss")
 
 
 " set mouse as clickable. to drag window size of :vert term 
-	" and when in term mode from insise of vim i can scroll up thru the page not
+	" and when in term mode from insise of vim i can scroll up thru the page not                   
 	" thur the command history
 set mouse=nvi
 

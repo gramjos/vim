@@ -72,6 +72,8 @@
 "   	+ make real jump links
 "   - turn on auto insert mode when creating a NEW buffer
 "		- write a mapping to delete the current the file and exit
+"		- a session for note taking and todos 
+"
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
 

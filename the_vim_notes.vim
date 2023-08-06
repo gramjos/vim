@@ -26,7 +26,7 @@
 "	nav  			  navigation
 "	jmp					jumplist
 "	find
-"	netew				create file
+"	netrw				create file
 "	mov					page movement
 "					 		 scroll cursor
 "						   scroll page
@@ -46,6 +46,7 @@
 "								:scriptnames					
 "
 "	py					python vim api
+"	pytab				deal with python indentation error
 "	
 "##########################################################
 "	nmc 			  Normal Mode Commands
@@ -61,11 +62,18 @@
 "	 dig				 Digraphs
 "
 " term 				vertical split terminal
+" ve					Virtual Edit
 "##########################################################
 "	imc 				Insert mode Commands 
 "		replace expression with evaluation
 "		escape to do one normal mode commond
+" 	insert a tab ^I (indent) unprintable character
+"##########################################################
+" Shell command Line
+" 	nit				start vim with blank rc
 " _help TODO
+"   - mapping in visual mode, based on current file suffix  apply commentting
+"   		out
 "   - yank the line or selection put into system paste bin
 "   - comment box
 "   - orginize this buffers table of contents
@@ -73,6 +81,11 @@
 "   - turn on auto insert mode when creating a NEW buffer
 "		- write a mapping to delete the current the file and exit
 "		- a session for note taking and todos 
+"
+"	_nit 
+"	$ vi -u NONE
+"	temporarily start vim with a blank user. this creates a runtime that
+"		ignores: runtime commands (.vimrc) and (.vim)
 "
 " Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
@@ -383,6 +396,8 @@ gf
 "		yanks ahead
 " :-2,+2y
 " 	yank around cursor
+" :-5,y
+" 	yank everything from 5 line back to current line
 "
 
 " Movement:		_mov
@@ -524,7 +539,7 @@ gf
 " 		or flip casing of a highlighted sectionn
 "
 " Netrw _netrw
-" 	netrw is activated press % to create a new file
+" 	When netrw is activated press % to create a new file
 
 " _mouse
 "Mouse control
@@ -533,11 +548,17 @@ gf
 "			 adjust window panes with mmouse
 "
 " Insert mode Command _imc
+" <Ctrl>v<Tab>
+" 	will insert a 'REAL' tab
+"
+"Enter meta character (digraph) mode with 
 " <Ctrl>k
+"then, below denotes the format to pick specific character 
 " 	___S
 " 		where the three under scores are characters/digits that wiil
 " 			be 'S'uperscripted
-" 		*aside* <ctrl>k enters meta charater mode. 
+" while in insert mode <ctrl>k wait for cursor to change then RF
+" ▤ 
 "
 "	<Ctrl>r =	
 "		"ctrl and r key toegether and then press ="
@@ -584,11 +605,27 @@ gf
 "Help 
 "	:helpgrep [search term]
 "	this brings you to the first occurenece of [search term] 
-"		Broweser thru results use +quickfix commanss
+"		To browse thru results use +quickfix commands
 "		to see the list of search results :cwindow
+"	-----------------------------------------------------------------------------
+"	Prefix	|		Example				|		Context
+"		:			|		:h :r					|		ex command (command starting with a colon)
+"		none	|		:h r					|		normal mode
+"		v_		|		:h v_r				|		visual mode
+"		i_		|		:h i_CTRL-W		|		insert mode
+"		c_		|		:h c_CTRL-R		|		ex command line
+"		/			|		:h /\r				|		search pattern (in this case, :h \r also works)
+"		'			|		:h 'ro'				|		option
+"		-			|		:h -r					|		Vim argument (starting Vim)
+"	-----------------------------------------------------------------------------
+"	^ chart source https://vim.fandom.com/wiki/Learn_to_use_help
 "		
 "##########################################################
 "Command Mode Commands (Ex or Colon Commands)  _cc
+"
+" Virtual Edit _ve 
+" visual select strictly tabular
+set ve=block
 "
 " insert the standard out of <cmd> into current buffer buffer where cursor is
 :.!<cmd>
@@ -598,7 +635,9 @@ gf
 "  while in insert press control k and a question mark should appear over the
 "  cursor position. Type two characters(letter,number,punctuation). The two
 "  character codes are on the left side of the blue digraph in the :dig menu
-"  9S ⁹  8313 ... zh ㄓ 12563
+"  9S ⁹  8313 ... zh ㄓ 12563  
+" aside, sub super script are intuitive big s for super and little s for sub
+"  ²₂2
 "
 "When working with Meta-charaters
 " control v 	"to access meta character mode"
@@ -613,3 +652,12 @@ gf
 " :pydo 			'do python expression every line with builtins like line number
 " and line contents (line,linenr)
 "
+" _pytab
+" fixing the python indentation error
+" :set listchars=tab:>-,trail:-,nbsp:
+" :set list
+" the above pair of commands dislpays those hidden character
+" :set invlist
+" invert to undo
+" search and replace to fox botch files
+" :%s/\t/    /g

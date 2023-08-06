@@ -16,7 +16,10 @@ set undodir=/home/yourname/.vimundo/
 
 let mapleader=" "
 " key(s) in use:
-"	c d D j k n N u U w W z ev gc hl pv qv so sp <tab>
+"	c d D j k n N r u U w W z ev gc hl pv qv so sp <tab>
+
+" Redo last colon command
+noremap <leader>r :<Up><CR>
 
 " quick resize
 " upward - enlarge
@@ -34,23 +37,49 @@ noremap <leader>N :vert res -6<CR>
 
 " normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
 " to bring back
-noremap <leader>z  :stop<CR>
+noremap <leader>z :stop<CR>
 
 " Move the contents of the unnamed register to the 
 	" global clipboard
 nnoremap <leader>gc :let @*=@0<cr>
 
 " yank line/selection to sys paste bin, whether in Normal/Visual mode
-nnoremap <leader>y yy:let @*=@0<cr>
-vnoremap <leader>y yy:let @*=@0<cr>
+nnoremap <leader>y :let @*=@0<cr>
+vnoremap <leader>y :let @*=@0<cr>
 
 " quick pound sign - mark at r, front of line in insert (I) mode, enter
 "	# character then back to normal mode, jump to mark r
-nnoremap <leader>c mrI#<ESC>`r
+" quick pound for visually selected area
+function! QuickPound() abort
+	:execute 's/^/#/g | noh'
+endfunction
+nnoremap <leader>c :call QuickPound()<CR>
+vnoremap <leader>c :call QuickPound()<CR>
 
 " insert upward or downward return while staying in command mode
-noremap <leader>j o<esc>
-noremap <leader>k O<esc>
+function! AddSpaceUp() abort
+	" save(mark) location
+	normal! mz
+	" add space above in insert mode
+	normal! O
+	" jmp back to mark
+	normal! `z
+	" remove mark
+	execute 'delmarks z'
+endfunction
+function! AddSpaceDown() abort
+	" save(mark) location
+	normal! mz
+	" add space below in insert mode
+	normal! o
+	" jmp back to mark
+	normal! `z
+	" remove mark
+	execute 'delmarks z'
+endfunction
+
+noremap <leader>j :call AddSpaceDown()<CR>
+noremap <leader>k :call AddSpaceUp()<CR>
 
 nnoremap <leader>ev :!evr<cr>
 nnoremap <leader>so :source %:p<cr>
@@ -85,7 +114,6 @@ set path+=**
 "set statusline=
 
 set encoding=utf-8
-
 " set the dictionary paths. to activate pop-up window. Control xk. 
 " Control buton = ^
 set dictionary+=/usr/share/dict/web2
@@ -112,7 +140,6 @@ autocmd BufNewFile *.txt set spell spelllang=en_us
 
 " Normal Mode Mapping - spell check for this file
 :nmap <F5> :setlocal spell! spelllang=en_us<CR>
-
 
 function! Qkv()
   let curse_word = expand('<cfile>')
@@ -166,7 +193,7 @@ au BufNewFile,BufRead *.py
     \ set softtabstop=4|
     \ set shiftwidth=4|
     \ set textwidth=79|
-    \ set expandtab|
+    \ set noexpandtab|
     \ set autoindent|
     \ set fileformat=unix
 
@@ -180,9 +207,8 @@ ab pymn if __name__ == "__main__":
 
 " Color Margin
 " To standardize width. Make the 81st column magenta 
-" highlight ColorColumn ctermbg=LightGrey
-"let &colorcolumn="81,".join(range(100,999),",")
-call matchadd('ColorColumn','%80v')
+highlight ColorColumn ctermbg=LightGrey
+call matchadd('ColorColumn','\%80v')
 " '\%81v' -> regex "once at the 81st column virtually"
 
 highlight FindMe ctermbg=green guibg=green
@@ -190,8 +216,8 @@ call matchadd("FindMe", "Graham Joss")
 
 
 " set mouse as clickable. to drag window size of :vert term 
-	" and when in term mode from insise of vim i can scroll up thru the page not                   
-	" thur the command history
+  "and when in term mode from insise of vim i can scroll up thru the page not 
+  " thur the command history
 set mouse=nvi
 
 " last status. always_on=2
@@ -205,3 +231,13 @@ set vb t_vb=
 " defaults for :sp and :vs respectively 
 set splitbelow
 set splitright   
+
+
+nnoremap <leader>m :call GetUserInput()<cr>
+
+function! GetUserInput()
+  let input = input("!!;Enter an integer: ")
+  let doubled_input = input * 2
+  echo "The doubled input is: " . doubled_input
+endfunction
+

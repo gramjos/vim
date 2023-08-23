@@ -241,3 +241,13 @@ function! GetUserInput()
   echo "The doubled input is: " . doubled_input
 endfunction
 
+
+" Step 1: Create the visual mode mapping
+xnoremap <leader>i :call RunPython()<cr>
+
+" Step 2: Define the RunPython() function
+function! RunPython() abort 
+endfunction 
+
+
+

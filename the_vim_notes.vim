@@ -639,11 +639,11 @@ set ve=block
 " aside, sub super script are intuitive big s for super and little s for sub
 "  ²₂2
 "
-"When working with Meta-charaters
+"When working with Meta-charates
+"In insert mode:
 " control v 	"to access meta character mode"
 " control m		"inputs " replace m with any meta
-"
-"
+" 
 "Performace 
 "	:sciptnames
 "		displays what files are sourced at vim's startup

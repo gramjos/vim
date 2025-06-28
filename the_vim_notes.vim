@@ -1,8 +1,6 @@
-"vim run commands. run these commands at the start of each vim instance'
-"Sections of this RC file:
-"  
-"   _help jumps to this section where help is one of the abreviations on left
-"   column
+" vim run commands. run these commands at the start of each vim instance
+" Sections of this RC file:
+" jump to the section where help is one of the abreviations on left column
 "
 " 	_+jmp-code		 descripion
 " 					 
@@ -24,7 +22,7 @@
 "	tab 				page tabs
 "	split 			vertical or horozontal split
 "	nav  			  navigation
-"	jmp					jumplist
+"	jmp					jumplist/edit list
 "	find
 "	netrw				create file
 "	mov					page movement
@@ -36,6 +34,7 @@
 "	  s&r			   search and replace
 "		cp		     copy pasting yanking to registers
 "		d^				Delete 'Special Character' 
+"		g					delete lines that match pattern
 "
 "		change_wrd
 "		bvf				 Buffer View Formatting
@@ -47,6 +46,8 @@
 "
 "	py					python vim api
 "	pytab				deal with python indentation error
+"
+"	pi					plugins
 "	
 "##########################################################
 "	nmc 			  Normal Mode Commands
@@ -55,7 +56,8 @@
 "	 ~				  flip letter casing
 "		          command history pane
 "		          increment number
-"
+"	 _swc 			word count selection
+"  ap					append selection to file
 "##########################################################
 " cc					Command Line Mode (Colon or Ex Commands) 
 "	 dt					 dump terminal results into vim buffer
@@ -81,6 +83,8 @@
 "   - turn on auto insert mode when creating a NEW buffer
 "		- write a mapping to delete the current the file and exit
 "		- a session for note taking and todos 
+"	- integrate a popup window with a `fzf` as new `find` command to look for
+"	arbirary files
 "
 "	_nit 
 "	$ vi -u NONE
@@ -92,29 +96,6 @@ set shell=/usr/local/bin/zsh
 
 " Status Bar
 " _stat_bar
-set statusline=
-set statusline+=%#DiffAdd#%{(mode()=='n')?'\ \ NORMAL\ ':''}
-set statusline+=%#DiffChange#%{(mode()=='i')?'\ \ INSERT\ ':''}
-set statusline+=%#DiffDelete#%{(mode()=='r')?'\ \ RPLACE\ ':''}
-set statusline+=%#Cursor#%{(mode()=='v')?'\ \ VISUAL\ ':''}
-set statusline+=\ %n\           " buffer number
-set statusline+=%#Visual#       " colour
-set statusline+=%{&paste?'\ PASTE\ ':''}
-set statusline+=%{&spell?'\ SPELL\ ':''}
-set statusline+=%#CursorIM#     " colour
-set statusline+=%R                        " readonly flag
-set statusline+=%M                        " modified [+] flag
-set statusline+=%#Cursor#               " colour
-set statusline+=%#CursorLine#     " colour
-set statusline+=\ %t\                   " short file name
-set statusline+=%=                          " right align
-set statusline+=%#CursorLine#   " colour
-set statusline+=\ %Y\                   " file type
-set statusline+=%#CursorIM#     " colour
-set statusline+=\ %3l:%-2c\         " line + column
-set statusline+=%#Cursor#       " colour
-set statusline+=\ %3p%%\                " percentage
-
 
 
 " :registers to see what is currently being stored
@@ -218,6 +199,12 @@ set number				" static numbering OFF
 imap ;; <Esc>
 
 " Abbreviations _abb
+" NOTE: insert mode abbreviations add an extra space as a known bug. Use the
+" built-in helper Eatchar 'eat character'    
+" func Eatchar(pat)
+  " let c = nr2char(getchar(0))
+  " return (c =~ a:pat) ? '' : c
+" endfunc
 " insert mode. when 'this' typed replace it with 'that'
 "  ab this that
 ab hwg here we go	
@@ -243,7 +230,13 @@ call matchadd('ColorColumn','\%81v',100)
 "		<esc> twice
 "
 "	_nmc
+" _ap
+" Append selection to a file that already exists
+" :'<,'>w >> file
 "
+" _swc
+" Get the word count, lines, and bytes of current selection while in normal
+" mode. When you have soething selected in normal mode, press g then control g
 "
 " a normal mode function:
 " m  mark this location. the second m is the varible name of the marking
@@ -276,7 +269,6 @@ endfunction
 
 "	Two ways to skin a cat: 1.) builtin  2.) nmap
 "	jump to an editor session for the file that the cursor is on
-gf
 "go to file cursor is over (must be a full path)
 :nmap ;e :execute 'next ' . expand('<cfile>')<CR>
 " a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
@@ -297,14 +289,16 @@ gf
 " JumpList 			_jmp
 " 	 Contains cursor positions
 " 	 below are both normal mode commands 
-"			g;			 cycle backward thru jumplist
-"			g,			 cycle foward thru jumplist
-"
+"			g;			 cycle backward thru edit list
+"			g,			 cycle foward thru edit list
+"  To view the jump list :ju
 "		Buffer Jump List 
 "			<ctrl>o
-"				go backwards on the buffer jump list
+"				go backwards on the buffer jump list go
 "			<ctrl>i
 "				go forewards on the buffer jump list
+"			NOTE can use a number as a range to move N many positions up or
+"			down the jump list
 "				
 "
 "_win
@@ -313,6 +307,7 @@ gf
 "	<C>w r		rotate windows
 "	<C>w n		new horizontally split buffer
 "						:new 						
+"
 "	Normal mode command _nmc
 "		z{n}<CR>
 "			where {n} is a positive integer. Increase current window height
@@ -371,7 +366,7 @@ gf
 " 	CTRL-u
 " 	In insert mode, control u to delete from cursor to beginning of the line
 
-"
+"_s&r
 "	Search and replace Example. In this case, replace with nothing
 "	:%s:\~/Desktop/term_color::g
 "		deletes the string (happens to be a file path)
@@ -399,6 +394,14 @@ gf
 " :-5,y
 " 	yank everything from 5 line back to current line
 "
+" _g
+" Global (g) command - 
+" Execute a command in range that matches a pattern
+"
+" search and delete lines that match pattern
+" :g/\/\/.*$/d
+" 	the above pattern matches any lines that contain a double forward slash
+" Instead of `d` for deleted is be any Ex command found here :help ex-cmd-index
 
 " Movement:		_mov
 " in command mode:
@@ -408,6 +411,7 @@ gf
 	" z-    adjust scrolling in the frame. cursor to bottom of page
 	" zt    adjust scrolling in the frame. cursor to top of page
 
+" _split
 " Split Editor - same file and same edits happen in both panes
 " :sp 		horizontal split
 "
@@ -422,6 +426,16 @@ gf
 " :sf - split find. split pane and find file/dir
 "
 " :tabfind
+"
+" Rotate the split tabs vert to hort or vice versa
+" To change two vertically split windows to horizonally split:
+" Ctrl-w t Ctrl-w K
+" 
+" Horizontally to vertically:
+" Ctrl-w t Ctrl-w H
+"
+" Got form two panes (vert or hort) to two tabs
+" Ctrl-w T
 
 " :vs		vertical
 " <crt>w 'm'
@@ -443,6 +457,8 @@ gf
 "	:qa
 "		close all tabs and exit vim
 "
+" :tab sb <buffListItem>
+" 	open buffer in new tab
  
 " Command Mode:
 " 	<control> d
@@ -484,6 +500,7 @@ gf
 " 
 " Yank y (copy) take a movement command following
 " 
+
 " Vim Script Snippets with Functions:		_fx
 	" :put =readfile('/path/to/foo/foo.c')[146:226]
 	" sorta of like a paste from other file w/in line numbers
@@ -507,10 +524,7 @@ gf
 "	 	
 "	 	tnoremap <Esc> <C-W>N
 "	 		'terminal non recursive mapping'
-
-
-
-
+"
 "Select from current buffer and copy into new file
 "	:5,50 w newfile 
 "			to create a new file containing the text from line 5 to line 50
@@ -533,16 +547,33 @@ gf
 "
 " Normal mode command 
 " <control>a over a number will increment it 
+" <control>x			'''						decrement 2
+"
+" Sequential Increment over visual block
+" https://httpbin.org/delay/1
+" https://httpbin.org/delay/1
+" https://httpbin.org/delay/1
+" https://httpbin.org/delay/1
+" https://httpbin.org/delay/1
+" Once at the 1 column is visually(block) selected g<CTRL>a
 "
 " ~
 " 	tilde will flip the casing of the letter the cursor is on
 " 		or flip casing of a highlighted sectionn
 "
 " Netrw _netrw
-" 	When netrw is activated press % to create a new file
+" 	When netrw is activated:
+" 		press % to create a new file
+" 		press v to vert split pane for the file the cursor is over.
+" 		press p to horizontal split pane for the file the cursor is over.
+" 		and you just entered a random file to go back to the file
+" 		explorer view enter the Ex command :E[xplore]
+"
+" 	the built-in mapping `cd` will change the current working directory 
+" 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 
+" 	command to start a terminal at the `NetrwTreeListing` directory
 
 " _mouse
-"Mouse control
 " set mouse=a
 "			visualy sellect wiht cursor/mouse
 "			 adjust window panes with mmouse
@@ -587,38 +618,48 @@ gf
 "					this will execute the selected code snippet and REPLACE
 "						the selected with the results of the snippet
 "
-"Yanking from register to vim command line
+"Yanking from register to vim command line or while in insert mode _imc
 "		<C>r reg_ref<CR>
 "			after <C>r is hit a double will appear on the vim command line
 "				then procede to enter the register refernece 
 "				
 "Insert mode Command _imc
 "	while in insert mode execute ONE normal command and automatically 
-"		go back to insert mode.
-"		<C>O
-"			'control uppercase oh'
-"			insert a line above 
+"		go back to insert mode 
+"		<C>o___		where the 3 '_'are the normal mode command
+"		example:
+	"		<C>oO
+	"			'control oh uppercase oh'
+	"			insert a line above 
 
 " Term information
 " 	echo $TERM  -> xterm-color256
+" 	
 " 	
 "Help 
 "	:helpgrep [search term]
 "	this brings you to the first occurenece of [search term] 
 "		To browse thru results use +quickfix commands
 "		to see the list of search results :cwindow
-"	-----------------------------------------------------------------------------
-"	Prefix	|		Example				|		Context
-"		:			|		:h :r					|		ex command (command starting with a colon)
-"		none	|		:h r					|		normal mode
-"		v_		|		:h v_r				|		visual mode
-"		i_		|		:h i_CTRL-W		|		insert mode
-"		c_		|		:h c_CTRL-R		|		ex command line
-"		/			|		:h /\r				|		search pattern (in this case, :h \r also works)
-"		'			|		:h 'ro'				|		option
-"		-			|		:h -r					|		Vim argument (starting Vim)
+" -----------------------------------------------------------------------------
+" Prefix	|		Example			|		Context
+"		:	|		:h :r			|		ex command (command starting with a colon)
+" 	none	|		:h r			|		normal mode
+"	v_		|		:h v_r			|		visual mode
+"	i_		|		:h i_CTRL-W		|		insert mode
+"	c_		|		:h c_CTRL-R		|		ex command line
+"	/		|		:h /\r			|		search pattern (in this case, :h \r also works)
+"	'		|		:h 'ro'			|		option
+"	-		|		:h -r			|		Vim argument (starting Vim)
 "	-----------------------------------------------------------------------------
 "	^ chart source https://vim.fandom.com/wiki/Learn_to_use_help
+"
+"	In the scenario, where I execute `:e foo.txt` and in the current i made
+"	changes that are not saved yet the error: 
+"		"E37: No write since last change (use ! to override)"
+" 	will appear. to look up error message:
+" 		`:h E37`
+
 "		
 "##########################################################
 "Command Mode Commands (Ex or Colon Commands)  _cc
@@ -638,18 +679,18 @@ set ve=block
 "  9S ⁹  8313 ... zh ㄓ 12563  
 " aside, sub super script are intuitive big s for super and little s for sub
 "  ²₂2
-"
+
 "When working with Meta-charates
 "In insert mode:
-" control v 	"to access meta character mode"
-" control m		"inputs " replace m with any meta
+" control v 	"to access meta character mode" " control m		"inputs " replace m with any meta
 " 
 "Performace 
 "	:sciptnames
 "		displays what files are sourced at vim's startup
 "
 " _py Python's Vim API
-" :pydo 			'do python expression every line with builtins like line number
+" :pydo 			
+" do python expression every line with builtins like line number
 " and line contents (line,linenr)
 "
 " _pytab
@@ -659,5 +700,9 @@ set ve=block
 " the above pair of commands dislpays those hidden character
 " :set invlist
 " invert to undo
-" search and replace to fox botch files
+" search and replace to fix botch files
 " :%s/\t/    /g
+"
+" _pi
+" :PluginInstall
+" 	run after adding new vundle link

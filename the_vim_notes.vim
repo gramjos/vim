@@ -1,79 +1,37 @@
-" vim run commands. run these commands at the start of each vim instance
-" Sections of this RC file:
-" jump to the section where help is one of the abreviations on left column
-"
-" 	_+jmp-code		 descripion
-" 					 
-" help		 		unimplemented ideas			 
-" tempts 		   language templates
-"	.py ext
-"	.c
-"	.java
-" abb 				abbreviations
-" macro			  recording macro
-" fx					vim builtin functions
-" 				term, TOhtml, put readfile,
-" org 		 		File/buffer Organization
-"  win					windows 	
-"								resize
-"								rotate
-"	form				re-format lines
-"	fold  			code folding
-"	tab 				page tabs
-"	split 			vertical or horozontal split
-"	nav  			  navigation
-"	jmp					jumplist/edit list
-"	find
-"	netrw				create file
-"	mov					page movement
-"					 		 scroll cursor
-"						   scroll page
-"	mouse				 mouse/cursor use "			
-"	edit				Editting section
-"		egc				 edit with grouping characters ({["'
-"	  s&r			   search and replace
-"		cp		     copy pasting yanking to registers
-"		d^				Delete 'Special Character' 
-"		g					delete lines that match pattern
-"
-"		change_wrd
-"		bvf				 Buffer View Formatting
-"	stat_bar	  Status Bar formatting
-"	meta				meta characters
-"
-"	pvp					Profiling Vim's performance 
-"								:scriptnames					
-"
-"	py					python vim api
-"	pytab				deal with python indentation error
-"
-"	pi					plugins
-"	
+" vim run commands(rc). run these commands at the start of each vim instance
+" Sections of this RC file: Sets, Maps, Abbreviations, Misc. Notes
+
+" jump with an underscore plus the jmp-code
+" 	_+jmp-code	descripion
+
+" Sets - `set`, `autocmd`, `let`, `call`, `highlight`
+"	sh		shell default
+" Maps - `map`
+"  1. Builtins/Defaults
+"  2. User Defined
+" Abbreivations - `iabbrev`, `ab`
+" Custom func - `function!`
+" TODO - unimplemented ideas
+" Notes - Builtin Functions, HowTOs and demonstrative examples
+"	y		yank
+"	reg		registers
+"	e		edit command
+"	imc		insert mode commands
+"	h		help, helpgrep
+"	pytab	Indent error
+"	py		py3do
+"	pyv		py interpret v selected
+"	prof	Profile Performace
+"	redir	re-direct messages
+"	norc	start vim w/o .vimrc
+"	ap		cross file append
+"	mc		multiple cursor
+"	.!		shell cmd output
+"	dig		Digraphs
+"	pu		put
 "##########################################################
-"	nmc 			  Normal Mode Commands
-"	 dict		    adding words to Dictionary
-"	 wc				  curretn file stats
-"	 ~				  flip letter casing
-"		          command history pane
-"		          increment number
-"	 _swc 			word count selection
-"  ap					append selection to file
+" _TODO
 "##########################################################
-" cc					Command Line Mode (Colon or Ex Commands) 
-"	 dt					 dump terminal results into vim buffer
-"	 dig				 Digraphs
-"
-" term 				vertical split terminal
-" ve					Virtual Edit
-"##########################################################
-"	imc 				Insert mode Commands 
-"		replace expression with evaluation
-"		escape to do one normal mode commond
-" 	insert a tab ^I (indent) unprintable character
-"##########################################################
-" Shell command Line
-" 	nit				start vim with blank rc
-" _help TODO
 "   - mapping in visual mode, based on current file suffix  apply commentting
 "   		out
 "   - yank the line or selection put into system paste bin
@@ -85,55 +43,255 @@
 "		- a session for note taking and todos 
 "	- integrate a popup window with a `fzf` as new `find` command to look for
 "	arbirary files
+"##########################################################
+" _notes Notes
+"##########################################################
+" _imc Insert Mode Command 
+" <Ctrl>v<Tab>
+"	Interpret the next non-digit literally,	will insert a 'REAL' tab
 "
-"	_nit 
+" <Ctrl>c
+"	back to normal mode
+
+" while in insert mode execute ONE normal command and automatically go back to
+" insert mode 
+"		<C>o___		where the 3 '_'are the normal mode command
+"	example:
+"		<C>oO
+"			'control oh uppercase oh'
+"			insert a line above 
+" _h Help 
+:helpgrep [search term]
+"	this brings you to the first occurenece of [search term] 
+"		To browse thru results use +quickfix commands
+"		to see the list of search results :cwindow
+" -----------------------------------------------------------------------------
+" Prefix	|		Example			|		Context
+"		:	|		:h :r			|		ex command (command starting with a colon)
+" 	none	|		:h r			|		normal mode
+"	v_		|		:h v_r			|		visual mode
+"	i_		|		:h i_CTRL-W		|		insert mode
+"	c_		|		:h c_CTRL-R		|		ex command line
+"	/		|		:h /\r			|		search pattern (in this case, :h \r also works)
+"	'		|		:h 'ro'			|		option
+"	-		|		:h -r			|		Vim argument (starting Vim)
+"	-----------------------------------------------------------------------------
+"	^ chart source https://vim.fandom.com/wiki/Learn_to_use_help
+"
+" _e _h Edit and Help
+" In the scenario, where I execute 
+:e foo.txt 
+" and in the current i made	changes that are not saved yet the error: 
+" 'E37: No write since last change (use ! to override)'
+" will appear. to look up error message:
+:h E37
+
+" _.! Shell command output
+" insert the standard out of <cmd> into current buffer buffer where cursor is
+:.!<cmd>
+"
+" _dig Digraphs 			
+"  insert special charaters from :dig menu with i_ctrl-k {char}{2}
+"  while in insert press control k and a question mark should appear over the
+"  cursor position. Type two characters(letter,number,punctuation). The two
+"  character codes are on the left side of the blue digraph in the :dig menu
+"  9S ⁹  8313 ... zh ㄓ 12563  
+" aside, sub super script are intuitive big s for super and little s for sub
+"  ²₂2
+
+"Enter meta character (digraph) mode with 
+" <Ctrl>k
+"then, below denotes the format to pick specific character 
+" 	___S
+" 		where the three under scores are characters/digits that wiil
+" 			be 'S'uperscripted
+" while in insert mode <ctrl>k wait for cursor to change then RF
+" ▤ 
+"
+"	<Ctrl>r =	
+"		"ctrl and r key toegether and then press ="
+"		the equal will appear at the command line and proceede to type
+"		an arithmetic expression like 2+2  OR a shell call like 
+"		system('ls')<enter> and the results are inserted at the cursor in the
+"		curtrent buffer  
+"
+" Leave insert mode to do one normal mode command
+" 	<ctrl>o
+"
+
+"When working with Meta-charates
+"In insert mode:
+" control v 	"to access meta character mode" " control m		"inputs " replace m with any meta
+" 
+" _prof Profiling Performace 
+"	displays what files are sourced at vim's startup
+:sciptnames
+"
+" _py Python's Vim API. only py3 is installed not py or py
+:py3do 			
+" do python expression every line with builtins like line number
+" and line contents (line,linenr)
+"
+" Example:
+'<,'>py3do return "%s\t%d" % (line[::-1], len(line))
+" or with modern f string 
+'<,'>py3do return f"here: {line[::-1]}, {len(line)}"
+
+" _pyv Python with Visual Line mode
+" select text then hit colon to enter command mode
+" you will see
+:'<,'>
+"	this repersents the selected text
+:'<,'>!python
+"	this will execute the selected code snippet and REPLACE
+"		the selected with the results of the snippet
+"
+import math; print(math.pi);
+import math;
+print(math.pi);
+3.141592653589793
+"
+" _pytab Common Python Identation error
+" fixing the python indentation error
+:set listchars=tab:>-,trail:-,nbsp:
+:set list
+" the above pair of commands dislpays those hidden character
+:set invlist
+" invert to undo
+" search and replace to fix botch files
+:%s/\t/    /g
+
+" _redir Re-Direct Mes
+" Below is a one liner to filter the mes
+:redir => g:vim_messages | silent messages | redir END | let g:message_lines = split(g:vim_messages, "\n") | put =g:message_lines[-2]
+
+:redir => g:vim_messages |
+"	declare locally and ephemerally (temporarily) to write all messages to a global variable `vim_messages`
+silent messages |
+"	then 'mock' call the messages function with silent on, so the actual messages do not get displayed.
+redir END | 
+"	Then 'END' the redirecting of the messages. 
+let g:message_lines = split(g:vim_messages, "\n") 
+" Then split the string by newline into a list of strings. 
+put =g:message_lines[-2]
+" slice out a mes
+
+" _norc 
 "	$ vi -u NONE
 "	temporarily start vim with a blank user. this creates a runtime that
 "		ignores: runtime commands (.vimrc) and (.vim)
-"
-" Change Vim's shell from bash to zsh
+
+" _mc Multiple Cursor
+" Repeat multiple lines of text at visual block 
+" Insert characters into Visual Block
+" 	<ctrl>v to enter Visual Blcok mode. After selecting a block
+"		press <shift>i then, type the fill in sequence followed
+"		<esc> twice
+
+" _ap
+" Append selection to a file that already exists
+:'<,'>w >> file
+
+"##########################################################
+" Sets
+"##########################################################
+" Term information
+echo $TERM  
+" -> xterm-color256
+" Virtual Edit _ve 
+" visual select strictly tabular
+set ve=block
+" To standardize width. Make the 81st column magenta 
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn','\%81v',100)
+" '\%81v' -> regex "once at the 81st column virtually"
+" turn off capitalization 
+set spellcapcheck=<CR>
+" ruler: displays the line number, the column number, the virtual column 
+" number,and the relative position of the cursor in the file (as a percentage)
+set ruler               " show line and column number
+syntax enable           " syntax highlighting
+set showcmd             " show (partial) command in status line
+set autoindent          " copy indent from current line when starting a new line
+set smartindent
+set shiftwidth=4        " number of spaces to use for auto indent
+set tabstop=4           " use 4 spaces to represent tab
+set relativenumber		" show current line number with surrounding offsets
+set number				" static numbering OFF
+" _sh Change Vim's shell from bash to zsh
 set shell=/usr/local/bin/zsh
-
-" Status Bar
-" _stat_bar
-
-
-" :registers to see what is currently being stored
-" or :reg
-" x"p   
-"	paste from reg x
-
 " Leader key - namespace for customised keyboard shortcuts
 let mapleader=' '
-
 set encoding=utf-8
-
 " set the dictionary paths. to activate pop-up window. Control xk. 
 " Control buton = ^
-
 set dictionary+=/usr/share/dict/web2
-
 " finding files:  Display all matching files when we tab complete
 set wildmenu
-
 " always switch to VIM from VI
 set nocompatible
-
 set belloff=all
-
 " Templates C Java HTML _tempts 
 " create a template for c files
 autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
-
 " † figure out † auto fill in class name same as given filename ___.java
 " create a template for java files
 autocmd BufNewFile *.java 0r ~/.vim/templates/java.skel
-
 autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
+
+"##########################################################
+" Maps
+"##########################################################
+
+" # Builtin/Default #
+
+
+" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
+" to bring back, but now just ctrl-z to throw to background
+noremap <leader>z :stop<CR> 
+
+" _wc Counting Col,Ln,Wrd,Byte
+" Get the word count, lines, and bytes of current selection while in normal
+" mode. When you have something selected in normal mode, press g then control g
+" Example mes printed
+"	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
+
+" _gx call the system `open` on the path the cursor is on. 
+
+" _y Yank
+
+" Yanking from register to vim command line or while in insert mode _imc
+"		<Crtl>r reg_ref<CR>
+"			after <Ctrl>r is hit a double will appear on the vim command line
+"				then procede to enter the register refernece 
+
+
+" _reg Registers
+" to see what is currently being stored
+:registers 
+:reg
+:display
+"	copy one register contents to another is like variable assignment with let. 
+"		:let @"=@*
+"			"the unnamed register now has the contents of register *
+"			
+"		:echo getreg('"')
+"		: let @a = getreg('"')
+"
+" yank the word the curosr is over into register 8
+" NOTE the leading double below is part of the builtin normal mode mapping
+		"8yw
+
+" 8"p   
+"	paste from reg x with 'hot keys'
+
+" _put put
+:put 4
+" place contents of register 4 where cursor is
 
 " Marking
 " _mark
-" in comand mode :
+" in normal mode:
 " 	ma
 " 		will mark (m) at (a)
 " 	`a
@@ -151,7 +309,6 @@ autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
 "			where you were
 "	:help mark-motions
 "	:help jump-motions
-
 "	
 " when opening a text file set spell check on
 " In command mode 
@@ -167,22 +324,20 @@ autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
 "	zw
 "		word the cursors on,delete this word from dictionary 
 "
-" turn off capitalization 
-set spellcapcheck=<CR>
 
-" ruler: displays the line number, the column number, the virtual column 
-" number,and the relative position of the cursor in the file (as a percentage)
-set ruler               " show line and column number
+"##########################################################
+" Maps
+"##########################################################
 
-syntax enable           " syntax highlighting
-set showcmd             " show (partial) command in status line
-set autoindent          " copy indent from current line when 
-						"   starting a new line
-set smartindent
-set shiftwidth=4        " number of spaces to use for auto indent
-set tabstop=4           " use 4 spaces to represent tab
-set relativenumber		" show current line number with surrounding offsets
-set number				" static numbering OFF
+" # User Defined #
+
+" Pager with with a three line context buffer
+noremap <leader>, Hz-jjj
+" H		Move cursor to top.
+" z-	Re-orient page, make curosr the bottom of page
+" j{n}	Basic movement. 3 lines down.
+noremap <leader>. Lztkkk
+
 
 " Snippet
 " n     -> Normal Mode. Snippet for when in n
@@ -193,18 +348,21 @@ set number				" static numbering OFF
 "       read in contents from file with a -1 offset when inputting
 " <CR> enter pressed
 "when in normal mode hit F4 and it will read in the contents of pt.txt
-"nnoremap <F4> :read ~/pt.txt<CR>
+nnoremap <F4> :read ~/pt.txt<CR>
+
 
 " short cut back to Normal mode 
 imap ;; <Esc>
 
-" Abbreviations _abb
+"##########################################################
+" Abbreviations
+"##########################################################
 " NOTE: insert mode abbreviations add an extra space as a known bug. Use the
 " built-in helper Eatchar 'eat character'    
-" func Eatchar(pat)
-  " let c = nr2char(getchar(0))
-  " return (c =~ a:pat) ? '' : c
-" endfunc
+func Eatchar(pat)
+  let c = nr2char(getchar(0))
+  return (c =~ a:pat) ? '' : c
+endfunc
 " insert mode. when 'this' typed replace it with 'that'
 "  ab this that
 ab hwg here we go	
@@ -216,27 +374,8 @@ iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
 	" of usage preferences. i plan to hit <CR> after the
 	" n in _pymn_ 
 ab pymn if __name__ == "__main__":
-
-
-" To standardize width. Make the 81st column magenta 
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn','\%81v',100)
-" '\%81v' -> regex "once at the 81st column virtually"
-
-" Repeat multiple lines of text at visual block 
-" Insert characters into Visual Block
-" 	<ctrl>v to enter Visual Blcok mode. After selecting a block
-"		press <shift>i then, type the fill in sequence followed
-"		<esc> twice
-"
-"	_nmc
-" _ap
-" Append selection to a file that already exists
-" :'<,'>w >> file
 "
 " _swc
-" Get the word count, lines, and bytes of current selection while in normal
-" mode. When you have soething selected in normal mode, press g then control g
 "
 " a normal mode function:
 " m  mark this location. the second m is the varible name of the marking
@@ -277,11 +416,7 @@ endfunction
 
 " 
 "
-"Word Count/Total Words
-"	normal mode command g<C>g  "press 'g' then let go, then hold down ^ with 'g' 
-"	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
 "
-"Look up manual page for word			_wc
 "	when cursor is over the word in normal mode
 "		<Shift>k
 "		takes you to the manual page
@@ -562,8 +697,11 @@ endfunction
 " 		or flip casing of a highlighted sectionn
 "
 " Netrw _netrw
+" 	netrw is for readig, writing files over  a network
 " 	When netrw is activated:
+" 		press i to cycle thru three viewing mode.
 " 		press % to create a new file
+" 		press d to create a directory
 " 		press v to vert split pane for the file the cursor is over.
 " 		press p to horizontal split pane for the file the cursor is over.
 " 		and you just entered a random file to go back to the file
@@ -573,136 +711,7 @@ endfunction
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 
 " 	command to start a terminal at the `NetrwTreeListing` directory
 
-" _mouse
-" set mouse=a
-"			visualy sellect wiht cursor/mouse
-"			 adjust window panes with mmouse
-"
-" Insert mode Command _imc
-" <Ctrl>v<Tab>
-" 	will insert a 'REAL' tab
-"
-"Enter meta character (digraph) mode with 
-" <Ctrl>k
-"then, below denotes the format to pick specific character 
-" 	___S
-" 		where the three under scores are characters/digits that wiil
-" 			be 'S'uperscripted
-" while in insert mode <ctrl>k wait for cursor to change then RF
-" ▤ 
-"
-"	<Ctrl>r =	
-"		"ctrl and r key toegether and then press ="
-"		the equal will appear at the command line and proceede to type
-"		an arithmetic expression like 2+2  OR a shell call like 
-"		system('ls')<enter> and the results are inserted at the cursor in the
-"		curtrent buffer  
-"
-" Leave insert mode to do one normal mode command
-" 	<ctrl>o
-"
-"Registers
-"	copy one register contents to another is like variable assignment with let. 
-"		:let @"=@*
-"			"the unnamed register now has the contents of register *
-"			
-"		:echo getreg('"')
-"		: let @a = getreg('"')
-"
-"Visual Line mode
-" select text then hit colon to enter command mode
-" you will see
-" 				:'<,'>
-" 				this repersents the selected text
-"					:'<,'>!python
-"					this will execute the selected code snippet and REPLACE
-"						the selected with the results of the snippet
-"
-"Yanking from register to vim command line or while in insert mode _imc
-"		<C>r reg_ref<CR>
-"			after <C>r is hit a double will appear on the vim command line
-"				then procede to enter the register refernece 
-"				
-"Insert mode Command _imc
-"	while in insert mode execute ONE normal command and automatically 
-"		go back to insert mode 
-"		<C>o___		where the 3 '_'are the normal mode command
-"		example:
-	"		<C>oO
-	"			'control oh uppercase oh'
-	"			insert a line above 
+"	  View the current working directory in netrw
+"	  nnoremap <leader>v e %:h<CR>
+"						 E<CR>
 
-" Term information
-" 	echo $TERM  -> xterm-color256
-" 	
-" 	
-"Help 
-"	:helpgrep [search term]
-"	this brings you to the first occurenece of [search term] 
-"		To browse thru results use +quickfix commands
-"		to see the list of search results :cwindow
-" -----------------------------------------------------------------------------
-" Prefix	|		Example			|		Context
-"		:	|		:h :r			|		ex command (command starting with a colon)
-" 	none	|		:h r			|		normal mode
-"	v_		|		:h v_r			|		visual mode
-"	i_		|		:h i_CTRL-W		|		insert mode
-"	c_		|		:h c_CTRL-R		|		ex command line
-"	/		|		:h /\r			|		search pattern (in this case, :h \r also works)
-"	'		|		:h 'ro'			|		option
-"	-		|		:h -r			|		Vim argument (starting Vim)
-"	-----------------------------------------------------------------------------
-"	^ chart source https://vim.fandom.com/wiki/Learn_to_use_help
-"
-"	In the scenario, where I execute `:e foo.txt` and in the current i made
-"	changes that are not saved yet the error: 
-"		"E37: No write since last change (use ! to override)"
-" 	will appear. to look up error message:
-" 		`:h E37`
-
-"		
-"##########################################################
-"Command Mode Commands (Ex or Colon Commands)  _cc
-"
-" Virtual Edit _ve 
-" visual select strictly tabular
-set ve=block
-"
-" insert the standard out of <cmd> into current buffer buffer where cursor is
-:.!<cmd>
-"
-" Digraphs 			_dig
-"  insert special charaters from :dig menu with i_ctrl-k {char}{2}
-"  while in insert press control k and a question mark should appear over the
-"  cursor position. Type two characters(letter,number,punctuation). The two
-"  character codes are on the left side of the blue digraph in the :dig menu
-"  9S ⁹  8313 ... zh ㄓ 12563  
-" aside, sub super script are intuitive big s for super and little s for sub
-"  ²₂2
-
-"When working with Meta-charates
-"In insert mode:
-" control v 	"to access meta character mode" " control m		"inputs " replace m with any meta
-" 
-"Performace 
-"	:sciptnames
-"		displays what files are sourced at vim's startup
-"
-" _py Python's Vim API
-" :pydo 			
-" do python expression every line with builtins like line number
-" and line contents (line,linenr)
-"
-" _pytab
-" fixing the python indentation error
-" :set listchars=tab:>-,trail:-,nbsp:
-" :set list
-" the above pair of commands dislpays those hidden character
-" :set invlist
-" invert to undo
-" search and replace to fix botch files
-" :%s/\t/    /g
-"
-" _pi
-" :PluginInstall
-" 	run after adding new vundle link

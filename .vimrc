@@ -120,10 +120,15 @@ let mapleader=" "
 "	so		call vim's source on the current buf
 "	sp		spellcheck there nearest (going backwards) error
 "	<tab>	insert a <tab> character
+"	,		pager up (shared key symbol <)
+"	.		pager down (shared key symbol >)
 
 "##########################################################
 " Maps
 "##########################################################
+noremap <leader>, Hz-jjj
+noremap <leader>. Lztkkk
+noremap <leader>hl :nohl<CR>
 " Redo last colon command
 noremap <leader>r :<Up><CR>
 

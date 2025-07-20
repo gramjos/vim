@@ -8,27 +8,41 @@
 "	sh		shell default
 " Maps - `map`
 "  1. Builtins/Defaults
+"  Normal Mode Commands
+"	Movement
+	"	mov		cursor & pg moves
+	"	f		Find/To motions
+"	Edit
+	"	q:		Ex command history
+	" 	ic		increment digit 
+	"	y		yank
+"  Visual Selection Mode Commands
+"  Insert Mode Commands
 "  2. User Defined
 " Abbreivations - `iabbrev`, `ab`
 " Custom func - `function!`
 " TODO - unimplemented ideas
 " Notes - Builtin Functions, HowTOs and demonstrative examples
-"	y		yank
-"	reg		registers
-"	e		edit command
-"	imc		insert mode commands
-"	h		help, helpgrep
-"	pytab	Indent error
-"	py		py3do
-"	pyv		py interpret v selected
-"	prof	Profile Performace
-"	redir	re-direct messages
-"	norc	start vim w/o .vimrc
-"	ap		cross file append
-"	mc		multiple cursor
 "	.!		shell cmd output
+"	ap		cross file append
 "	dig		Digraphs
+"	e		edit command
+"	h		help, helpgrep
+"	imc		insert mode commands
+"	mc		multiple cursor
+"	netrw	file explorer
+"	norc	start vim w/o .vimrc
+"	prof	Profile Performace
 "	pu		put
+"	py		py3do
+"	pytab	Indent error
+"	pyv		py interpret v selected
+"	redir	re-direct messages
+"	reg		registers
+"	sp 		split panes
+" 	tab		tabs
+"	term	terminal emulator
+"	w 		write to other file
 "##########################################################
 " _TODO
 "##########################################################
@@ -46,6 +60,11 @@
 "##########################################################
 " _notes Notes
 "##########################################################
+" View the current working directory in netrw
+nnoremap <leader>v e %:h<CR>
+" or 
+:E<CR>
+
 " _imc Insert Mode Command 
 " <Ctrl>v<Tab>
 "	Interpret the next non-digit literally,	will insert a 'REAL' tab
@@ -234,17 +253,22 @@ set belloff=all
 " Templates C Java HTML _tempts 
 " create a template for c files
 autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
-" † figure out † auto fill in class name same as given filename ___.java
-" create a template for java files
-autocmd BufNewFile *.java 0r ~/.vim/templates/java.skel
+" Replaces the empty buffer with the output of a shell command.
 autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
+autocmd BufNewFile *.java 0r ~/.vim/templates/java.skel
+" † figure out † auto fill in class name same as given filename ___.java
+" create a template for java files: FIGURED
+autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' . expand('%:r') . '/g"'
+" filter the entire (%) buffer thru the command !{cmd} 
+%!cat ~/.vim/templates/java.skel |
+" globally replace the hardcoded `CLASSNAME' for the file name
+sed "s/CLASSNAME/' . expand('%:r') . '/g"'
 
 "##########################################################
 " Maps
 "##########################################################
 
 " # Builtin/Default #
-
 
 " normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
 " to bring back, but now just ctrl-z to throw to background
@@ -285,12 +309,39 @@ noremap <leader>z :stop<CR>
 " 8"p   
 "	paste from reg x with 'hot keys'
 
-" _put put
-:put 4
+" _put Put
 " place contents of register 4 where cursor is
+:put 4
 
-" Marking
-" _mark
+" _put Vim Script Snippets with Functions:		
+	" :put =readfile('/path/to/foo/foo.c')[146:226]
+	" sorta of like a paste from other file w/in line numbers
+" _read Read
+" put the standard output of cmd one line below the cursor
+:read!{cmd}
+:read!date
+
+" Want to do a read the hard way?
+" Robustly run shell command, insert stdout at cursor
+function! Qs(...) abort
+    if a:0 < 1 " an integer that holds the total count of arguments passed to the function.
+        echoerr "Provide at least 1 word as shell command"
+        return
+    endif
+    let cmd = join(a:000, ' ') " a List containing all the arguments passed to the function
+	echom cmd
+    let output = split(system(cmd), "\n")
+    if v:shell_error
+        echoerr "Shell error occurred: " . cmd
+        return
+    endif
+    call append(line('.') - 1, output)
+endfunction
+
+" Concise custom command
+command! -nargs=+ Qs call Qs(<f-args>)
+
+" _mark Marking
 " in normal mode:
 " 	ma
 " 		will mark (m) at (a)
@@ -421,11 +472,13 @@ endfunction
 "		<Shift>k
 "		takes you to the manual page
 "
-" JumpList 			_jmp
+" _chnglst Change List
 " 	 Contains cursor positions
 " 	 below are both normal mode commands 
 "			g;			 cycle backward thru edit list
 "			g,			 cycle foward thru edit list
+
+" JumpList 			_jmp
 "  To view the jump list :ju
 "		Buffer Jump List 
 "			<ctrl>o
@@ -434,7 +487,10 @@ endfunction
 "				go forewards on the buffer jump list
 "			NOTE can use a number as a range to move N many positions up or
 "			down the jump list
-"				
+
+" Jump V. Change Disambiguation 
+" 	Jump: cursor history
+" 	Change: edit history
 "
 "_win
 "Windows
@@ -538,7 +594,7 @@ endfunction
 " 	the above pattern matches any lines that contain a double forward slash
 " Instead of `d` for deleted is be any Ex command found here :help ex-cmd-index
 
-" Movement:		_mov
+" _mov Movement:		
 " in command mode:
 	" <shift>l 		move cursor to bottom of page
 	" <shift>h			'	'	   top		 '
@@ -546,9 +602,21 @@ endfunction
 	" z-    adjust scrolling in the frame. cursor to bottom of page
 	" zt    adjust scrolling in the frame. cursor to top of page
 
-" _split
-" Split Editor - same file and same edits happen in both panes
-" :sp 		horizontal split
+" Old ideas...
+" there is a built in for paging.... find it! it is a control plus somethig...but which mode??
+noremap <leader>, Hz-jjj
+" or the native Ctrl-b without the 3 line context
+noremap <leader>. Lztkkk
+" or the native Ctrl-f without the 3 line context
+" Normal Mode Half-Pager
+" d for down
+" Ctrl-d
+" u for up
+" Ctrl-u
+
+" _split Split Editor - same file and same edits happen in both panes
+" horizontal split
+:sp
 "
 " : sp <file>
 " 		creates new file in a split pane
@@ -558,9 +626,10 @@ endfunction
 " set splitbelow
 " set splitright   
 
-" :sf - split find. split pane and find file/dir
+:sf 
+" split find. split pane and find file/dir
 "
-" :tabfind
+:tabfind
 "
 " Rotate the split tabs vert to hort or vice versa
 " To change two vertically split windows to horizonally split:
@@ -575,11 +644,18 @@ endfunction
 " :vs		vertical
 " <crt>w 'm'
 "	control w then 'm' stands for movement command like hjkl
-" :q 		close current pane
-" :qa		close all panes
 
-" Tabs for files(buffers)
-"	:tabnew [new_buffer(file_name)]
+" _cos Close Vim Ex/colon command
+" close current pane
+:q
+" close all panes
+:qa
+" Close from Normal Mode
+" ZZ	double capital z will soft close a named file
+" ZQ 	force close 
+
+" _tab Tabs for files(buffers)
+:tabnew [new_buffer(file_name)]
 "		creates a new tab(buffer/file)
 "
 "	in commmand mode with many tabs up
@@ -589,10 +665,8 @@ endfunction
 "			prev tab
 "		ngt
 "			where n is a number. go to nth tab
-"	:qa
-"		close all tabs and exit vim
 "
-" :tab sb <buffListItem>
+:tab sb <buffListItem>
 " 	open buffer in new tab
  
 " Command Mode:
@@ -606,7 +680,7 @@ endfunction
 " 	<control> y
 " 		increment line up
 "
-"Finding a chracter in the same line _find
+" _f Finding a chracter in the same line 
 " 	f_
 " 		where _ is a single character. move cursor to next occurence
 " 			of character _ on current line
@@ -627,29 +701,19 @@ endfunction
 " 	db
 " 		delete backward til end of word
 " 
-" Change while in command then leaves you in Insert mode
-" 	change c takes movement like d
-" 
 " <control>r
 " 	redo
-" 
-" Yank y (copy) take a movement command following
-" 
 
-" Vim Script Snippets with Functions:		_fx
-	" :put =readfile('/path/to/foo/foo.c')[146:226]
-	" sorta of like a paste from other file w/in line numbers
-
-"Convert page to HTML
+" Convert page to HTML
 "		:TOhtml
 "		save new .html in current directory 
 
-" Terminal 		_term
-" :term
+" _term Terminal 		
+:term
 " 	emulate a terminal horizontally
-" :vert term
+:vert term
 "
-" :term ls
+:term ls
 " 	runs the ls command and puts the output in a buffer
 "
 "	 Scrolling in new buffered :term 
@@ -657,19 +721,20 @@ endfunction
 "	 	turn the term buffer into a file buffer
 "	 	i	character will escape from file buffer view Back to term buffer
 "	 	
-"	 	tnoremap <Esc> <C-W>N
+ tnoremap <Esc> <C-W>N
 "	 		'terminal non recursive mapping'
 "
-"Select from current buffer and copy into new file
-"	:5,50 w newfile 
+" _w 
+" Select from current buffer and copy into new file
+:5,50 w newfile 
 "			to create a new file containing the text from line 5 to line 50
 "
-"	:'a,'b w newfile 
+:'a,'b w newfile 
 "			to create a new file containing the text from mark a to mark b
 "	set your marks by using ma and mb where ever you like
 
-" Normal Mode Commands _normal_mode_commands
-" Command Line history to appear. Can edit previous commands inside of window
+" Normal Mode Command
+" _:q Command Line history to appear. Can edit previous commands inside of window
 " Normal Mode q: 
 "
 " The command mode counter for the above command
@@ -680,7 +745,7 @@ endfunction
 " *** no matter which one enters the command history pane ( from command mode
 " or normal) use / to search that list
 "
-" Normal mode command 
+" _ic Normal mode command 
 " <control>a over a number will increment it 
 " <control>x			'''						decrement 2
 "
@@ -710,8 +775,4 @@ endfunction
 " 	the built-in mapping `cd` will change the current working directory 
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 
 " 	command to start a terminal at the `NetrwTreeListing` directory
-
-"	  View the current working directory in netrw
-"	  nnoremap <leader>v e %:h<CR>
-"						 E<CR>
 

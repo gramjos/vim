@@ -13,6 +13,10 @@
 "##########################################################
 " Sets
 "##########################################################
+
+" time out on mapping after two seconds, time out on key codes after a ninety-ninth
+set timeout timeoutlen=2000 ttimeoutlen=99
+
 filetype off                 
 set nocompatible						
 
@@ -33,7 +37,7 @@ set showcmd             " show (partial) command in status line
 set showmatch			" highlight matching bracket when cursor over it
 set number				" static numbering OFF
 set fileformat=mac
-set tags=./tags;
+set tags=./tags
 
 " Tab/Indent Sizes
 set autoindent          " copy indent from current line when 
@@ -74,10 +78,13 @@ set dictionary+=/usr/share/dict/web2
 " finding files:  Display all matching files when we tab complete
 set wildmenu
 
+" How to collect cexpr system('coinz') output as raw line
+set errorformat=%m
+
 " skeleton Templates C Java HTML
 autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
-autocmd BufNewFile *.java 0r ~/.vim/templates/java.skel
 autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
+autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' . expand('%:r') . '/g"'
 
 autocmd BufNewFile *.txt set spell spelllang=en_us
 " persist code fold
@@ -87,10 +94,13 @@ augroup Left_Off
 augroup END
 
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType python set omnifunc=python3complete#Complete
+" autocmd FileType python set omnifunc=python3complete#Complete
 
-" Automatically start in insert mode for new files
+" Automatically start in insert mode for new, NAMED files
 autocmd BufNewFile * startinsert
+
+" Automatically start in insert mode for new, UNNAMED buffers (e.g., just running 'vim')
+autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
 
 let mapleader=" "
 " key(s) in use: c d D j k n N o r u U w W ev gc hl pv qv so sp <tab>
@@ -104,7 +114,7 @@ let mapleader=" "
 "	m		popup menu open (M -> close)
 "	n		shrink vertical split pane small
 "	N		shrink vertical split pane large
-"	o	 	pop up dev in ~/.vim./my_pop_ups/p1.vim
+"	o	 	open with obsidian
 "	r		redo last colon command
 "	t		fix the common python tab error
 "	u		enlarge horizontal split pane small 
@@ -120,14 +130,11 @@ let mapleader=" "
 "	so		call vim's source on the current buf
 "	sp		spellcheck there nearest (going backwards) error
 "	<tab>	insert a <tab> character
-"	,		pager up (shared key symbol <)
-"	.		pager down (shared key symbol >)
 
 "##########################################################
 " Maps
 "##########################################################
-noremap <leader>, Hz-jjj
-noremap <leader>. Lztkkk
+
 noremap <leader>hl :nohl<CR>
 " Redo last colon command
 noremap <leader>r :<Up><CR>
@@ -150,6 +157,8 @@ noremap <leader>N :vert res -6<CR>
 nnoremap <leader>y :let @*=@0<cr>
 vnoremap <leader>y :let @*=@0<cr>
 
+nnoremap <leader>c :call QuickPound()<CR>
+vnoremap <leader>c :call QuickPound()<CR>
 function! QuickPound() abort
 	python3 << EOF
 
@@ -183,14 +192,10 @@ EOF
 
 endfunction
 
-nnoremap <leader>c :call QuickPound()<CR>
-vnoremap <leader>c :call QuickPound()<CR>
-
 nnoremap <leader>ev :!evr<cr>
 nnoremap <leader>so :source %:p<cr>
 
 nnoremap <leader><tab> :call BumpRight()<CR>
-
 function! BumpRight() abort
   let s:saved_line = line('.')
   let s:saved_col = col('.')
@@ -199,15 +204,14 @@ function! BumpRight() abort
 endfunction
 
 nnoremap <leader>sp :call FixLastSpellingError()<CR>
-
 function! FixLastSpellingError()
 	normal! mm[s1z=`m
 endfunction
 
-" insert upward or downward return while staying in command mode
-noremap <leader>j :call AddSpaceDown()<CR>
-noremap <leader>k :call AddSpaceUp()<CR>
 
+" insert upward or downward return while staying in command mode
+
+noremap <leader>k :call AddSpaceUp()<CR>
 function! AddSpaceUp() abort
 	" save(mark) location
 	normal! mz
@@ -219,6 +223,7 @@ function! AddSpaceUp() abort
 	execute 'delmarks z'
 endfunction
 
+noremap <leader>j :call AddSpaceDown()<CR>
 function! AddSpaceDown() abort
 	" save(mark) location
 	normal! mz
@@ -230,18 +235,17 @@ function! AddSpaceDown() abort
 	execute 'delmarks z'
 endfunction
 
-nnoremap <leader>qv :call Qkv()<CR>
 
 function! Qkv()
 	let curse_word = expand('<cfile>')
 	execute '!qkv' curse_word '&'
 endfunction
+nnoremap <leader>qv :call Qkv()<CR>
 
 function! Pkv()
 	let curse_word = expand('<cfile>')
 	execute '!open -a "Preview" ' curse_word '&'
 endfunction
-
 nnoremap <leader>pv :call Pkv()<CR>
 
 " terminal mapping, bufferize sub shell for scroll 
@@ -249,139 +253,29 @@ nnoremap <leader>pv :call Pkv()<CR>
 tnoremap <esc> <C-W>N	
 
 imap ;; <Esc>
+
 " Normal Mode Mapping - spell check for this file
 nmap <F5> :setlocal spell! spelllang=en_us<CR>
 
 " <option>s  pulls up a quick search
 nmap  ß  :%s//g<LEFT><LEFT>
+
 "##########################################################
 " Abbreviations
 "##########################################################
+
 "insert mode abbreviation. get the prev line and put here
 iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
 
 ab pymn if __name__ == "__main__":
 
- 
-
-" Graham's Global Command
-" A mix betweeen the global command and the substitute. Should really
-" acheieved with a slash search and then quickfix menu manipulation.
-" BUG: when pattern match in the on the top lines of the buffer it will not be
-" scrolled to.
-" Usage: :call DeleteMatchingLinesConfirm('<pattern>')
-" function! DeleteMatchingLinesConfirm(pattern)
-function! D()
-  " Prompt user for a regex pattern.
-  let l:pattern = input('Enter regex: ')
-  if empty(l:pattern)
-    echo "No regex provided."
-    return
-  endif
-  " Escape any slashes in the pattern.
-  let l:escaped = escape(l:pattern, '/')
-  " Highlight all matches using the Search highlight group.
-  execute 'match Search /' . l:escaped . '/'
-  redraw! " Force a screen redraw before starting the loop
-  " Iterate backwards to avoid skipping lines when deleting.
-  for lnum in reverse(range(1, line('$')))
-    let line_text = getline(lnum)
-    if line_text =~ l:pattern
-      " --- Scroll and center the matching line ---
-      redraw!            " Clear any messages that may shrink the text area
-      call cursor(lnum, 1)
-      normal! zz         " Center the line in the window
-      redraw!            " Make sure the display is updated
-      " --- Ask for deletion confirmation ---
-      let ans = confirm("Delete: (line no. " . lnum . ") " . line_text, "&Yes\n&No")
-      redraw!            " Clear any leftover messages from the confirm
-      if ans == 1
-        " Delete the matching line.
-        execute lnum . 'delete'
-        call cursor(lnum, 1)
-        normal! zz
-        redraw!
-	  endif
-    endif
-  endfor
-  " Clear highlighting and redraw one final time.
-  match none
-  redraw!
-endfunction
-
-" Map the function to <leader>g in normal mode.
-nnoremap <leader>g :call D()<CR>
+"##########################################################
+" Custom Func
+"##########################################################
 
 " pop up dev separate
-" Variable added to the global namespace;
-" job_output, popup_id, cur_job
-source /Users/gramjos/.vim/my_pop_ups/p1.vim
-nnoremap <leader>m :call OpenPopup()<CR>
-nnoremap <leader>M :call ClosePopup()<CR>
-
-" `say`
-function! SpeakVisualSelection()
-    silent '<,'>!say
-    let &modifiable = l:save_modifiable
-endfunction
-
-" vnoremap <leader>x :set modifiable|'<,'>!say|set nomodifiable<CR>
-" vnoremap <leader>x :set ma<CR>:'<,'>!say<CR>:set noma<CR>
-" Visual mode mapping to invoke the function on selection
-" Visual mode mapping to invoke the function on selection
-vnoremap <leader>x :<C-u>call StartScriptJob()<CR>
-
-" Function definition
-function! StartScriptJob() range
-  " Save original register to restore later
-  let l:original_reg = getreg('"')
-  let l:original_regtype = getregtype('"')
-
-  " Yank visual selection into register x
-  normal! gv"xy
-
-  " Get the content of register x (the visual selection)
-  let l:selected_text = getreg('x')
-
-  " Log selected text with timestamp to :messages
-  call LogSelection(l:selected_text)
-
-  " Start the shell command as a detached job
-  call job_start(['zsh', '-c', GetShellCommand(l:selected_text)])
-endfunction
-
-" Helper function to log messages with timestamp
-function! LogSelection(selection)
-  let l:timestamp = strftime("%Y-%m-%d %H:%M:%S")
-  echom printf('[%s] Selection: %s', l:timestamp, a:selection)
-endfunction
-
-function! GetShellCommand(selection)
-  " URL-encode spaces and special characters
-  let l:encoded_selection = substitute(a:selection, '\s', '+', 'g')
-
-  " Construct curl command clearly
-  let l:curl_cmd = 'curl "https://search.brave.com/search?q=' . l:encoded_selection . '&source=desktop" | vi -'
-
-  " Create the AppleScript command (tell Terminal to open and run the curl command)
-  let l:apple_script = 'tell application "Terminal"
-        \ to do script "' . l:curl_cmd . '"'
-
-  " Escape for shell execution
-  let l:escaped_script = shellescape(l:apple_script)
-
-  " Final zsh command to execute
-  return 'sleep 1; osascript -e ' . l:escaped_script
-endfunction
-
-func Eatchar(pat)
-  let c = nr2char(getchar(0))
-  return (c =~ a:pat) ? '' : c
-endfunc
-
-" HTML helpers
-iabbrev divid <div id=""></div><ESC>2F"a<C-R>=Eatchar('\s')<CR>
-iabbrev divcl <div class=""></div><ESC>2F"a<C-R>=Eatchar('\s')<CR>
+source /Users/gramjos/.vim/my_pop_ups/web_popup.vim
+source /Users/gramjos/.vim/my_pop_ups/file_pop.vim
 
 " Help in new Terminal window
 function! OpenHelpInNewTerminal(topic)
@@ -398,39 +292,17 @@ end tell
 subprocess.run(["osascript", "-e", apple_script])
 EOF
 endfunction
-
 command! -nargs=1 Hw call OpenHelpInNewTerminal(<q-args>)
 
 " Open help in a new tab
 command! -nargs=1 Ht execute 'tab help' <q-args>
 
-" Robustly run shell command, insert stdout at cursor
-function! Qs(...) abort
-    if a:0 < 1
-        echoerr "Provide at least 1 word as shell command"
-        return
-    endif
-    let cmd = join(a:000, ' ')
-	echom cmd
-    let output = split(system(cmd), "\n")
-    if v:shell_error
-        echoerr "Shell error occurred: " . cmd
-        return
-    endif
-    call append(line('.') - 1, output)
-endfunction
-
-" Concise custom command
-command! -nargs=+ Qs call Qs(<f-args>)
-
 " Make ascii
 " --- Custom Bubble Font Generator ---
-
 " Define a new custom command called 'Bubble'.
 " -nargs=+ means it requires one or more arguments.
 " <q-args> represents the arguments passed to the command.
 command! -nargs=+ Bubble :call BubbleFont(<q-args>)
-
 " Define the function that does the work.
 function! BubbleFont(text)
     " Define the path to your Python script.
@@ -446,3 +318,19 @@ function! BubbleFont(text)
     " The '=' register is used to insert the content of a variable.
     execute 'put =bubble_output'
 endfunction
+
+" Open current file in Obsidian
+function! OpenInObsidian()
+  " Get the absolute path of the current buffer. e.g., /Users/user/My Notes/File #1.md
+  let l:abs_path = expand('%:p')
+  " Abort if the buffer has no associated file.
+  if empty(l:abs_path)
+    echo "Error: No file path associated with this buffer."
+    return
+  endif
+  let l:command = '!open "obsidian://open?path=' . l:abs_path . '"'
+  " Execute the command. 'silent' prevents the command from being echoed.
+  execute l:command
+endfunction
+nnoremap <silent> <leader>o :call OpenInObsidian()<CR>
+

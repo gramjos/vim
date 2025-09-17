@@ -1,336 +1,299 @@
-" vim run commands(rc). run these commands at the start of each vim instance
+vim9script 
 
-" Sections of this RC file:
-" Sets
-"  - `set`, `autocmd`, `let`, `call`, `highlight`
-" Maps
-"  - `map`
-" Abbreivations
-"  - `iabbrev`, `ab`
-" Custom func
-"  - `function!`
+# vim run commands(rc). run these commands at the start of each vim instance
 
-"##########################################################
-" Sets
-"##########################################################
+# Sections of this RC file:
+# Sets
+#  - `set`, `autocmd`, `let`, `call`, `highlight`
+# Maps
+#  - `map`
+# Abbreivations
+#  - `iabbrev`, `ab`
+# Custom func
+#  - `function!`
 
-" time out on mapping after two seconds, time out on key codes after a ninety-ninth
+###########################################################
+# Sets
+###########################################################
+
+# time out on mapping after two seconds, time out on key codes after a ninety-ninth
 set timeout timeoutlen=2000 ttimeoutlen=99
 
 filetype off                 
 set nocompatible						
 
-set undofile " tell it to use an undo file
-set undodir=/home/gramjos/.vimundo/ " set a directory to store the undo history
+set undofile # tell it to use an undo file
+set undodir=/home/gramjos/.vimundo/ # set a directory to store the undo history
 
 highlight FindMe ctermbg=green guibg=green gui=bold
 call matchadd("FindMe", "Graham Joss")
-set spellcapcheck=<CR> " turn off capitalization 
+set spellcapcheck=<CR> # turn off capitalization 
 
-set hlsearch "Search Hightlighting
+set hlsearch #Search Hightlighting
 
-" New buffer formatting/settings
-set ruler               " show line and column number
-set relativenumber		" show current line number with surrounding offsets
-syntax enable           " syntax highlighting
-set showcmd             " show (partial) command in status line
-set showmatch			" highlight matching bracket when cursor over it
-set number				" static numbering OFF
+# New buffer formatting/settings
+set ruler               # show line and column number
+set relativenumber		# show current line number with surrounding offsets
+syntax enable           # syntax highlighting
+set showcmd             # show (partial) command in status line
+set showmatch			# highlight matching bracket when cursor over it
+set number				# static numbering OFF
 set fileformat=mac
 set tags=./tags
 
-" Tab/Indent Sizes
-set autoindent          " copy indent from current line when 
+# Tab/Indent Sizes
+set autoindent          # copy indent from current line when 
 set smartindent
-set shiftwidth=4        " number of spaces to use for auto indent
-set tabstop=4           " use 4 spaces to represent tab
-" set mouse as clickable. to drag window size of :vert term 
-"and when in term mode from insise of vim i can scroll up thru the page not 
-" thru the command history
+set shiftwidth=4        # number of spaces to use for auto indent
+set tabstop=4           # use 4 spaces to represent tab
+# set mouse as clickable. to drag window size of :vert term 
+#and when in term mode from insise of vim i can scroll up thru the page not 
+# thru the command history
 set mouse=nvi
-set ls=2 " last status. always_on=2
-"turn on visual bell
+set ls=2 # last status. always_on=2
+#turn on visual bell
 set noerrorbells
 set vb t_vb=
-set belloff="all"
-" defaults for :sp and :vs respectively 
+# set belloff="all"
+# defaults for :sp and :vs respectively 
 set splitbelow
 set splitright  
 
-" NETRW config
-" tree view as default
-let g:netrw_liststyle=3
-" line numbers in netrw
-let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-" Normally, the v key splits the window vertically with the new window and cursor at the left.  To change to splitting the window vertically with the new window and cursor at the right, have    https://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-v
-let g:netrw_altv = 1
+# NETRW config
+# tree view as default
+g:netrw_liststyle = 3
+# line numbers in netrw
+g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+# Normally, the v key splits the window vertically with the new window and cursor at the left.  To change to splitting the window vertically with the new window and cursor at the right, have    https://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-v
+g:netrw_altv = 1
 
-set shell=/bin/zsh " Change Vim's shell from bash to zsh
+set shell=/bin/zsh # Change Vim's shell from bash to zsh
 
-" Search down into subfolders
-" provides tab completion for all file realted tasks
+# Search down into subfolders
+# provides tab completion for all file realted tasks
 set path+=**
 set encoding=utf-8
-" set the dictionary paths. to activate pop-up window. Control xk. 
-" Control buton = ^
+# set the dictionary paths. to activate pop-up window. Control xk. 
+# Control buton = ^
 set dictionary+=/usr/share/dict/web2
 
-" finding files:  Display all matching files when we tab complete
+# finding files:  Display all matching files when we tab complete
 set wildmenu
 
-" How to collect cexpr system('coinz') output as raw line
+# How to collect cexpr system('coinz') output as raw line
 set errorformat=%m
 
-" skeleton Templates C Java HTML
-autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
-autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
-autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' . expand('%:r') . '/g"'
+# skeleton Templates C Java HTML
+autocmd BufNewFile *.c :0r ~/.vim/templates/c.skel
+autocmd BufNewFile *.html :0r ~/.vim/templates/html.skel
+autocmd BufNewFile *.java execute ':0read !cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' .. expand('%:r') .. '/g"'
 
-autocmd BufNewFile *.txt set spell spelllang=en_us
-" persist code fold
-augroup Left_Off
-	autocmd BufWinLeave *.*\|.* mkview
-	autocmd BufWinEnter *.*\|.* silent loadview
+# Persist code folds
+augroup LeftOff
+  autocmd!
+  autocmd BufWinLeave *.*,.* mkview
+  autocmd BufWinEnter *.*,.* silent loadview
 augroup END
 
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-" autocmd FileType python set omnifunc=python3complete#Complete
+# Language-specific settings
+augroup FiletypeSettings
+  autocmd!
+  autocmd FileType txt set spell spelllang=en_us
+  autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+augroup END
 
-" Automatically start in insert mode for new, NAMED files
-autocmd BufNewFile * startinsert
+# Automatically start in insert mode for new files
+augroup AutoInsertMode
+  autocmd!
+  autocmd BufNewFile * startinsert
+  autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
+augroup END
 
-" Automatically start in insert mode for new, UNNAMED buffers (e.g., just running 'vim')
-autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
+# ----------------------------------------------------------
+# Leader Key
+# ----------------------------------------------------------
+g:mapleader = ' '
 
-let mapleader=" "
-" key(s) in use: c d D j k n N o r u U w W ev gc hl pv qv so sp <tab>
-"
-"	c		comment
-"	d		split pane downward shrink small
-"	D		split pane downward shrink large
-"	g		custom global/substitute function
-"	j		add newline below
-"	k		add newline above
-"	m		popup menu open (M -> close)
-"	n		shrink vertical split pane small
-"	N		shrink vertical split pane large
-"	o	 	open with obsidian
-"	r		redo last colon command
-"	t		fix the common python tab error
-"	u		enlarge horizontal split pane small 
-"	U		enlarge horizontal split pane large
-"	v		visualize the cwd in netrw
-"	w		enlarge vertical split pane small
-"	W		enlarge vertical split pane large
-"	y		global copy. copy uname register to system clipboard
-"	ev		open vimrc
-"	hl		highlight off
-"	pv		open with Preview application
-"	qv		open with spacebar (quickview)
-"	so		call vim's source on the current buf
-"	sp		spellcheck there nearest (going backwards) error
-"	<tab>	insert a <tab> character
+# ==========================================================
+# Functions (Vim9script)
+# ==========================================================
 
-"##########################################################
-" Maps
-"##########################################################
+# TODO Normal Mode Mapping: put the most recent mes in the clipboard
+# TODO a mapping for the quick menu when filetype is 'qf' -> normal mode map 'p' to enter and then window pane movement ( control j ) to focus the cursor back tothe quickfix menu
 
-noremap <leader>hl :nohl<CR>
-" Redo last colon command
-noremap <leader>r :<Up><CR>
-
-" Split Pane 'quick resize'
-" upward - enlarge
-noremap <leader>u :res +2<CR> 
-noremap <leader>U :res +6<CR> 
-" downward - shrink
-noremap <leader>d :res -2<CR> 
-noremap <leader>D :res -6<CR> 
-" wider - enlarge
-noremap <leader>w :vert res +2<CR> 
-noremap <leader>W :vert res +6<CR> 
-" narrower - shrink
-noremap <leader>n :vert res -2<CR> 
-noremap <leader>N :vert res -6<CR> 
-
-" yank line/selection to sys paste bin, whether in Normal/Visual mode
-nnoremap <leader>y :let @*=@0<cr>
-vnoremap <leader>y :let @*=@0<cr>
-
-nnoremap <leader>c :call QuickPound()<CR>
-vnoremap <leader>c :call QuickPound()<CR>
-function! QuickPound() abort
-	python3 << EOF
-
-import vim, re
-
-# Mapping from filetypes to comment symbols
-comment_symbols = { 'sh': '#', 'c': '//', 'python': '#', 'js': '//', 'javascript': '//', 'java': '//', 'vim': '"' }
-
-ft = vim.eval('&filetype')
-comment_char = comment_symbols.get(ft, '#')
-line = vim.current.line
-
-# Regex to detect a comment at start of line (optional space after symbol)
-pattern = re.compile(r'^\s*' + re.escape(comment_char) + r'\s?')
-
-if pattern.match(line):
-    # Remove the comment symbol (preserve indentation)
-    newline = re.sub(r'^(\s*)' + re.escape(comment_char) + r'\s?', r'\1', line)
-    vim.current.line = newline
-else:
-    # Insert comment symbol after leading indent
-    leading_ws_len = len(line) - len(line.lstrip())
-    newline = line[:leading_ws_len] + comment_char + ' ' + line[leading_ws_len:]
-    # Set the line with comment
-    vim.current.line = newline
-    # Adjust cursor: if it was after indent, shift it right by length of inserted comment symbol + space
-    row, col = vim.current.window.cursor
-    if col >= leading_ws_len:
-        vim.current.window.cursor = (row, col + len(comment_char) + 1)
-EOF
-
-endfunction
-
-nnoremap <leader>ev :!evr<cr>
-nnoremap <leader>so :source %:p<cr>
-
-nnoremap <leader><tab> :call BumpRight()<CR>
-function! BumpRight() abort
-  let s:saved_line = line('.')
-  let s:saved_col = col('.')
-  execute "normal! mti\<TAB>\<ESC>`t"
-  call cursor(s:saved_line, s:saved_col)
-endfunction
-
-nnoremap <leader>sp :call FixLastSpellingError()<CR>
-function! FixLastSpellingError()
-	normal! mm[s1z=`m
-endfunction
+# const g:comment_map = {
+#     \ 'python': '#',
+#     \ 'javascript': '//',
+#     \ 'typescript': '//',
+#     \ 'vim': '"',
+#     \ 'sh': '#',
+#     \ 'ruby': '#',
+#     \ 'go': '//',
+#     \ 'rust': '//',
+#     \ 'c': '//',
+#     \ 'cpp': '//',
+#     \ 'java': '//',
+#     \ 'lua': '--',
+#     \ 'perl': '#',
+#     \ 'php': '//',
+#     \ 'default': '#',
+#     \ }
+# 
+# def ToggleLine(line: string, comment_char: string): string
+#     # Check if the line starts with the comment character
+#     if line =~ '^\s*' .. comment_char
+#         # Remove comment character and one space if it exists
+#         return substitute(line, '^\(\s*\)' .. comment_char .. '\s\?', '\1', '')
+#     else
+#         # Add comment character and a space
+#         return comment_char .. ' ' .. line
+#     endif
+# enddef
+# 
+# def g:ToggleComment(start_line: number, end_line: number)
+#     var comment_char = g:comment_map->get(&filetype, g:comment_map['default'])
+# 
+#     for lnum in range(start_line, end_line)
+#         var current_line = getline(lnum)
+#         var new_line = ToggleLine(current_line, comment_char)
+#         setline(lnum, new_line)
+#     endfor
+# enddef
+# 
+# command! -range ToggleCommentRange call g:ToggleComment(<line1>, <line2>)
+# 
+# # --- Mappings ---
+# nnoremap <silent> <leader>c :call g:ToggleComment(line('.'), line('.'))<CR>
+# vnoremap <silent> <leader>c :ToggleCommentRange<CR>
 
 
-" insert upward or downward return while staying in command mode
 
-noremap <leader>k :call AddSpaceUp()<CR>
-function! AddSpaceUp() abort
-	" save(mark) location
-	normal! mz
-	" add space above in insert mode
-	normal! O
-	" jmp back to mark
-	normal! `z
-	" remove mark
-	execute 'delmarks z'
-endfunction
+# --- Insert Newline without leaving Normal Mode ---
+def g:AddSpace(direction: string, mark_char: string = 'z')
+  # 1. Create the correct mark specifier string (e.g., "'z").
+  var mark_spec = "'" .. mark_char
 
-noremap <leader>j :call AddSpaceDown()<CR>
-function! AddSpaceDown() abort
-	" save(mark) location
-	normal! mz
-	" add space below in insert mode
-	normal! o
-	" jmp back to mark
-	normal! `z
-	" remove mark
-	execute 'delmarks z'
-endfunction
+  # 2. Save the original position of the chosen mark, if it exists.
+  var original_mark_pos = getpos(mark_spec)
+
+  # 3. Save the current cursor position to the mark.
+  execute $"normal! m{mark_char}"
+
+  # 4. Open a new line and immediately return to Normal mode.
+  execute $"normal! {direction}" .. "\<Esc>"
+
+  # 5. Return the cursor to the exact position it was at before adding the line.
+  execute $"normal! `{mark_char}"
+
+  # 6. Restore the original mark's position or delete our temporary mark.
+  #    A line number of 0 in the position list indicates the mark was not set.
+  if original_mark_pos[1] == 0
+    # The mark was not set before, so we clean up after ourselves.
+    execute $":delmarks {mark_char}"
+  else
+    # The mark was set, so we restore it to its original position.
+    setpos(mark_spec, original_mark_pos)
+  endif
+enddef
+
+# --- Mappings ---
+# Use <Cmd> for a clean, non-blocking call to the Vim9 function.
+nnoremap <silent> <leader>k <Cmd>call g:AddSpace('O')<CR>
+nnoremap <silent> <leader>j <Cmd>call g:AddSpace('o')<CR>
 
 
-function! Qkv()
-	let curse_word = expand('<cfile>')
-	execute '!qkv' curse_word '&'
-endfunction
-nnoremap <leader>qv :call Qkv()<CR>
 
-function! Pkv()
-	let curse_word = expand('<cfile>')
-	execute '!open -a "Preview" ' curse_word '&'
-endfunction
-nnoremap <leader>pv :call Pkv()<CR>
+# # --- Open File with External Application ---
+def g:OpenWith(app_name: string)
+  var file_path = expand('<cfile>')
+  # Use job_start for non-blocking execution
+  if app_name == 'qkv'
+      job_start(['qkv', file_path])
+  else
+      job_start(['open', '-a', app_name, file_path])
+  endif
+enddef
+nnoremap <leader>qv <Cmd>call g:OpenWith('qkv')<CR>
+nnoremap <leader>pv <Cmd>call g:OpenWith('Preview')<CR>
 
-" terminal mapping, bufferize sub shell for scroll 
-"	(any route to insert mode triggers sub shell)
-tnoremap <esc> <C-W>N	
-
-imap ;; <Esc>
-
-" Normal Mode Mapping - spell check for this file
-nmap <F5> :setlocal spell! spelllang=en_us<CR>
-
-" <option>s  pulls up a quick search
-nmap  ß  :%s//g<LEFT><LEFT>
-
-"##########################################################
-" Abbreviations
-"##########################################################
-
-"insert mode abbreviation. get the prev line and put here
-iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
-
-ab pymn if __name__ == "__main__":
-
-"##########################################################
-" Custom Func
-"##########################################################
-
-" pop up dev separate
-source /Users/gramjos/.vim/my_pop_ups/web_popup.vim
-source /Users/gramjos/.vim/my_pop_ups/file_pop.vim
-
-" Help in new Terminal window
-function! OpenHelpInNewTerminal(topic)
-python3 << EOF
-import subprocess
-import vim
-
-topic = vim.eval('a:topic')
-apple_script = f'''
-tell application "Terminal"
-    do script "vim -c 'help {topic}' -c 'only'"
-end tell
-'''
-subprocess.run(["osascript", "-e", apple_script])
-EOF
-endfunction
-command! -nargs=1 Hw call OpenHelpInNewTerminal(<q-args>)
-
-" Open help in a new tab
-command! -nargs=1 Ht execute 'tab help' <q-args>
-
-" Make ascii
-" --- Custom Bubble Font Generator ---
-" Define a new custom command called 'Bubble'.
-" -nargs=+ means it requires one or more arguments.
-" <q-args> represents the arguments passed to the command.
-command! -nargs=+ Bubble :call BubbleFont(<q-args>)
-" Define the function that does the work.
-function! BubbleFont(text)
-    " Define the path to your Python script.
-    " '~' is expanded to your home directory.
-    let script_path = expand('~/.vim/scripts/mk_ascii.py')
-
-    " Use the system() function to execute the external script.
-    " a:text contains the string passed to the function.
-    " shellescape() ensures the text is safely passed to the shell.
-    let bubble_output = system(script_path . ' ' . shellescape(a:text))
-
-    " The 'put' command inserts the output below the current line.
-    " The '=' register is used to insert the content of a variable.
-    execute 'put =bubble_output'
-endfunction
-
-" Open current file in Obsidian
-function! OpenInObsidian()
-  " Get the absolute path of the current buffer. e.g., /Users/user/My Notes/File #1.md
-  let l:abs_path = expand('%:p')
-  " Abort if the buffer has no associated file.
-  if empty(l:abs_path)
+# --- Open Current File in Obsidian ---
+def OpenInObsidian()
+  var abs_path = expand('%:p')
+  if empty(abs_path)
     echo "Error: No file path associated with this buffer."
     return
   endif
-  let l:command = '!open "obsidian://open?path=' . l:abs_path . '"'
-  " Execute the command. 'silent' prevents the command from being echoed.
-  execute l:command
-endfunction
-nnoremap <silent> <leader>o :call OpenInObsidian()<CR>
+  job_start(['open', $"obsidian://open?path={abs_path}"])
+enddef
 
+# --- Help in New Terminal Window (Python-free) ---
+def OpenHelpInNewTerminal(topic: string)
+  var vim_command = $"vim -c 'help {topic}' -c 'only'"
+  var apple_script = $'tell application "Terminal" to do script {shellescape(vim_command)}'
+  job_start(['osascript', '-e', apple_script])
+  redraw!
+enddef
+
+# --- ASCII Art Generator ---
+def BubbleFont(text: string)
+    var script_path = expand('~/.vim/scripts/mk_ascii.py')
+    var bubble_output = system(script_path .. ' ' .. shellescape(text))
+    # Insert the output below the current line
+    put = bubble_output
+enddef
+
+# # ==========================================================
+# # Mappings
+# # ==========================================================
+# 
+# # --- General ---
+noremap <leader>hl <Cmd>nohlsearch<CR>
+noremap <leader>r :<Up><CR>
+noremap <leader>so <Cmd>source %<CR>
+nnoremap <leader>ev <Cmd>!evr<CR>
+# 
+# # --- Window Resizing ---
+noremap <leader>u <Cmd>resize +2<CR>
+noremap <leader>U <Cmd>resize +6<CR>
+noremap <leader>d <Cmd>resize -2<CR>
+noremap <leader>D <Cmd>resize -6<CR>
+noremap <leader>w <Cmd>vertical resize +2<CR>
+noremap <leader>W <Cmd>vertical resize +6<CR>
+noremap <leader>n <Cmd>vertical resize -2<CR>
+noremap <leader>N <Cmd>vertical resize -6<CR>
+# 
+# # --- Yank to System Clipboard ---
+nnoremap <leader>y <Cmd>let @* = @0<CR>
+vnoremap <leader>y <Cmd>let @* = @0<CR>
+# 
+# # --- Function Mappings ---
+nnoremap <silent> <leader>o <Cmd>call OpenInObsidian()<CR>
+# 
+# # --- Spelling ---
+nnoremap <leader>sp [s1z=
+nmap <F5> <Cmd>setlocal spell! spelllang=en_us<CR>
+# 
+# # --- Other Mappings ---
+imap ;; <Esc>
+tnoremap <Esc> <C-W>N
+nmap ß :%s//g<Left><Left>
+# 
+# # ==========================================================
+# # Abbreviations
+# # ==========================================================
+iabbr <expr> ^^- getline(search('\\S\\_.*\\n\\_.*\\%#', 'b'))
+iabbrev pymn if __name__ == "__main__":
+# 
+# # ==========================================================
+# # Custom Commands
+# # ==========================================================
+command -nargs=1 Hw OpenHelpInNewTerminal(<q-args>)
+command -nargs=1 Ht execute 'tab help' .. <q-args>
+command -nargs=+ Bubble BubbleFont(<q-args>)
+# 
+# # ==========================================================
+# # Source External Configs
+# # ==========================================================
+# # These files should also be converted to Vim9script or checked for compatibility.
+source ~/.vim/my_pop_ups/web_popup.vim
+source ~/.vim/my_pop_ups/file_pop.vim

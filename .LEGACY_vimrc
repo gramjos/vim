@@ -1,0 +1,302 @@
+" vim run commands(rc). run these commands at the start of each vim instance
+
+" Sections of this RC file:
+" Sets
+"  - `set`, `autocmd`, `let`, `call`, `highlight`
+" Maps
+"  - `map`
+" Abbreivations
+"  - `iabbrev`, `ab`
+" Custom func
+"  - `function!`
+
+"##########################################################
+" Sets
+"##########################################################
+
+" time out on mapping after two seconds, time out on key codes after a ninety-ninth
+set timeout timeoutlen=2000 ttimeoutlen=99
+
+filetype off                 
+set nocompatible						
+
+set undofile " tell it to use an undo file
+set undodir=/home/gramjos/.vimundo/ " set a directory to store the undo history
+
+highlight FindMe ctermbg=green guibg=green gui=bold
+call matchadd("FindMe", "Graham Joss")
+set spellcapcheck=<CR> " turn off capitalization 
+
+set hlsearch "Search Hightlighting
+
+" New buffer formatting/settings
+set ruler               " show line and column number
+set relativenumber		" show current line number with surrounding offsets
+syntax enable           " syntax highlighting
+set showcmd             " show (partial) command in status line
+set showmatch			" highlight matching bracket when cursor over it
+set number				" static numbering OFF
+set fileformat=mac
+set tags=./tags
+
+" Tab/Indent Sizes
+set autoindent          " copy indent from current line when 
+set smartindent
+set shiftwidth=4        " number of spaces to use for auto indent
+set tabstop=4           " use 4 spaces to represent tab
+" set mouse as clickable. to drag window size of :vert term 
+"and when in term mode from insise of vim i can scroll up thru the page not 
+" thru the command history
+set mouse=nvi
+set ls=2 " last status. always_on=2
+"turn on visual bell
+set noerrorbells
+set vb t_vb=
+set belloff="all"
+" defaults for :sp and :vs respectively 
+set splitbelow
+set splitright  
+
+" NETRW config
+" tree view as default
+let g:netrw_liststyle=3
+" line numbers in netrw
+let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
+" Normally, the v key splits the window vertically with the new window and cursor at the left.  To change to splitting the window vertically with the new window and cursor at the right, have    https://vimdoc.sourceforge.net/htmldoc/pi_netrw.html#netrw-v
+let g:netrw_altv = 1
+
+set shell=/bin/zsh " Change Vim's shell from bash to zsh
+
+" Search down into subfolders
+" provides tab completion for all file realted tasks
+set path+=**
+set encoding=utf-8
+" set the dictionary paths. to activate pop-up window. Control xk. 
+" Control buton = ^
+set dictionary+=/usr/share/dict/web2
+
+" finding files:  Display all matching files when we tab complete
+set wildmenu
+
+" How to collect cexpr system('coinz') output as raw line
+set errorformat=%m
+
+" skeleton Templates C Java HTML
+autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
+autocmd BufNewFile *.html 0r ~/.vim/templates/html.skel
+autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' . expand('%:r') . '/g"'
+
+autocmd BufNewFile *.txt set spell spelllang=en_us
+" persist code fold
+augroup Left_Off
+	autocmd BufWinLeave *.*\|.* mkview
+	autocmd BufWinEnter *.*\|.* silent loadview
+augroup END
+
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+" autocmd FileType python set omnifunc=python3complete#Complete
+
+" Automatically start in insert mode for new, NAMED files
+autocmd BufNewFile * startinsert
+
+" Automatically start in insert mode for new, UNNAMED buffers (e.g., just running 'vim')
+autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
+
+" shift k look up like below only accounts for python standard builtins
+" autocmd FileType python source /Users/gramjos/.vim/scripts/SmartK.vim
+
+let mapleader=" "
+" key(s) in use: c d D j k n N o r u U w W ev gc hl pv qv so sp <tab>
+"
+"	c		comment
+"	d		split pane downward shrink small
+"	D		split pane downward shrink large
+"	g		custom global/substitute function
+"	j		add newline below
+"	k		add newline above
+"	m		popup menu open (M -> close)
+"	n		shrink vertical split pane small
+"	N		shrink vertical split pane large
+"	o	 	open with obsidian
+"	r		redo last colon command
+"	t		fix the common python tab error
+"	u		enlarge horizontal split pane small 
+"	U		enlarge horizontal split pane large
+"	v		visualize the cwd in netrw
+"	w		enlarge vertical split pane small
+"	W		enlarge vertical split pane large
+"	y		global copy. copy uname register to system clipboard
+"	ev		open vimrc
+"	hl		highlight off
+"	pv		open with Preview application
+"	qv		open with spacebar (quickview)
+"	so		call vim's source on the current buf
+"	sp		spellcheck there nearest (going backwards) error
+"	<tab>	insert a <tab> character
+
+"##########################################################
+" Maps
+"##########################################################
+
+noremap <leader>hl :nohl<CR>
+" Redo last colon command
+noremap <leader>r :<Up><CR>
+
+" Split Pane 'quick resize'
+" upward - enlarge
+noremap <leader>u :res +2<CR> 
+noremap <leader>U :res +6<CR> 
+" downward - shrink
+noremap <leader>d :res -2<CR> 
+noremap <leader>D :res -6<CR> 
+" wider - enlarge
+noremap <leader>w :vert res +2<CR> 
+noremap <leader>W :vert res +6<CR> 
+" narrower - shrink
+noremap <leader>n :vert res -2<CR> 
+noremap <leader>N :vert res -6<CR> 
+
+" yank line/selection to sys paste bin, whether in Normal/Visual mode
+nnoremap <leader>y :let @*=@0<cr>
+vnoremap <leader>y :let @*=@0<cr>
+
+nnoremap <leader>ev :!evr<cr>
+nnoremap <leader>so :source %:p<cr>
+
+nnoremap <leader><tab> :call BumpRight()<CR>
+function! BumpRight() abort
+  let s:saved_line = line('.')
+  let s:saved_col = col('.')
+  execute "normal! mti\<TAB>\<ESC>`t"
+  call cursor(s:saved_line, s:saved_col)
+endfunction
+
+
+" select the first suggestion 
+nnoremap <leader>sp :call FixLastSpellingError()<CR>
+function! FixLastSpellingError()
+	normal! mm[s1z=`m
+endfunction
+
+
+" insert upward or downward return while staying in command mode
+
+noremap <leader>k :call AddSpaceUp()<CR>
+function! AddSpaceUp() abort
+	" save(mark) location
+	normal! mz
+	" add space above in insert mode
+	normal! O
+	" jmp back to mark
+	normal! `z
+	" remove mark
+	execute 'delmarks z'
+endfunction
+
+noremap <leader>j :call AddSpaceDown()<CR>
+function! AddSpaceDown() abort
+	" save(mark) location
+	normal! mz
+	" add space below in insert mode
+	normal! o
+	" jmp back to mark
+	normal! `z
+	" remove mark
+	execute 'delmarks z'
+endfunction
+
+
+function! Qkv()
+	let curse_word = expand('<cfile>')
+	execute '!qkv' curse_word '&'
+endfunction
+nnoremap <leader>qv :call Qkv()<CR>
+
+function! Pkv()
+	let curse_word = expand('<cfile>')
+	execute '!open -a "Preview" ' curse_word '&'
+endfunction
+nnoremap <leader>pv :call Pkv()<CR>
+
+" terminal mapping, bufferize sub shell for scroll 
+"	(any route to insert mode triggers sub shell)
+tnoremap <esc> <C-W>N	
+
+imap ;; <Esc>
+
+" Normal Mode Mapping - spell check for this file
+nmap <F5> :setlocal spell! spelllang=en_us<CR>
+
+" <option>s  pulls up a quick search
+nmap  ß  :%s//g<LEFT><LEFT>
+
+"##########################################################
+" Abbreviations
+"##########################################################
+
+"insert mode abbreviation. get the prev line and put here
+iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
+
+ab pymn if __name__ == "__main__":
+
+"##########################################################
+" Custom Func
+"##########################################################
+
+" pop up dev separate
+source /Users/gramjos/.vim/my_pop_ups/web_popup.vim
+source /Users/gramjos/.vim/my_pop_ups/file_pop.vim
+" Test out different colors
+source /Users/gramjos/.vim/scripts/ColorSchemeCycle_low.vim
+
+" comment 
+source /Users/gramjos/.vim/scripts/comment.vim 
+
+" : advanced K 
+source /Users/gramjos/.vim/scripts/smart_k.vim
+
+" Launch Help in new window
+source /Users/gramjos/.vim/scripts/HelpNewWindow.vim
+
+" Help in new Terminal window
+" function! OpenHelpInNewTerminal(topic)
+" python3 << EOF
+" import subprocess
+" import vim
+" 
+" topic = vim.eval('a:topic')
+" apple_script = f'''
+" tell application "Terminal"
+"     do script "vim -c 'help {topic}' -c 'only'"
+" end tell
+" '''
+" subprocess.run(["osascript", "-e", apple_script])
+" EOF
+" redraw! " creating the new vim window left artifacts on the original window
+" endfunction
+" command! -nargs=1 Hw call OpenHelpInNewTerminal(<q-args>)
+
+" Open help in a new tab
+command! -nargs=1 Ht execute 'tab help' <q-args>
+
+" Make ascii
+" --- Custom Bubble Font Generator ---
+" Define a new custom command called 'Bubble'.
+" -nargs=+ means it requires one or more arguments.
+" <q-args> represents the arguments passed to the command.
+source /Users/gramjos/.vim/scripts/bubs.vim
+
+" Open current file in Obsidian
+function! OpenInObsidian()
+  " Get the absolute path of the current buffer. e.g., /Users/user/My Notes/File #1.md
+  let l:abs_path = expand('%:p')
+  " Abort if the buffer has no associated file.
+  if empty(l:abs_path)
+    echo "Error: No file path associated with this buffer."
+    return
+  endif
+  let l:command = '!open "obsidian://open?path=' . l:abs_path . '"'
+  " Execute the command. 'silent' prevents the command from being echoed.
+  execute l:command
+endfunction
+nnoremap <silent> <leader>o :call OpenInObsidian()<CR>

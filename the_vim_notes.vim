@@ -46,6 +46,7 @@
 "##########################################################
 " _TODO
 "##########################################################
+"	- the normal mode gf should search should normaly but then if fails do a fall back local search. if "/src/web/tab.js" is the path that fails the normal gf search then the fall back search will look 2 levels up for for a 'src' dir. 2 b/c given the path "/_2_/_1_/_FILE_"
 "   - mapping in visual mode, based on current file suffix  apply commentting
 "   		out
 "   - yank the line or selection put into system paste bin
@@ -179,6 +180,8 @@ print(math.pi);
 " invert to undo
 " search and replace to fix botch files
 :%s/\t/    /g
+" also try 
+:retab
 
 " _redir Re-Direct Mes
 " Below is a one liner to filter the mes
@@ -361,7 +364,7 @@ command! -nargs=+ Qs call Qs(<f-args>)
 "	:help mark-motions
 "	:help jump-motions
 "	
-" when opening a text file set spell check on
+" when opening a text file set spell check on with <F5>
 " In command mode 
 "	[s and ]s 
 "		will move back and forth, respectively thru misspelled words 
@@ -769,8 +772,8 @@ noremap <leader>. Lztkkk
 " 		press d to create a directory
 " 		press v to vert split pane for the file the cursor is over.
 " 		press p to horizontal split pane for the file the cursor is over.
-" 		and you just entered a random file to go back to the file
-" 		explorer view enter the Ex command :E[xplore]
+" 		and you just entered a random file to go back to the file explorer view enter the Ex command :E[xplore]
+" 		press mf for make file
 "
 " 	the built-in mapping `cd` will change the current working directory 
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 

@@ -2,7 +2,7 @@ vim9script
 
 # vim run commands(rc). run these commands at the start of each vim instance
 
-# Sections of this RC file:
+# Folds at:
 # Sets
 #  - `set`, `autocmd`, `let`, `call`, `highlight`
 # Maps
@@ -166,8 +166,6 @@ g:mapleader = ' '
 # nnoremap <silent> <leader>c :call g:ToggleComment(line('.'), line('.'))<CR>
 # vnoremap <silent> <leader>c :ToggleCommentRange<CR>
 
-
-
 # --- Insert Newline without leaving Normal Mode ---
 def g:AddSpace(direction: string, mark_char: string = 'z')
   # 1. Create the correct mark specifier string (e.g., "'z").
@@ -196,12 +194,8 @@ def g:AddSpace(direction: string, mark_char: string = 'z')
   endif
 enddef
 
-# --- Mappings ---
-# Use <Cmd> for a clean, non-blocking call to the Vim9 function.
 nnoremap <silent> <leader>k <Cmd>call g:AddSpace('O')<CR>
 nnoremap <silent> <leader>j <Cmd>call g:AddSpace('o')<CR>
-
-
 
 # # --- Open File with External Application ---
 def g:OpenWith(app_name: string)
@@ -216,37 +210,54 @@ enddef
 nnoremap <leader>qv <Cmd>call g:OpenWith('qkv')<CR>
 nnoremap <leader>pv <Cmd>call g:OpenWith('Preview')<CR>
 
+
 # --- Open Current File in Obsidian ---
-def OpenInObsidian()
-  var abs_path = expand('%:p')
-  if empty(abs_path)
-    echo "Error: No file path associated with this buffer."
+# BROKEN: cant find the right path to open in shell call
+# All files have the form [[...]] where ... is either file1 or dir/file2
+def g:OpenInObsidian()
+  # Yank the content inside the square brackets
+  execute 'normal! vi]y'
+  var file_path = getreg('"')
+
+  if empty(file_path)
+    echo "Error: Could not find a file path in [[...]] brackets."
     return
   endif
-  job_start(['open', $"obsidian://open?path={abs_path}"])
-enddef
 
-# --- Help in New Terminal Window (Python-free) ---
+  # Append .md if not present and construct the URL-encoded path
+  var obsidian_path = fnameescape(file_path .. '.md')
+  var safe_obsidian_path = substitute(obsidian_path, ' ', '%20', 'g')
+
+  # Use job_start with the 'open' command on macOS
+  job_start(['open', $"obsidian://open?path={safe_obsidian_path}"])
+  echomsg $"Opening {safe_obsidian_path}.md in Obsidian"
+enddef
+nnoremap <silent> <leader>o <Cmd>call g:OpenInObsidian()<CR>
+
+command! -nargs=1 -complete=help Hw OpenHelpInNewTerminal(<q-args>)
 def OpenHelpInNewTerminal(topic: string)
   var vim_command = $"vim -c 'help {topic}' -c 'only'"
-  var apple_script = $'tell application "Terminal" to do script {shellescape(vim_command)}'
+  var apple_script = $"tell application \"Terminal\" to do script \"{vim_command}\""
   job_start(['osascript', '-e', apple_script])
   redraw!
 enddef
+# 
+# --- Help in New tab
+command -nargs=1 Ht execute 'tab help ' .. <q-args>
 
 # --- ASCII Art Generator ---
+command -nargs=+ Bubble BubbleFont(<q-args>)
 def BubbleFont(text: string)
     var script_path = expand('~/.vim/scripts/mk_ascii.py')
     var bubble_output = system(script_path .. ' ' .. shellescape(text))
-    # Insert the output below the current line
-    put = bubble_output
+    put = bubble_output # Insert the output below the current line
 enddef
-
+#
 # # ==========================================================
 # # Mappings
 # # ==========================================================
-# 
 # # --- General ---
+noremap <leader><Tab> mzI<Tab><Esc>`z
 noremap <leader>hl <Cmd>nohlsearch<CR>
 noremap <leader>r :<Up><CR>
 noremap <leader>so <Cmd>source %<CR>
@@ -266,11 +277,8 @@ noremap <leader>N <Cmd>vertical resize -6<CR>
 nnoremap <leader>y <Cmd>let @* = @0<CR>
 vnoremap <leader>y <Cmd>let @* = @0<CR>
 # 
-# # --- Function Mappings ---
-nnoremap <silent> <leader>o <Cmd>call OpenInObsidian()<CR>
-# 
 # # --- Spelling ---
-nnoremap <leader>sp [s1z=
+nnoremap <leader>sp mz[s1z=`z
 nmap <F5> <Cmd>setlocal spell! spelllang=en_us<CR>
 # 
 # # --- Other Mappings ---
@@ -284,16 +292,4 @@ nmap ß :%s//g<Left><Left>
 iabbr <expr> ^^- getline(search('\\S\\_.*\\n\\_.*\\%#', 'b'))
 iabbrev pymn if __name__ == "__main__":
 # 
-# # ==========================================================
-# # Custom Commands
-# # ==========================================================
-command -nargs=1 Hw OpenHelpInNewTerminal(<q-args>)
-command -nargs=1 Ht execute 'tab help' .. <q-args>
-command -nargs=+ Bubble BubbleFont(<q-args>)
-# 
-# # ==========================================================
-# # Source External Configs
-# # ==========================================================
-# # These files should also be converted to Vim9script or checked for compatibility.
-source ~/.vim/my_pop_ups/web_popup.vim
-source ~/.vim/my_pop_ups/file_pop.vim
+source ~/.vim/scripts/web_popup.vim

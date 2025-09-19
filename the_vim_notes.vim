@@ -467,7 +467,6 @@ endfunction
 " a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
 " <control> o takes bake to previous buffer. 
 " aside :ls to view available buffers. :b _some_buff_
-
 " 
 "
 "

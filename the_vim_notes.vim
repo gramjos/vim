@@ -49,7 +49,6 @@
 "	- the normal mode gf should search should normaly but then if fails do a fall back local search. if "/src/web/tab.js" is the path that fails the normal gf search then the fall back search will look 2 levels up for for a 'src' dir. 2 b/c given the path "/_2_/_1_/_FILE_"
 "   - mapping in visual mode, based on current file suffix  apply commentting
 "   		out
-"   - yank the line or selection put into system paste bin
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
@@ -391,6 +390,14 @@ noremap <leader>, Hz-jjj
 " z-	Re-orient page, make curosr the bottom of page
 " j{n}	Basic movement. 3 lines down.
 noremap <leader>. Lztkkk
+
+" the native equivalent:
+" Page Down	<C-f> (Control-F)	Scrolls forward (down) one full screen.
+" Page Up	<C-b> (Control-B)	Scrolls backward (up) one full screen.
+" Half Page Down	<C-d> (Control-D)	Scrolls down a half screen.
+" Half Page Up	<C-u> (Control-U)	Scrolls up a half screen.
+" Line Scrolling	<C-e> (Control-E)	Scrolls the screen one line down (eel up).
+" <C-y> (Control-Y)	Scrolls the screen one line up (eye down).
 
 
 " Snippet
@@ -777,4 +784,35 @@ noremap <leader>. Lztkkk
 " 	the built-in mapping `cd` will change the current working directory 
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 
 " 	command to start a terminal at the `NetrwTreeListing` directory
+
+" ctags
+" given my project for vanilla web dev
+" $ tree
+" .
+" ├── data
+" │   ├── bnsf_rail.geojson
+" │   └── pro_pic.jpg
+" ├── index.html
+" ├── js
+" │   ├── app.js
+" │   ├── basemap-control.js
+" │   ├── charts-panel.js
+" │   ├── landing-page.js
+" │   ├── modal-info.js
+" │   ├── table-interactions.js
+" │   └── table-resize.js
+" ├── package.json
+" ├── README.md
+" ├── server.js
+" ├── styles.css
+
+" Run this command to generate a 'tags' file
+
+ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist --exclude=.git --exclude='*.geojson' -exclude='*.jpg'
+" $ ctags -R --languages=JavaScript,HTML,CSS \
+"   --exclude=node_modules \
+"   --exclude=dist \
+"   --exclude=.git \
+"   --exclude='*.geojson' \
+"   --exclude='*.jpg'
 

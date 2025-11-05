@@ -39,7 +39,8 @@ set showcmd             # show (partial) command in status line
 set showmatch			# highlight matching bracket when cursor over it
 set number				# static numbering OFF
 set fileformat=mac
-set tags=./tags
+# Tell Vim to look for tags file in current directory and upward
+set tags=./tags,tags;
 #
 # Tab/Indent Sizes
 set autoindent          # copy indent from current line when 
@@ -71,7 +72,7 @@ set shell=/bin/zsh # Change Vim's shell from bash to zsh
 #
 # Search down into subfolders
 # provides tab completion for all file realted tasks
-set path+=**
+set path+=.,,**,./**,../**
 set encoding=utf-8
 # set the dictionary paths. to activate pop-up window. Control xk. 
 # Control buton = ^
@@ -95,7 +96,6 @@ augroup LeftOff
   autocmd BufWinEnter *.*,.* silent loadview
 augroup END
 
-# Language-specific settings
 augroup FiletypeSettings
   autocmd!
   autocmd FileType txt set spell spelllang=en_us
@@ -116,10 +116,15 @@ augroup END
 # Leader Key
 # ----------------------------------------------------------
 g:mapleader = ' '
+# Taken Leader combos (use :vimgrep /leader/ ~/Computation/vim/.vimrc
+# <Tab> d D ev hl j k n N o pv qv r so sp u U w W y
 
 # ==========================================================
 # Functions (Vim9script)
 # ==========================================================
+
+
+
 
 # the below snippet is left commented just as a demonstration. 
 # const g:comment_map = {
@@ -270,9 +275,9 @@ noremap <leader>U <Cmd>resize +6<CR>
 noremap <leader>d <Cmd>resize -2<CR>
 noremap <leader>D <Cmd>resize -6<CR>
 noremap <leader>w <Cmd>vertical resize +2<CR>
-noremap <leader>W <Cmd>vertical resize +6<CR>
+noremap <leader>W <Cmd>vertical resize +10<CR>
 noremap <leader>n <Cmd>vertical resize -2<CR>
-noremap <leader>N <Cmd>vertical resize -6<CR>
+noremap <leader>N <Cmd>vertical resize -10<CR>
 # 
 # # --- Yank to System Clipboard ---
 nnoremap <leader>y <Cmd>let @* = @0<CR>

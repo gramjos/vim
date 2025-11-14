@@ -1,5 +1,0 @@
- the self made automator app is at
- /Users/g_joss/Library/Services/VOpen.app
-  .../Library/... is a hidden folder
-  to view hidden folders in Finder cmd shift g
-

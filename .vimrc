@@ -1,8 +1,8 @@
 vim9script 
 
 # vim run commands(rc). run these commands at the start of each vim instance
-
 # Folds at:
+
     # Sets
     #  - `set`, `autocmd`, `let`, `call`, `highlight`
     # Auto Comands

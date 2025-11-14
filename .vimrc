@@ -3,15 +3,15 @@ vim9script
 # vim run commands(rc). run these commands at the start of each vim instance
 
 # Folds at:
-	# Sets
-	#  - `set`, `autocmd`, `let`, `call`, `highlight`
-	# Auto Comands
-	# Custom func
-	#  - `function!`
-	# Maps
-	#  - `map`
-	# Abbreivations
-	#  - `iabbrev`, `ab`
+    # Sets
+    #  - `set`, `autocmd`, `let`, `call`, `highlight`
+    # Auto Comands
+    # Custom func
+    #  - `function!`
+    # Maps
+    #  - `map`
+    # Abbreivations
+    #  - `iabbrev`, `ab`
 
 ###########################################################
 # Sets
@@ -20,10 +20,11 @@ vim9script
 set timeout timeoutlen=2000 ttimeoutlen=99
 #
 filetype off                 
-set nocompatible						
+set nocompatible                        
+#
 #
 set undofile # tell it to use an undo file
-set undodir=/home/gramjos/.vimundo/ # set a directory to store the undo history
+set undodir=/Users/gramjos/.vimundo/ # set a directory to store the undo history
 #
 highlight FindMe ctermbg=green guibg=green gui=bold
 call matchadd("FindMe", "Graham Joss")
@@ -33,11 +34,11 @@ set hlsearch #Search Hightlighting
 #
 # New buffer formatting/settings
 set ruler               # show line and column number
-set relativenumber		# show current line number with surrounding offsets
+set relativenumber        # show current line number with surrounding offsets
 syntax enable           # syntax highlighting
 set showcmd             # show (partial) command in status line
-set showmatch			# highlight matching bracket when cursor over it
-set number				# static numbering OFF
+set showmatch            # highlight matching bracket when cursor over it
+set number                # static numbering OFF
 set fileformat=mac
 # Tell Vim to look for tags file in current directory and upward
 set tags=./tags,tags;
@@ -92,8 +93,8 @@ autocmd BufNewFile *.java execute ':0read !cat ~/.vim/templates/java.skel | sed 
 # Persist code folds
 augroup LeftOff
   autocmd!
-  autocmd BufWinLeave *.*,.* mkview
-  autocmd BufWinEnter *.*,.* silent loadview
+  autocmd BufWinLeave *.* if &buftype == '' && filereadable(expand('%')) | mkview | endif
+  autocmd BufWinEnter *.* if &buftype == '' && filereadable(expand('%')) | silent! loadview | endif
 augroup END
 
 augroup FiletypeSettings
@@ -116,7 +117,7 @@ augroup END
 # Leader Key
 # ----------------------------------------------------------
 g:mapleader = ' '
-# Taken Leader combos (use :vimgrep /leader/ ~/Computation/vim/.vimrc
+# Taken Leader combos aside, use :vimgrep /leader/ ~/Computation/vim/.vimrc
 # <Tab> d D ev hl j k n N o pv qv r so sp u U w W y
 
 # ==========================================================
@@ -299,3 +300,4 @@ iabbr <expr> ^^- getline(search('\\S\\_.*\\n\\_.*\\%#', 'b'))
 iabbrev pymn if __name__ == "__main__":
 # 
 source ~/.vim/scripts/web_popup.vim
+

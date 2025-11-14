@@ -65,6 +65,9 @@ nnoremap <leader>v e %:h<CR>
 " or 
 :E<CR>
 
+" 
+:Vexplore
+
 " _imc Insert Mode Command 
 " <Ctrl>v<Tab>
 "	Interpret the next non-digit literally,	will insert a 'REAL' tab
@@ -249,6 +252,10 @@ set encoding=utf-8
 set dictionary+=/usr/share/dict/web2
 " finding files:  Display all matching files when we tab complete
 set wildmenu
+" the below is in-efficient
+" like :tabe [file] (or :find, :sfind, gf, etc.) and the file is not in the current directory,
+" Vim searches for that file in all directories listed in your 'path'. removed inreal vimrc
+set path+=.,,**,./**,../**
 " always switch to VIM from VI
 set nocompatible
 set belloff=all
@@ -262,9 +269,9 @@ autocmd BufNewFile *.java 0r ~/.vim/templates/java.skel
 " create a template for java files: FIGURED
 autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' . expand('%:r') . '/g"'
 " filter the entire (%) buffer thru the command !{cmd} 
-%!cat ~/.vim/templates/java.skel |
+	%!cat ~/.vim/templates/java.skel |
 " globally replace the hardcoded `CLASSNAME' for the file name
-sed "s/CLASSNAME/' . expand('%:r') . '/g"'
+	sed "s/CLASSNAME/' . expand('%:r') . '/g"'
 
 "##########################################################
 " Maps

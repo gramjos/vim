@@ -1,0 +1,12 @@
+===============================================================================
+1. FILE 1 - INTRODUCTION                                      *file1-intro*
+===============================================================================
+
+This is File 1. You can jump to File 2 from here: |file2-section|.
+This is File 1. You can jump to File 2 from here: `file2-section`.
+
+===============================================================================
+2. USAGE                                                      *file1-usage*
+===============================================================================
+
+More content in File 1. Try jumping back from File 2.

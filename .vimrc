@@ -72,8 +72,8 @@ g:netrw_altv = 1
 set shell=/bin/zsh # Change Vim's shell from bash to zsh
 #
 # Search down into subfolders
-# provides tab completion for all file realted tasks
-set path+=.,,**,./**,../**
+# provides tab completion for all file realted tasks but way too expensive, just know where you are!
+# set path+=.,,**,./**,../**
 set encoding=utf-8
 # set the dictionary paths. to activate pop-up window. Control xk. 
 # Control buton = ^
@@ -91,11 +91,11 @@ autocmd BufNewFile *.html :0r ~/.vim/templates/html.skel
 autocmd BufNewFile *.java execute ':0read !cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' .. expand('%:r') .. '/g"'
 
 # Persist code folds
-augroup LeftOff
-  autocmd!
-  autocmd BufWinLeave *.* if &buftype == '' && filereadable(expand('%')) | mkview | endif
-  autocmd BufWinEnter *.* if &buftype == '' && filereadable(expand('%')) | silent! loadview | endif
-augroup END
+# augroup LeftOff
+  # autocmd!
+  # autocmd BufWinLeave *.* if &buftype == '' && filereadable(expand('%')) | mkview | endif
+  # autocmd BufWinEnter *.* if &buftype == '' && filereadable(expand('%')) | silent! loadview | endif
+# augroup END
 
 augroup FiletypeSettings
   autocmd!
@@ -110,8 +110,12 @@ augroup END
 augroup AutoInsertMode
   autocmd!
   autocmd BufNewFile * startinsert
-  autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
 augroup END
+
+# Only run once at actual Vim startup
+if has('vim_starting') && expand('%') == '' && &filetype == ''
+  autocmd VimEnter * ++once startinsert
+endif
 
 # ----------------------------------------------------------
 # Leader Key

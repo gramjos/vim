@@ -1,0 +1,71 @@
+https://www.youtube.com/watch?v=XA2WjJbmmoM&t=3007s
+thought bot talk
+
+Finding files
+	:find <path>
+
+" Search down into subfolders
+" provides tab completion for all fiel realted tasks
+set path+=**
+"	needed for the 'find' command
+"	search for and jump file in all subfolders 
+"	find can take a regex or fuzzyfind
+
+" ctags 
+$ ctags -R .
+	create a tag index from this dir '.' recursively all the way down
+$ vi it <tag>
+	jump tag definiton
+
+when inside of vi, and when cursor is over tag. 
+	Ctrl + ] jumps to definition.
+	Ctrl + o jumps back to previous buffer
+	:tn
+		'tag next' if multiple definitions
+	:tp
+		'tag previous'
+
+" Dictionary auto suggest
+		<ctrl>xk
+			calls on file in /usr/share/dict/web2
+
+Auto complete:
+	<Ctrl>x<Ctrl>n	
+			local(just this buffer) auto complete
+
+	<Ctrl>x<Ctrl>f
+			file path lookup
+
+	<Ctrl>x<Ctrl>]
+			complete from tag list
+
+	**When auto sugest box appears use <Ctrl>n to next option in the window
+		<Ctrl>p previous option
+
+netrw 
+ shell command
+	$ vi .		
+	or
+ vi command line
+	:edit .
+
+	
+		where . is a path to a dir
+
+HELP
+	using the help system
+
+	:h i_^n
+		"look up the docs for the command: 
+								i_
+									during insert mode
+								^n
+									when control n is pressed
+
+	:h n_^n
+	:h c_^n
+
+	:helpgrep ___
+		where ___ is any search term to loosely search
+
+	

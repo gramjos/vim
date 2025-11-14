@@ -1,0 +1,35 @@
+Auto Commands - vim in event driven
+autocmd will create callbacks/hooks (another event) when specified 	
+	events are triggered
+
+
+syntax 
+ :autocmd <EventType> <pattern> <command>
+
+many buffer related auto commands
+
+:h autocmd-events
+Event Types: 
+	- Buffer 
+	- File
+	...
+	- Interactions (lost focus)
+
+autocmd BufNewFile *.h 0r ~/template/skeleton.h
+	EventType: BufNewFile
+	Pattern: *.h
+	collon command: 0r ~/template/skeleton.h
+		'go to line 0 and read from file'
+
+autcmd BufNewFile *.p[lm] call BuildFileTemplate(<afile>)
+	
+autocdm BufReadPost *.[ch] %!indent -st
+	" after reading information into a buffer run the indent command on the
+	" whole buffer
+autocdm FileReadPost *.[ch] %!indent -st
+	" after reading into a file ...	
+
+autocmd BufRead *.[ch] set cindent
+autocmd FileRead *.[ch] set cindent
+		
+

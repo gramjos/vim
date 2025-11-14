@@ -1,0 +1,136 @@
+" A Useful Example
+:imap <TAB> <C-N>
+" above mapping becomes annoying with collisions (cases where the 
+"		mapping doesnt do want we want)
+"	we do NOT want completion when there is a blank line, and there
+"		we just want an indent
+
+" How can we make this DUMB mapping SMART?
+" Define the specific behavior: Only completion when the cursor is
+" in front of a partial word
+
+" we <TAB> to do both: indentation and completion
+
+function! TabOrCompletion()
+	let col = col('.')-1
+	if col==0 || getline('.')[col-1] !~ '\k'
+		return "\<TAB>"
+	else
+		return "\<C-N>"
+	endif
+endfunction
+
+:inoremap <expr> <TAB> TabOrCompletion()
+
+" col('.') get the column number of the cursor
+			" 'need to work out the context around the cursor'
+			" *vim starts counting columns at 1
+			" the offset of 1 is b/c we will use this variable to index the line
+			"		which is a string and indexing starts a 0
+" if col==0
+	" obviously if the cursor is way left then we want to indent
+" if getline('.')[col-1] !~ '\k'
+	"	getline('.') returns a string of the line the cursor is on
+	" we index into that string and see what is to the left of the cursor
+	" comparison operator !~ 'regex does NOT match'
+	" '\k' this regex stands for keyword 
+
+
+
+" Exceptions
+try 
+	commands here
+	...
+catch /pattern to match exception/
+	handle exception here
+	here
+	once or catches are allowed
+finally
+	cleanup commands
+	finally section are executed unconditionally (no matter what)
+endtry
+
+" the catch statements are tried in order
+
+try 
+	let data = AcquireData(soruce)
+	let results = Process(data)
+
+catch /^Vim\%((\a\+)\)\=:E/
+	" GenericPatterns catch classes of exception
+	echoerr "Vim error: ".v:exception. ' in '.v:throwpoint
+	" the vim reserved variable thorowpoint give contextual info about exception
+			" like, what functions and what line
+			
+catch /AquireFailed/
+	" can catch user defined exceptions
+	echoerr 'could not find acquire data'
+
+catch
+	" Patternless catch catches everything else...
+	echoerr 'Unexpected error: '.v:exception.' in '.v:throwpoint
+
+finally 
+	" Return immediately if no results (whether try succeeded or not)..
+	if len(results) == 0
+		return reults
+	endif
+
+endtry
+
+" Rasing your exception
+" user defined exceptions done by the throw statement
+throw "Exception: as a string"
+thorw 666
+throw 'Exception:'.' as an expression '.'that produces a string'
+" the: string, number or string expression is the propatgating 
+		" exception message
+throw v:exception
+
+" Debugging
+" :h debug-script
+
+" to enter the interactive debugger
+:debug call Myfunc()
+
+" to debug .vimrc or plugins or syntax files, start Vim with -D flag
+$ vi -D somefile
+ 
+" In the debugger mode you get a  > prompt
+
+debugger commands:
+	cont continue
+		run til next breakpoint
+	step
+		execute next script command (stepping into fx calls)
+	next 
+		same as step but steps over functions calls
+	interupt
+		simulate a 'control c'
+	quit
+		abort entire script
+
+Adding BreakPoints - from with in the interactive debugger
+	syntax:		breakadd <func|file> <line_num> <file path|func name>
+
+example breakpoint adding
+
+	breakadd func MyFunc	" break at the start of function named MyFunc
+	breakdd func 10 MyFunc	" break at 10th line relative to start of MyFunc
+
+	breakadd file 	~/.vimrc  " break at start of script of file
+	breakadd file 42 ~/.vimrc  " break at absolute line number in file
+
+	breakadd here 	" set break point at current line of current file
+			** be careful ** NOT at the current line in the interactive 
+							 debugging processes 
+	breaklist		" list all current breakpoints
+
+	breakdel func MyFunc	" delete break at the start of function named MyFunc
+	breakdel func 10 MyFunc	" delete break at 10th line relative to start of MyFunc
+
+	breakdel file 	~/.vimrc  " delete break at start of script of file
+	breakdel file 42 ~/.vimrc  " delete break at absolute line number in file
+
+	breakdel * 		delete all break points
+	breakdel 7		delete the 7th breakpoiint as numbered in the breaklist

@@ -1,0 +1,18 @@
+$ gcc -g statements.c -o statements
+
+	-g 	turns on debug info
+
+:packadd
+:Termdebug statements 
+
+To set the same file and line breakpoint in LLDB you 
+	can enter either of:
+
+	(lldb) breakpoint set --file foo.c --line 12
+	(lldb) breakpoint set -f foo.c -l 12
+
+To set a breakpoint on a function named foo in LLDB you 
+	can enter either of:
+
+	(lldb) breakpoint set --name foo
+	(lldb) breakpoint set -n foo

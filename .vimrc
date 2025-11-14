@@ -1,7 +1,8 @@
 vim9script 
 
 # vim run commands(rc). run these commands at the start of each vim instance
-# Folds at
+
+# Folds at:
     # Sets
     #  - `set`, `autocmd`, `let`, `call`, `highlight`
     # Auto Comands
@@ -90,11 +91,11 @@ autocmd BufNewFile *.html :0r ~/.vim/templates/html.skel
 autocmd BufNewFile *.java execute ':0read !cat ~/.vim/templates/java.skel | sed "s/CLASSNAME/' .. expand('%:r') .. '/g"'
 
 # Persist code folds
-# augroup LeftOff
-  # autocmd!
-  # autocmd BufWinLeave *.* if &buftype == '' && filereadable(expand('%')) | mkview | endif
-  # autocmd BufWinEnter *.* if &buftype == '' && filereadable(expand('%')) | silent! loadview | endif
-# augroup END
+augroup LeftOff
+  autocmd!
+  autocmd BufWinLeave *.* if &buftype == '' && filereadable(expand('%')) | mkview | endif
+  autocmd BufWinEnter *.* if &buftype == '' && filereadable(expand('%')) | silent! loadview | endif
+augroup END
 
 augroup FiletypeSettings
   autocmd!
@@ -106,15 +107,11 @@ augroup FiletypeSettings
 augroup END
 
 # Automatically start in insert mode for new files
-augroup AutoInsertMode
-  autocmd!
-  autocmd BufNewFile * startinsert
-augroup END
-
-# Only run once at actual Vim startup
-if has('vim_starting') && expand('%') == '' && &filetype == ''
-  autocmd VimEnter * ++once startinsert
-endif
+# augroup AutoInsertMode
+  # autocmd!
+  # autocmd BufNewFile * startinsert
+  # autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
+# augroup END
 
 # ----------------------------------------------------------
 # Leader Key

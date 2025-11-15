@@ -26,6 +26,12 @@ set nocompatible
 set undofile # tell it to use an undo file
 set undodir=/Users/gramjos/.vimundo/ # set a directory to store the undo history
 #
+# highlight CurSearch cterm=reverse gui=reverse
+highlight CurSearch guibg=Red guifg=Black
+
+# For Terminal Vim
+highlight CurSearch ctermbg=Red ctermfg=Black
+
 highlight FindMe ctermbg=green guibg=green gui=bold
 call matchadd("FindMe", "Graham Joss")
 set spellcapcheck=<CR> # turn off capitalization 
@@ -37,7 +43,7 @@ set ruler               # show line and column number
 syntax enable           # syntax highlighting
 set showcmd             # show (partial) command in status line
 set showmatch            # highlight matching bracket when cursor over it
-set number                # static numbering OFF
+# set number                # static numbering OFF
 set fileformat=mac
 # Tell Vim to look for tags file in current directory and upward
 set tags=./tags,tags;
@@ -105,72 +111,37 @@ augroup FiletypeSettings
   autocmd FileType qf nnoremap <buffer><silent> p <CR><C-w>p
 augroup END
 
-# Automatically start in insert mode for new files
-# augroup AutoInsertMode
-  # autocmd!
-  # autocmd BufNewFile * startinsert
-  # autocmd VimEnter * if expand('%') == '' && &filetype == '' | startinsert | endif
-# augroup END
 
 # ----------------------------------------------------------
 # Leader Key
 # ----------------------------------------------------------
 g:mapleader = ' '
 # Taken Leader combos aside, use :vimgrep /leader/ ~/Computation/vim/.vimrc
-# <Tab> d D ev hl j k n N o pv qv r so sp u U w W y
+# <Tab> bn bp d D ev gf hl j k n N o pv qv r so sp u U w W y
+
+
+def g:GfCreate()
+	var raw_path = expand('<cfile>')
+	if empty(raw_path)
+		echoerr "No file path under cursor."
+		return
+	endif
+	var expanded_path = expand(raw_path)
+	var dir_path = fnamemodify(expanded_path, ':h')
+	if !empty(dir_path) && dir_path != '.'
+		if mkdir(dir_path, 'p') == -1
+			echoerr "Failed to create directory: " .. dir_path
+			return
+		endif
+	endif
+	execute 'edit ' .. fnameescape(expanded_path)
+enddef
+nnoremap <silent> <Leader>gf :call g:GfCreate()<CR>
+
 
 # ==========================================================
 # Functions (Vim9script)
 # ==========================================================
-
-
-
-
-# the below snippet is left commented just as a demonstration. 
-# const g:comment_map = {
-#     \ 'python': '#',
-#     \ 'javascript': '//',
-#     \ 'typescript': '//',
-#     \ 'vim': '"',
-#     \ 'sh': '#',
-#     \ 'ruby': '#',
-#     \ 'go': '//',
-#     \ 'rust': '//',
-#     \ 'c': '//',
-#     \ 'cpp': '//',
-#     \ 'java': '//',
-#     \ 'lua': '--',
-#     \ 'perl': '#',
-#     \ 'php': '//',
-#     \ 'default': '#',
-#     \ }
-# 
-# def ToggleLine(line: string, comment_char: string): string
-#     # Check if the line starts with the comment character
-#     if line =~ '^\s*' .. comment_char
-#         # Remove comment character and one space if it exists
-#         return substitute(line, '^\(\s*\)' .. comment_char .. '\s\?', '\1', '')
-#     else
-#         # Add comment character and a space
-#         return comment_char .. ' ' .. line
-#     endif
-# enddef
-# 
-# def g:ToggleComment(start_line: number, end_line: number)
-#     var comment_char = g:comment_map->get(&filetype, g:comment_map['default'])
-# 
-#     for lnum in range(start_line, end_line)
-#         var current_line = getline(lnum)
-#         var new_line = ToggleLine(current_line, comment_char)
-#         setline(lnum, new_line)
-#     endfor
-# enddef
-# 
-# command! -range ToggleCommentRange call g:ToggleComment(<line1>, <line2>)
-# 
-# # --- Mappings ---
-# nnoremap <silent> <leader>c :call g:ToggleComment(line('.'), line('.'))<CR>
-# vnoremap <silent> <leader>c :ToggleCommentRange<CR>
 
 # --- Insert Newline without leaving Normal Mode ---
 def g:AddSpace(direction: string, mark_char: string = 'z')

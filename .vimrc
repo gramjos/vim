@@ -34,7 +34,6 @@ set hlsearch #Search Hightlighting
 #
 # New buffer formatting/settings
 set ruler               # show line and column number
-set relativenumber        # show current line number with surrounding offsets
 syntax enable           # syntax highlighting
 set showcmd             # show (partial) command in status line
 set showmatch            # highlight matching bracket when cursor over it

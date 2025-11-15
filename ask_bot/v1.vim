@@ -1,3 +1,5 @@
+vim9script
+
 def g:GetApiKey(): string
     var key_file = expand('~/.config/gemini_key_4_vim/g.key')
 

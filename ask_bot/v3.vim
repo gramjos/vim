@@ -1,3 +1,5 @@
+vim9script
+
 # single file ai help  
 # ==========================================================
 nnoremap <leader>af <Cmd>call g:AskAboutFile()<CR>

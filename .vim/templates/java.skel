@@ -1,0 +1,12 @@
+import java.util.Date;
+
+public class CLASSNAME { 
+	public static void startTag(){
+		Date d = new Date();
+		System.out.println("___øø___"+d.toString());	
+	}
+	public static void main(String[] args){
+		startTag();
+		
+	}
+}

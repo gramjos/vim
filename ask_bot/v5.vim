@@ -1,4 +1,3 @@
-
 nnoremap <leader>aa <Cmd>call g:AskAboutFiles()<CR>
 
 def g:GetApiKey(): string

@@ -6,8 +6,6 @@ def g:GetApiKey(): string
         return ""
     endif
 
-    # readfile() returns a list of lines. Get the first line.
-    # trim() removes any trailing newlines
     var api_key = readfile(key_file)[0]->trim()
 
     if empty(api_key)

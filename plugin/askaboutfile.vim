@@ -5,15 +5,22 @@ if &cp || exists('g:loaded_askaboutfile')
 endif
 g:loaded_askaboutfile = 1
 
-# Import the main function from our autoload script.
-# The 'togglecomment' name is derived from 'autoload/togglecomment.vim'.
+# Import the namespace
 import autoload 'askaboutfile.vim'
 
-# Define a user command that can take a range.
-# This command calls the imported function.
-command! -range ASK call askaboutfile.AskAboutFile()
+# --- User Commands ---
+command! AskFile      call askaboutfile.AskCurrentFile()
+command! AskAll       call askaboutfile.AskMultipleFiles()
+command! -range AskSelection call askaboutfile.AskSelection()
 
 # --- Mappings ---
-# The mappings now call our command or function via the imported namespace.
-# Use the command for both mappings to ensure autoloading works correctly.
-nnoremap <silent> <leader>af :ASK<CR>
+
+# 1. Ask File: <leader>af
+nnoremap <silent> <leader>af <Cmd>AskFile<CR>
+
+# 2. Ask Selection: <leader>as
+# We use <Esc> to update the '< and '> marks before calling the function
+vnoremap <silent> <leader>as <Esc><Cmd>AskSelection<CR>
+
+# 3. Ask All (Fuzzy): <leader>aa
+nnoremap <silent> <leader>aa <Cmd>AskAll<CR>

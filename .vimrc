@@ -4,7 +4,7 @@ vim9script
 # Folds at:
 
     # Sets
-    #  - `set`, `autocmd`, `let`, `call`, `highlight`
+    #  - `set`, `autocmd`, `let`, `call`, `highlight` optional packages
     # Auto Comands
     # Custom func
     #  - `function!`
@@ -16,11 +16,10 @@ vim9script
 ###########################################################
 # Sets
 ###########################################################
+filetype plugin indent on
+packadd! matchit
 # time out on mapping after two seconds, time out on key codes after a ninety-ninth
 set timeout timeoutlen=2000 ttimeoutlen=99
-#
-filetype off                 
-set nocompatible                        
 #
 #
 set undofile # tell it to use an undo file
@@ -116,9 +115,18 @@ augroup END
 # Leader Key
 # ----------------------------------------------------------
 g:mapleader = ' '
-# Taken Leader combos aside, use :vimgrep /leader/ ~/Computation/vim/.vimrc
-# <Tab> bn bp d D ev gf hl j k n N o pv qv r so sp u U w W y
+# Taken Leader combos aside, use :vimgrep /leader/ ~/.vim/*
+### vimgrep
+# <Tab> . aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U w W y
 
+# " Map 'f' to move forward (Buffer Next)
+nnoremap <leader>f :bn<CR>
+
+# " Map 'b' to move backward (Buffer Previous)
+nnoremap <leader>b :bp<CR>
+
+# Map <leader>m to copy the last message to the system clipboard
+nnoremap <leader>m :let @+ = trim(execute('1messages'))<CR>
 
 def g:GfCreate()
 	var raw_path = expand('<cfile>')
@@ -142,32 +150,23 @@ nnoremap <silent> <Leader>gf :call g:GfCreate()<CR>
 # Functions (Vim9script)
 # ==========================================================
 
-# --- Insert Newline without leaving Normal Mode ---
-def g:AddSpace(direction: string, mark_char: string = 'z')
-  # 1. Create the correct mark specifier string (e.g., "'z").
-  var mark_spec = "'" .. mark_char
+def g:AddSpace(direction: string): void
+    # Get the count. v:count1 defaults to 1 if no count is given.
+    var count = v:count1
 
-  # 2. Save the original position of the chosen mark, if it exists.
-  var original_mark_pos = getpos(mark_spec)
+    # Save cursor position
+    var original_pos = getpos('.')
 
-  # 3. Save the current cursor position to the mark.
-  execute $"normal! m{mark_char}"
+    # Create the new lines.
+    # We use 'execute "normal!..."' to apply the count.
+    if direction == 'O'
+        execute $"normal! {count}O"
+    else
+        execute $"normal! {count}o"
+    endif
 
-  # 4. Open a new line and immediately return to Normal mode.
-  execute $"normal! {direction}" .. "\<Esc>"
-
-  # 5. Return the cursor to the exact position it was at before adding the line.
-  execute $"normal! `{mark_char}"
-
-  # 6. Restore the original mark's position or delete our temporary mark.
-  #    A line number of 0 in the position list indicates the mark was not set.
-  if original_mark_pos[1] == 0
-    # The mark was not set before, so we clean up after ourselves.
-    execute $":delmarks {mark_char}"
-  else
-    # The mark was set, so we restore it to its original position.
-    setpos(mark_spec, original_mark_pos)
-  endif
+    # Return cursor to its original position
+    setpos('.', original_pos)
 enddef
 
 nnoremap <silent> <leader>k <Cmd>call g:AddSpace('O')<CR>
@@ -236,8 +235,10 @@ enddef
 noremap <leader><Tab> mzI<Tab><Esc>`z
 noremap <leader>hl <Cmd>nohlsearch<CR>
 noremap <leader>r :<Up><CR>
-noremap <leader>so <Cmd>source %<CR>
-nnoremap <leader>ev <Cmd>!evr<CR>
+noremap <leader>so <Cmd>source $MYVIMRC<CR>
+nnoremap <leader>ev <Cmd>tabe $MYVIMRC<CR>
+# redo last Ex command
+nnoremap <leader>. @:
 # 
 # # --- Window Resizing ---
 noremap <leader>u <Cmd>resize +2<CR>
@@ -392,6 +393,125 @@ def g:AskAboutFiles()
         'out_mode': 'nl',
         'err_mode': 'nl',
     }
+    echo "Starting pipeline to Gemini API (async)..."
+    var job = job_start(cmd, job_options)
+    if job_status(job) == 'fail'
+        echoerr "Failed to start async job."
+    endif
+enddef
+
+
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+vnoremap <leader>as <Esc>:<C-U>call AskAboutSelection()<CR>
+
+def g:AskAboutSelection()
+    var api_key = g:GetApiKey()
+    if empty(api_key)
+        return
+    endif
+
+    # --- Get Visual Selection ---
+    # This function must be called from a visual mode mapping.
+    var selection: string
+    try
+        # gv = reselect last visual selection
+        # "vy = yank the selection into register 'v'
+        normal! gv"vy
+        selection = getreg('v')
+    catch /E20|E481/ # E20: "No previous visual selection"
+        echoerr "Error: No visual selection. Call this from a visual mode mapping."
+        return
+    endtry
+
+    if empty(selection)
+        echoerr "Error: Visual selection is empty."
+        return
+    endif
+    # --- End of selection logic ---
+
+    var question = input("Ask about this selection: ")
+    if empty(question)
+        echo "Cancelled."
+        return
+    endif
+
+    # --- Create the scratch buffer *before* the job ---
+    execute 'new'
+    setlocal buftype=nofile bufhidden=wipe noswapfile
+    setlocal filetype=markdown
+    var output_bufnr = bufnr()
+    call setline(1, $"[Query: {question}]")
+    call setline(2, "---")
+    execute 'normal! G' # Move to end, ready to stream
+
+    # --- Prepare API request ---
+    # Give the model context about what *kind* of text was selected
+    var file_type = &filetype
+    var context_hint = !empty(file_type) ? $"Code ({file_type}):" : "Selected Text:"
+
+    var prompt = $"{context_hint}\n\n```\n{selection}\n```\n\nQuestion: {question}"
+
+    var json_payload = {
+        contents: [{
+            parts: [{
+                text: prompt
+            }]
+        }]
+    }
+    var payload_str = json_encode(json_payload)
+
+    # --- Job and Pipeline (Unchanged) ---
+    var api_url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?key={api_key}&alt=sse"
+
+    # awk magic 7 from length of prefix len("data: ") then real json starts
+    var awk_cmd = '/^data: / { print substr($0, 7); fflush() }'
+    var awk_command_full = "awk '" .. awk_cmd .. "'"
+
+    var pipeline = join([
+        'curl -N -s -X POST -H "Content-Type: application/json" -d "$1" "$2"',
+        awk_command_full,
+        'jq --unbuffered -r ".candidates[0].content.parts[0].text // empty"'
+    ], ' | ')
+
+    var cmd = ['/bin/bash', '-c', pipeline, 'bash', payload_str, api_url]
+
+    var On_stdout = (job: any, data: string) => {
+        if empty(data)
+            return
+        endif
+        call appendbufline(output_bufnr, '$', data)
+   }
+
+    var On_stderr = (job: any, data: list<string>) => {
+        for line in data
+            if !empty(line)
+                call appendbufline(output_bufnr, '$', $"[Pipeline STDERR: {line}]")
+            endif
+        endfor
+    }
+
+    var On_exit = (job: any, status: number) => {
+        if status == 0
+            call appendbufline(output_bufnr, '$', "")
+            call appendbufline(output_bufnr, '$', "[Stream finished]")
+        else
+            call appendbufline(output_bufnr, '$', "")
+            call appendbufline(output_bufnr, '$', $"[Pipeline failed, exit status: {status}]")
+        endif
+    }
+
+    var job_options = {
+        'out_cb': On_stdout,
+        'err_cb': On_stderr,
+        'exit_cb': On_exit,
+        'out_mode': 'nl',
+        'err_mode': 'nl',
+    }
+
     echo "Starting pipeline to Gemini API (async)..."
     var job = job_start(cmd, job_options)
     if job_status(job) == 'fail'

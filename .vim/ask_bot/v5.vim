@@ -1,4 +1,3 @@
-
 nnoremap <leader>aa <Cmd>call g:AskAboutFiles()<CR>
 
 def g:GetApiKey(): string
@@ -30,7 +29,7 @@ def g:AskAboutFiles()
     # Use fzf to select multiple files. The result is a list of file paths.
     # Note: fzf#run() returns a list of strings directly in Vim9.
     var selected_files: list<string> = fzf#run({
-        'source': 'find . -type f',
+        'source': 'find . -type f -not -path "*/.git/*" -not -path "*/node_modules/*" -not -path "*/__pycache__/*" -not -path "*/venv/*" -not -path "*/.venv/*" -not -path "*/env/*" -not -path "*/vim/view/*" -not -path "*/.vim/view/*"',
         'options': '--multi --prompt="Select files to ask about: "',
     })
 
@@ -40,18 +39,29 @@ def g:AskAboutFiles()
         return
     endif
 
+    # --- Capture original buffer info ---
+    var original_buf_name = expand('%:p')
+    var original_buf_content = getline(1, '$')->join("\n")
+
     # --- Create the scratch buffer *before* the job ---
     execute 'new'
     setlocal buftype=nofile bufhidden=wipe noswapfile
     setlocal filetype=markdown
     var output_bufnr = bufnr()
     call setline(1, $"[Query: {question}]")
-    call setline(2, $"[Files: {join(selected_files, ', ')}]")
-    call setline(3, "---")
+    call append(1, $"[Original Buffer: {original_buf_name}]")
+    call append(2, $"[File(s) Selected: {join(selected_files, ', ')}]")
+    call append(3, "---")
     execute 'normal! G' # Move to end, ready to stream
 
     # --- Prepare API request ---
     var prompt_parts: list<string> = []
+
+    # Add original buffer content to the prompt
+    if !empty(original_buf_name)
+        prompt_parts->add($"File: {original_buf_name} (Current Buffer)\n\n```\n{original_buf_content}\n```")
+    endif
+
     for file_path in selected_files
         if filereadable(file_path)
             var file_content = readfile(file_path)->join("\n")

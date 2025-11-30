@@ -310,6 +310,8 @@ vnoremap <silent> <leader>as :call g:AskSelection()<CR>
 nnoremap <silent> <leader>aa :call g:AskAll()<CR>
 
 # --- Helper: Stream output from shell script to buffer ---
+# Note: Using job_start() with a list of arguments is shell-injection-safe
+# because Vim passes arguments directly to the process without shell interpretation.
 def StreamFromShell(cmd: list<string>, stdin_data: string = '')
     # Create Scratch Buffer
     execute 'vnew'
@@ -354,6 +356,7 @@ def g:AskCurrentFile()
     endif
 
     var q = input("Ask about current file: ")
+    q = trim(q)
     if empty(q) | return | endif
 
     var cmd = ['/bin/bash', ASKBOT_SCRIPT, q, filepath]
@@ -376,6 +379,7 @@ def g:AskSelection()
     endif
 
     var q = input("Ask about selection: ")
+    q = trim(q)
     if empty(q) | return | endif
 
     # Pipe selection to shell script via stdin
@@ -450,6 +454,7 @@ def g:AskAll()
     if empty(files) | return | endif
 
     var q = input($"Ask about {len(files)} files: ")
+    q = trim(q)
     if empty(q) | return | endif
 
     # Pass file paths to shell script - shell reads files, not Vim

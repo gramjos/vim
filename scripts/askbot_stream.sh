@@ -22,7 +22,9 @@ MODEL="gemini-2.5-flash-lite"
 QUESTION=""
 USE_MEMORY=0
 USE_STDIN=0
-FILES=""
+# Use a temporary file to store file paths safely (handles spaces/special chars)
+FILES_TMP=$(mktemp)
+trap 'rm -f "$FILES_TMP" "$RESPONSE_TMP" 2>/dev/null' EXIT
 
 if [ $# -lt 1 ]; then
     echo "Usage: askbot_stream.sh <question> [--memory] [--stdin | file1 file2 ...]" >&2
@@ -43,7 +45,8 @@ while [ $# -gt 0 ]; do
             shift
             ;;
         *)
-            FILES="$FILES $1"
+            # Store each file path on a separate line (handles spaces/special chars)
+            printf '%s\n' "$1" >> "$FILES_TMP"
             shift
             ;;
     esac
@@ -69,14 +72,15 @@ if [ "$USE_STDIN" -eq 1 ]; then
 fi
 
 # Read files if provided (shell reads them, not Vim)
-for f in $FILES; do
-    if [ -f "$f" ]; then
+# Read file paths from temp file to properly handle spaces/special characters
+while IFS= read -r f; do
+    if [ -n "$f" ] && [ -f "$f" ]; then
         FILE_CONTENT=$(cat "$f")
         CONTEXT="$CONTEXT
 --- File: $f ---
 $FILE_CONTENT"
     fi
-done
+done < "$FILES_TMP"
 
 # === Get Memory Context if enabled ===
 MEMORY_CONTEXT=""
@@ -123,14 +127,14 @@ API_URL="${BASE_URL}${MODEL}:streamGenerateContent?key=${API_KEY}&alt=sse"
 
 # === Temporary file for collecting response (for logging) ===
 RESPONSE_TMP=$(mktemp)
-trap 'rm -f "$RESPONSE_TMP"' EXIT
 
 # === Stream the API response ===
 # curl streams to awk, which extracts data lines, then jq extracts text
+# Note: curl errors are redirected to stderr which will appear in Vim's error buffer
 curl -N -s -X POST \
     -H "Content-Type: application/json" \
     -d "$JSON_PAYLOAD" \
-    "$API_URL" 2>/dev/null | \
+    "$API_URL" | \
     awk '/^data: / { print substr($0, 7); fflush() }' | \
     jq --unbuffered -r '.candidates[0].content.parts[0].text // empty' | \
     while IFS= read -r line; do

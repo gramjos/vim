@@ -272,203 +272,99 @@ iabbrev pymn if __name__ == "__main__":
 source ~/.vim/scripts/web_popup.vim
 
 
+# ==========================================================
+# AskBot Shell-First Architecture
+# ==========================================================
+# Core principle: Vim should never process heavy data in RAM.
+# All file reading, JSON handling, and API calls are delegated to shell.
+
+# Path to the shell script that handles all heavy lifting
+const ASKBOT_SCRIPT = expand('~/.vim/scripts/askbot_stream.sh')
+
 # Global Memory Variable
 if !exists('g:memory')
     g:memory = false
 endif
 
-# toggle memory 
+# Toggle memory
 command! ToggleMemory {
     g:memory = !g:memory
     echo $"AskBot Memory is now: {g:memory ? 'ON' : 'OFF'}"
 }
+
 # Function to clear memory by deleting the log.json file
 def g:ClearMemory()
     var log_file = expand('~/.vim/askbot_log/log.json')
     if filereadable(log_file)
-        call delete(log_file)
+        delete(log_file)
         echo "AskBot memory cleared."
     else
         echo "No memory to clear."
     endif
 enddef
 
-# Map a keybinding to clear memory (e.g., <leader>ac)
+# --- Keybindings ---
 nnoremap <silent> <leader>ac :call g:ClearMemory()<CR>
-
-
 nnoremap <silent> <leader>af :call g:AskCurrentFile()<CR>
-##
-## # 2. Ask Selection: <leader>as
-## # We use <Esc> to update the '< and '> marks before calling the function
 vnoremap <silent> <leader>as :call g:AskSelection()<CR>
-##
-## # 3. Ask All (Fuzzy): <leader>aa
 nnoremap <silent> <leader>aa :call g:AskAll()<CR>
 
-# --- Helper: Logging ---
-def LogInteraction(query: string, context_text: string, response: string)
-    var log_dir = expand('~/.vim/askbot_log')
-    var log_file = log_dir .. '/log.json'
-
-    # 1. Ensure directory exists
-    if !isdirectory(log_dir)
-        mkdir(log_dir, 'p')
-    endif
-
-    # 2. Load existing logs
-    var logs = []
-    if filereadable(log_file)
-        try
-            var file_content = readfile(log_file)
-            if !empty(file_content)
-                logs = json_decode(join(file_content, "\n"))
-            endif
-        catch
-            # If JSON is corrupt, we start fresh
-            logs = []
-        endtry
-    endif
-
-    # 3. Create new entry
-    var new_entry = {
-        query: query,
-        query_context: context_text,
-        response: response,
-        timestamp: strftime('%Y-%m-%d %H:%M:%S')
-    }
-
-    # 4. Append and Write
-    add(logs, new_entry)
-    writefile([json_encode(logs)], log_file)
-enddef
-
-def GetApiKey(): string
-    var key_file = expand('~/.config/gemini_key_4_vim/g.key')
-    if !filereadable(key_file)
-        echoerr $"Error: API key file not found at {key_file}"
-        return ""
-    endif
-    return readfile(key_file)[0]->trim()
-enddef
-
-# --- Helper: Memory Retrieval ---
-def GetMemoryContext(): string
-    var log_file = expand('~/.vim/askbot_log/log.json')
-    if !filereadable(log_file)
-        return ""
-    endif
-
-    var logs = []
-    try
-        var content = readfile(log_file)->join("\n")
-        logs = json_decode(content)
-    catch
-        return ""
-    endtry
-
-    if empty(logs)
-        return ""
-    endif
-
-    # Limit to the last 5 interactions to save token costs/limit
-    var recent_logs = logs
-    if len(logs) > 5
-        recent_logs = logs[-5 : ]
-    endif
-
-    var memory_string = "--- CONVERSATION HISTORY ---\n"
-    for entry in recent_logs
-        memory_string ..= $"USER ASKED: {entry.query}\n"
-        memory_string ..= $"AI REPLIED: {entry.response}\n"
-        memory_string ..= "---\n"
-    endfor
-    memory_string ..= "--- END HISTORY ---\n\n"
-
-    return memory_string
-enddef
-
-def StreamResponse(context_text: string, user_question: string)
-    var api_key = GetApiKey()
-    if empty(api_key) | return | endif
-
+# --- Helper: Stream output from shell script to buffer ---
+def StreamFromShell(cmd: list<string>, stdin_data: string = '')
     # Create Scratch Buffer
     execute 'vnew'
     setlocal buftype=nofile bufhidden=wipe noswapfile filetype=markdown wrap
     var output_bufnr = bufnr()
 
-    # Visual indicator if memory is being used
-    if g:memory
-        append(1, "(Memory: ON)")
-    endif
-    append(1, "---")
-
-    # --- Construct Prompt with Memory if enabled ---
-    var final_context = ""
-
-    if g:memory
-        var history = GetMemoryContext()
-        final_context = $"{history}CURRENT FILE CONTEXT:\n{context_text}"
-    else
-        final_context = $"Context:\n{context_text}"
-    endif
-
-    var prompt = $"{final_context}\n\nQuestion: {user_question}"
-    setline(1, $"{prompt}")
-
-    # Prepare API Payload
-    var json_payload = { contents: [{ parts: [{ text: prompt }] }] }
-
-    var base_url = "https://generativelanguage.googleapis.com/v1beta/models/"
-    var model_url = "gemini-2.5-flash-lite"
-    var api_url = $"{base_url}{model_url}:streamGenerateContent?key={api_key}&alt=sse"
-	#
-    # Construct Pipeline
-    var awk_cmd = '/^data: / { print substr($0, 7); fflush() }'
-    var pipeline = join([
-        'curl -N -s -X POST -H "Content-Type: application/json" -d @- ' .. shellescape(api_url),
-        $"awk '{awk_cmd}'",
-        'jq --unbuffered -r ".candidates[0].content.parts[0].text // empty"'
-    ], ' | ')
-
-    # --- Capture State for Logging ---
-    var collected_response = []
-
-    # Start Job
-    var job = job_start(['/bin/bash', '-c', pipeline], {
-        'in_io': 'pipe',
+    var job_opts = {
         'out_cb': (ch, msg) => {
-            # 1. Update Buffer
             appendbufline(output_bufnr, '$', msg)
-            # 2. Accumulate for Log
-            add(collected_response, msg)
         },
         'exit_cb': (ch, st) => {
-            appendbufline(output_bufnr, '$', ["", "---", "[Done]"])
-            # 3. Save to Log when finished
-            var full_response_text = join(collected_response, "\n")
-            LogInteraction(user_question, context_text, full_response_text)
+            if st != 0
+                appendbufline(output_bufnr, '$', ["", "---", "[Error: exit code " .. string(st) .. "]"])
+            endif
         }
-    })
+    }
 
-    # Send payload
-    var ch = job_getchannel(job)
-    ch_sendraw(ch, json_encode(json_payload))
-    ch_close_in(ch)
+    # If we have stdin data, pipe it to the command
+    if !empty(stdin_data)
+        job_opts['in_io'] = 'pipe'
+    endif
+
+    var job = job_start(cmd, job_opts)
+
+    # Send stdin data if provided
+    if !empty(stdin_data)
+        var ch = job_getchannel(job)
+        ch_sendraw(ch, stdin_data)
+        ch_close_in(ch)
+    endif
 enddef
 
 # --- Public Exported Functions ---
 
 # 1. Ask about the current whole file
+# Shell script reads the file directly - Vim never loads content into RAM
 def g:AskCurrentFile()
-    var content = getline(1, '$')->join("\n")
-    var q = input("Ask about current file: ")
-    if !empty(q)
-        StreamResponse(content, q)
+    var filepath = expand('%:p')
+    if empty(filepath) || !filereadable(filepath)
+        echoerr "No file to read or file not saved."
+        return
     endif
+
+    var q = input("Ask about current file: ")
+    if empty(q) | return | endif
+
+    var cmd = ['/bin/bash', ASKBOT_SCRIPT, q, filepath]
+    if g:memory
+        insert(cmd, '--memory', 2)
+    endif
+    StreamFromShell(cmd)
 enddef
 
 # 2. Ask about the visual selection
+# Pipes selected lines via stdin to shell script - minimal Vim RAM usage
 def g:AskSelection()
     var [lnum1, col1] = getpos("'<")[1 : 2]
     var [lnum2, col2] = getpos("'>")[1 : 2]
@@ -479,14 +375,20 @@ def g:AskSelection()
         return
     endif
 
-    var content = lines->join("\n")
     var q = input("Ask about selection: ")
-    if !empty(q)
-        StreamResponse(content, q)
+    if empty(q) | return | endif
+
+    # Pipe selection to shell script via stdin
+    var selection_text = lines->join("\n")
+    var cmd = ['/bin/bash', ASKBOT_SCRIPT, q, '--stdin']
+    if g:memory
+        insert(cmd, '--memory', 2)
     endif
+    StreamFromShell(cmd, selection_text)
 enddef
 
 # 3. Ask about multiple files (Requires fzf)
+# Passes file paths to shell script - shell reads files, not Vim
 def g:AskAll()
     if !exists('*fzf#run')
         echoerr "FZF is not installed."
@@ -550,13 +452,16 @@ def g:AskAll()
     var q = input($"Ask about {len(files)} files: ")
     if empty(q) | return | endif
 
-    var combined_content = []
+    # Pass file paths to shell script - shell reads files, not Vim
+    var cmd = ['/bin/bash', ASKBOT_SCRIPT, q]
+    if g:memory
+        add(cmd, '--memory')
+    endif
+    # Add all file paths as arguments
     for f in files
-        combined_content += [$"\n--- File: {f} ---", readfile(f)->join("\n")]
+        add(cmd, f)
     endfor
-
-    StreamResponse(combined_content->join("\n"), q)
+    StreamFromShell(cmd)
 enddef
-
 
 

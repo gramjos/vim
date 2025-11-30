@@ -1,18 +1,14 @@
 def g:GetApiKey(): string
     var key_file = expand('~/.config/gemini_key_4_vim/g.key')
-
     if !filereadable(key_file)
         echoerr $"Error: API key file not found at {key_file}"
         return ""
     endif
-
     var api_key = readfile(key_file)[0]->trim()
-
     if empty(api_key)
         echoerr $"Error: API key file is empty: {key_file}"
         return ""
     endif
-
     return api_key
 enddef
 

@@ -22,7 +22,7 @@
 " Abbreivations - `iabbrev`, `ab`
 " Custom func - `function!`
 " TODO - unimplemented ideas
-" Notes - Builtin Functions, HowTOs and demonstrative examples
+" Notes - Builtin unctions, HowTOs and demonstrative examples
 "	.!		shell cmd output
 "	ap		cross file append
 "	dig		Digraphs
@@ -111,6 +111,13 @@ nnoremap <leader>v e %:h<CR>
 " _.! Shell command output
 " insert the standard out of <cmd> into current buffer buffer where cursor is
 :.!<cmd>
+
+" pretty print json in current buffer
+:%!jq .
+" Breakdown:
+" "   %      Selects the entire file (all lines).
+" "   !      Runs the selection through an external command.
+" "   jq .   Runs jq with the simplest filter (.), which just outputs the formatted JSON.
 "
 " _dig Digraphs 			
 "  insert special charaters from :dig menu with i_ctrl-k {char}{2}

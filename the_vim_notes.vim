@@ -192,20 +192,23 @@ print(math.pi);
 " also try 
 :retab
 
-" _redir Re-Direct Mes
+" _redir _mes Re-Direct Mes
 " Below is a one liner to filter the mes
 :redir => g:vim_messages | silent messages | redir END | let g:message_lines = split(g:vim_messages, "\n") | put =g:message_lines[-2]
 
-:redir => g:vim_messages |
-"	declare locally and ephemerally (temporarily) to write all messages to a global variable `vim_messages`
-silent messages |
-"	then 'mock' call the messages function with silent on, so the actual messages do not get displayed.
-redir END | 
-"	Then 'END' the redirecting of the messages. 
-let g:message_lines = split(g:vim_messages, "\n") 
-" Then split the string by newline into a list of strings. 
-put =g:message_lines[-2]
-" slice out a mes
+	:redir => g:vim_messages |
+	"	declare locally and ephemerally (temporarily) to write all messages to a global variable `vim_messages`
+	silent messages |
+	"	then 'mock' call the messages function with silent on, so the actual messages do not get displayed.
+	redir END | 
+	"	Then 'END' the redirecting of the messages. 
+	let g:message_lines = split(g:vim_messages, "\n") 
+	" Then split the string by newline into a list of strings. 
+	put =g:message_lines[-2]
+	" slice out a mes
+	"
+" Last message mes_
+:echo v:statusmsg
 
 " _norc 
 "	$ vi -u NONE
@@ -291,8 +294,10 @@ autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLA
 noremap <leader>z :stop<CR> 
 
 " _wc Counting Col,Ln,Wrd,Byte
-" Get the word count, lines, and bytes of current selection while in normal
-" mode. When you have something selected in normal mode, press g then control g
+" Get the word count, lines, and bytes of current file or selection while in normal
+" mode. 
+" 	- When you have something selected in normal mode, press g then control g
+" 	- W/o selection then whole file.
 " Example mes printed
 "	Col 1 of 34; Line 1 of 415; Word 1 of 1998; Char 1 of 11788; Byte 1 of 11792
 

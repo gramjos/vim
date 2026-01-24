@@ -117,7 +117,7 @@ augroup END
 g:mapleader = ' '
 # Taken Leader combos aside, use :vimgrep /leader/ ~/.vim/*
 ### vimgrep
-# <Tab> . aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U w W y
+# <Tab> . ? aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U w W y
 #
 # SORT visual selected based on pattern mask      :'<,'>sort /^#\s*/
 
@@ -136,6 +136,7 @@ g:mapleader = ' '
 # pv — Open current file with external app Preview.
 # o — Open the current file path (inside [[...]]) in Obsidian.
 # y — Yank current buffer/selection to the system clipboard (* register).
+# ? - search normal mode mappings with fzf
 
 # Editing & formatting
 
@@ -167,6 +168,9 @@ g:mapleader = ' '
 # as   — Ask Selection: Send only the visually selected text to Gemini.
 # " --- Toggles line numbering modes ---
 
+# Search normal mode maps using Space + ?
+nmap <Space>? <Plug>(fzf-maps-n)
+
 # " Map 'f' to move forward (Buffer Next)
 nnoremap <leader>f :bn<CR>
 
@@ -175,6 +179,10 @@ nnoremap <leader>b :bp<CR>
 
 # Map <leader>m to copy the last message to the system clipboard
 nnoremap <leader>m :let @+ = trim(execute('1messages'))<CR>
+
+# ==========================================================
+# Functions 
+# ==========================================================
 
 def g:GfCreate()
 	var raw_path = expand('<cfile>')
@@ -193,10 +201,6 @@ def g:GfCreate()
 	execute 'edit ' .. fnameescape(expanded_path)
 enddef
 nnoremap <silent> <Leader>gf :call g:GfCreate()<CR>
-
-# ==========================================================
-# Functions (Vim9script)
-# ==========================================================
 
 def g:AddSpace(direction: string): void
     # Get the count. v:count1 defaults to 1 if no count is given.

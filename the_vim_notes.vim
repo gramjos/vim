@@ -791,14 +791,62 @@ noremap <leader>. Lztkkk
 "
 " Netrw _netrw
 " 	netrw is for readig, writing files over  a network
-" 	When netrw is activated:
-" 		press i to cycle thru three viewing mode.
-" 		press % to create a new file
-" 		press d to create a directory
-" 		press v to vert split pane for the file the cursor is over.
-" 		press p to horizontal split pane for the file the cursor is over.
 " 		and you just entered a random file to go back to the file explorer view enter the Ex command :E[xplore]
-" 		press mf for make file
+" File Management
+" d 	Create Directory: Prompts for a new directory name.
+" 
+" % 	Create File: Prompts for a new filename.
+" 
+" R 	Rename: Rename the file/directory under the cursor.
+" 
+" D 	Delete: Delete the file/directory (requires confirmation).
+" 
+" Navigation & "Zooming"
+" 
+" <CR> 	Open: Enter directory or open file.
+" 
+" - 	Up: Go up one directory level.
+" 
+" c 	Make Root: Set current directory as the browsing root (CWD).
+" 
+" gn 	Zoom In: Make the directory under cursor the top of the tree.
+" 
+" u 	History: Go back to the previously browsed directory.
+" 
+" Opening Files
+" 
+" p 	Preview: Open file in a preview window (cursor stays in netrw).
+" 
+" t 	Tab: Open file/directory in a new tab.
+" 
+" v 	V-Split: Open file/directory in a vertical split.
+" 
+" o 	H-Split: Open file/directory in a horizontal split.
+" 
+" View Customization
+" 
+" i 	Cycle View: Thin → Long → Wide → Tree.
+" 
+" s 	Sort: Cycle sorting by Name → Time → Size → Extension.
+" 
+" r 	Reverse: Reverse the current sort order.
+" 
+" a 	Hiding: Toggle hiding of files matching g:netrw_list_hide.
+" 
+" Ctrl-l 	Refresh: Redraw the directory listing.
+" 
+" Marking & Bulk Actions
+" 
+" mf 	Mark: Mark the file/directory under the cursor.
+" 
+" mu 	Unmark: Remove marks from all files.
+" 
+" mt 	Target: Set the target directory for copy/move operations.
+" 
+" mc 	Copy: Copy marked files to the target directory.
+" 
+" mm 	Move: Move marked files to the target directory.
+
 "
 " 	the built-in mapping `cd` will change the current working directory 
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 

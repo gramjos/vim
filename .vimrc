@@ -137,6 +137,7 @@ g:mapleader = ' '
 # o — Open the current file path (inside [[...]]) in Obsidian.
 # y — Yank current buffer/selection to the system clipboard (* register).
 # ? - search normal mode mappings with fzf
+# x - run py3do over the selected range line, linenr
 
 # Editing & formatting
 
@@ -291,6 +292,8 @@ nnoremap <leader>ev <Cmd>tabe $MYVIMRC<CR>
 # redo last Ex command
 nnoremap <leader>. @:
 # 
+xnoremap <buffer> <leader>x :py3do return f""<Left>
+
 # # --- Window Resizing ---
 noremap <leader>u <Cmd>resize +2<CR>
 noremap <leader>U <Cmd>resize +6<CR>

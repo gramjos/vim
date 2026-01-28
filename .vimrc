@@ -117,7 +117,7 @@ augroup END
 g:mapleader = ' '
 # Taken Leader combos aside, use :vimgrep /leader/ ~/.vim/*
 ### vimgrep
-# <Tab> . ? aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U w W y
+# <Tab> . ? aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U vk w W x y
 #
 # SORT visual selected based on pattern mask      :'<,'>sort /^#\s*/
 
@@ -127,6 +127,7 @@ g:mapleader = ' '
 # b   — Previous buffer.
 # gf   — Create the file/directory under the cursor if it doesn't exist, then edit it.
 # ev   — Edit .vimrc in a new tab.
+# vk   - Edit the_vim_notes.vim in a new tab
 # so   — Source (reload) .vimrc.
 
 # System & External Tools
@@ -289,6 +290,7 @@ noremap <leader><Tab> mzI<Tab><Esc>`z
 noremap <leader>hl <Cmd>nohlsearch<CR>
 noremap <leader>so <Cmd>source $MYVIMRC<CR>
 nnoremap <leader>ev <Cmd>tabe $MYVIMRC<CR>
+nnoremap <leader>vk <Cmd>tabe $MYVIMDIR/the_vim_notes.vim<CR>
 # redo last Ex command
 nnoremap <leader>. @:
 # 
@@ -323,4 +325,4 @@ iabbr <expr> ^^- getline(search('\\S\\_.*\\n\\_.*\\%#', 'b'))
 iabbrev pymn if __name__ == "__main__":
 # 
 source ~/.vim/scripts/web_popup.vim
-
+source ~/.vim/scripts2/web_popup.vim

@@ -1,0 +1,28 @@
+*project_details.txt* Detailed specs for my coding projects.
+
+PROJECT SPECS & LOGS                           *project-details*
+
+1. Obsidian Parser .... |obsidian-parser|
+2. Server Setup ....... |server-setup|
+
+To go back to the main index, see |mynotes|.
+
+==============================================================================
+OBSIDIAN PARSER                                *obsidian-parser*
+
+Current Status:
+	- my oh my
+    Working on the Python script to convert markdown frontmatter.
+    
+    See |my-mappings| for the keyboard shortcuts I use while coding this.
+    (This link jumps to your other file!)
+
+==============================================================================
+SERVER SETUP                                   *server-setup*
+
+Hardware:
+    Raspberry Pi 2 and MacBook Pro 2017.
+
+    I need to document the "Option Key" fix referenced in |mynotes|.
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

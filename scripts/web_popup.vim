@@ -49,5 +49,5 @@ def ToggleUrlPopup()
 enddef
 
 command! UrlPopupToggle call ToggleUrlPopup()
-nnoremap <silent> <leader>e :UrlPopupToggle<CR>
+nnoremap <silent> <leader>q :UrlPopupToggle<CR>
 

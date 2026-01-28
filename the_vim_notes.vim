@@ -1,54 +1,12 @@
-" vim run commands(rc). run these commands at the start of each vim instance
-" Sections of this RC file: Sets, Maps, Abbreviations, Misc. Notes
-
-" jump with an underscore plus the jmp-code
-" 	_+jmp-code	descripion
-
-" Sets - `set`, `autocmd`, `let`, `call`, `highlight`
-"	sh		shell default
-" Maps - `map`
-"  1. Builtins/Defaults
-"  Normal Mode Commands
-"	Movement
-	"	mov		cursor & pg moves
-	"	f		Find/To motions
-"	Edit
-	"	q:		Ex command history
-	" 	ic		increment digit 
-	"	y		yank
-"  Visual Selection Mode Commands
-"  Insert Mode Commands
-"  2. User Defined
-" Abbreivations - `iabbrev`, `ab`
-" Custom func - `function!`
-" TODO - unimplemented ideas
-" Notes - Builtin unctions, HowTOs and demonstrative examples
-"	.!		shell cmd output
-"	ap		cross file append
-"	dig		Digraphs
-"	e		edit command
-"	h		help, helpgrep
-"	imc		insert mode commands
-"	mc		multiple cursor
-"	netrw	file explorer
-"	norc	start vim w/o .vimrc
-"	prof	Profile Performace
-"	pu		put
-"	py		py3do
-"	pytab	Indent error
-"	pyv		py interpret v selected
-"	redir	re-direct messages
-"	reg		registers
-"	sp 		split panes
-" 	tab		tabs
-"	term	terminal emulator
-"	w 		write to other file
 "##########################################################
+" _notes Notes
+"##########################################################
+" Jump List
+"
+" File Navigation 
+" (c)tags	vim & linux file jump list
 " _TODO
 "##########################################################
-"	- the normal mode gf should search should normaly but then if fails do a fall back local search. if "/src/web/tab.js" is the path that fails the normal gf search then the fall back search will look 2 levels up for for a 'src' dir. 2 b/c given the path "/_2_/_1_/_FILE_"
-"   - mapping in visual mode, based on current file suffix  apply commentting
-"   		out
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
@@ -58,23 +16,15 @@
 "	- integrate a popup window with a `fzf` as new `find` command to look for
 "	arbirary files
 "##########################################################
-" _notes Notes
-"##########################################################
 " View the current working directory in netrw
-nnoremap <leader>v e %:h<CR>
-" or 
 :E<CR>
-
-" 
-:Vexplore
+" Vertical, Side
+:Vex[plore]
+:Sex[plore]
 
 " _imc Insert Mode Command 
-" <Ctrl>v<Tab>
-"	Interpret the next non-digit literally,	will insert a 'REAL' tab
 "
 " <Ctrl>c
-"	back to normal mode
-
 " while in insert mode execute ONE normal command and automatically go back to
 " insert mode 
 "		<C>o___		where the 3 '_'are the normal mode command
@@ -86,18 +36,18 @@ nnoremap <leader>v e %:h<CR>
 :helpgrep [search term]
 "	this brings you to the first occurenece of [search term] 
 "		To browse thru results use +quickfix commands
-"		to see the list of search results :cwindow
-" -----------------------------------------------------------------------------
-" Prefix	|		Example			|		Context
-"		:	|		:h :r			|		ex command (command starting with a colon)
-" 	none	|		:h r			|		normal mode
-"	v_		|		:h v_r			|		visual mode
-"	i_		|		:h i_CTRL-W		|		insert mode
-"	c_		|		:h c_CTRL-R		|		ex command line
-"	/		|		:h /\r			|		search pattern (in this case, :h \r also works)
-"	'		|		:h 'ro'			|		option
-"	-		|		:h -r			|		Vim argument (starting Vim)
-"	-----------------------------------------------------------------------------
+"	to see the list of search results :cwindow
+"-----------------------------------------------------------------------------
+" Prefix	|Example		|Context
+"		:	|:h :r		|ex command (command starting with a colon)
+" 	none	|:h r		|normal mode
+"	v_		|:h v_r		|visual mode
+"	i_		|:h i_CTRL-W	|insert mode
+"	c_		|:h c_CTRL-R	|ex command line
+"	/		|:h /\r		|search pattern (in this case, :h \r also works)
+"	'		|:h 'ro'		|option
+"	-		|:h -r		|Vim argument (starting Vim)
+"-----------------------------------------------------------------------------
 "	^ chart source https://vim.fandom.com/wiki/Learn_to_use_help
 "
 " _e _h Edit and Help
@@ -192,6 +142,9 @@ print(math.pi);
 " also try 
 :retab
 
+" Formatting Issue: meta character ^M replaces newlines...
+:%s/\r/\r/g
+
 " _redir _mes Re-Direct Mes
 " Below is a one liner to filter the mes
 :redir => g:vim_messages | silent messages | redir END | let g:message_lines = split(g:vim_messages, "\n") | put =g:message_lines[-2]
@@ -225,6 +178,9 @@ print(math.pi);
 " _ap
 " Append selection to a file that already exists
 :'<,'>w >> file
+
+" write to file that does NOT exist yet
+:'<,'>w file
 
 "##########################################################
 " Sets
@@ -875,7 +831,7 @@ noremap <leader>. Lztkkk
 
 " Run this command to generate a 'tags' file
 
-ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist --exclude=.git --exclude='*.geojson' -exclude='*.jpg'
+$ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist --exclude=.git --exclude='*.geojson' -exclude='*.jpg'
 " $ ctags -R --languages=JavaScript,HTML,CSS \
 "   --exclude=node_modules \
 "   --exclude=dist \
@@ -883,3 +839,6 @@ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist -
 "   --exclude='*.geojson' \
 "   --exclude='*.jpg'
 
+" _tags
+" see all tags 
+:edit $VIMRUNTIME/doc/tags

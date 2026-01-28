@@ -1,0 +1,30 @@
+*obsidian_project.txt* Specs for the Obsidian->SPA Pipeline.
+
+OBSIDIAN PUBLISHING PIPELINE                   *obsidian-project*
+
+GOAL: Parse local Obsidian vault -> JSON -> Vanilla JS SPA.
+REPO: ~/dev/obsidian-web-parser
+
+==============================================================================
+PARSER SPECS                                   *parser-specs*
+
+Language: Python (See |python-snippets|)
+Input: Markdown files with Frontmatter.
+
+Challenges:
+    - Handling "Wikilinks" `[[Like This]]`.
+    - Extracting Frontmatter YAML efficiently.
+    - Excalidraw integration (drawing tablet sketches).
+
+==============================================================================
+FRONTEND SPECS                                 *spa-specs*
+
+Framework: Vanilla JavaScript (No React/Vue overhead).
+State Management:
+    - Simple store pattern.
+    - Routing via History API.
+
+Hosting:
+    Self-hosted on the |homelab| (Mac Mini or RPi).
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

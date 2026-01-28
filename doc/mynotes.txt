@@ -1,0 +1,23 @@
+*mynotes.txt* For Vim version 9.0.  Last change: 2026 Jan 26
+
+MY PERSONAL VIM NOTES                          *mynotes* *my-notes*
+
+1. Key Mappings ....... |my-mappings|
+2. Project Ideas ...... |my-projects|
+
+==============================================================================
+KEY MAPPINGS                                   *my-mappings*
+
+Here are my custom leader keys:
+    <leader>vk  - Open these notes
+    <leader>r   - Run current file
+
+To jump back to the top, look at |mynotes|.
+
+==============================================================================
+PROJECT IDEAS                                  *my-projects*
+
+* Build a parser for Obsidian
+* Fix the "Option Key" issue in Terminal.app
+
+ vim:tw=78:ts=8:noet:ft=help:norl:

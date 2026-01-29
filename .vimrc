@@ -186,46 +186,6 @@ nnoremap <leader>m :let @+ = trim(execute('1messages'))<CR>
 # Functions 
 # ==========================================================
 
-def g:GfCreate()
-	var raw_path = expand('<cfile>')
-	if empty(raw_path)
-		echoerr "No file path under cursor."
-		return
-	endif
-	var expanded_path = expand(raw_path)
-	var dir_path = fnamemodify(expanded_path, ':h')
-	if !empty(dir_path) && dir_path != '.'
-		if mkdir(dir_path, 'p') == -1
-			echoerr "Failed to create directory: " .. dir_path
-			return
-		endif
-	endif
-	execute 'edit ' .. fnameescape(expanded_path)
-enddef
-nnoremap <silent> <Leader>gf :call g:GfCreate()<CR>
-
-def g:AddSpace(direction: string): void
-    # Get the count. v:count1 defaults to 1 if no count is given.
-    var count = v:count1
-
-    # Save cursor position
-    var original_pos = getpos('.')
-
-    # Create the new lines.
-    # We use 'execute "normal!..."' to apply the count.
-    if direction == 'O'
-        execute $"normal! {count}O"
-    else
-        execute $"normal! {count}o"
-    endif
-
-    # Return cursor to its original position
-    setpos('.', original_pos)
-enddef
-
-nnoremap <silent> <leader>k <Cmd>call g:AddSpace('O')<CR>
-nnoremap <silent> <leader>j <Cmd>call g:AddSpace('o')<CR>
-
 # # --- Open File with External Application ---
 def g:OpenWith(app_name: string)
   var file_path = expand('<cfile>')
@@ -316,7 +276,8 @@ nmap <F5> <Cmd>setlocal spell! spelllang=en_us<CR>
 # 
 imap ;; <Esc>
 tnoremap <Esc> <C-W>N
-nmap ß :%s//g<Left><Left>
+# alt-s
+nmap ß :%s//g<Left><Left> 	
 # 
 # # ==========================================================
 # # Abbreviations
@@ -325,4 +286,7 @@ iabbr <expr> ^^- getline(search('\\S\\_.*\\n\\_.*\\%#', 'b'))
 iabbrev pymn if __name__ == "__main__":
 # 
 source ~/.vim/scripts/web_popup.vim
-source ~/.vim/scripts2/web_popup.vim
+
+nmap <silent> <leader>gf <Plug>(GfCreate)
+nmap <silent> <leader>k  <Plug>(AddSpaceAbove)
+nmap <silent> <leader>j  <Plug>(AddSpaceBelow)

@@ -7,6 +7,10 @@
 " (c)tags	vim & linux file jump list
 " _TODO
 "##########################################################
+" - after `:'<,'>w~/new-file.vim` (new file made) the help string
+"   ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
+" 	area. Goal: goto to the newly created file. verify the the new file with
+" 	`:mes` or normal mode command q:
 "   - comment box
 "   - orginize this buffers table of contents
 "   	+ make real jump links
@@ -176,9 +180,11 @@ print(math.pi);
 "		<esc> twice
 
 " _ap
+" Append
 " Append selection to a file that already exists
 :'<,'>w >> file
 
+" Write and create 
 " write to file that does NOT exist yet
 :'<,'>w file
 
@@ -580,6 +586,7 @@ endfunction
 
 " _mov Movement:		
 " in command mode:
+	" }  jump to next white space
 	" <shift>l 		move cursor to bottom of page
 	" <shift>h			'	'	   top		 '
 	" z. 	adjust scrolling in the frame. cursor to middle of page

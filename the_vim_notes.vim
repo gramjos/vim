@@ -25,6 +25,9 @@
 " 	_chnglst change list _h help _mov motins _f find
 " 	_netrw _win windows _jmp jump list
 " 	_tab _mark _tags
+"
+" Plugins:
+" 	_fzf _tag
 
 " Tags waiting to sort
 " _mes            _pyv            
@@ -852,3 +855,25 @@ $ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist
 " _tags
 " see all tags 
 :edit $VIMRUNTIME/doc/tags
+
+" _fzf
+" Switch buffer
+:Buffers
+
+" Project text search (ripgrep)
+:Rg someFunctionName
+
+" Interactive “search as you type” ripgrep
+:RG
+
+" Search within current buffer
+:BLines
+
+" Search across all open buffers
+:Lines
+
+" Jump to any window across tabs
+:Windows
+
+" Fullscreen:
+:Windows!

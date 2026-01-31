@@ -1,24 +1,52 @@
 "##########################################################
-" _notes Notes
+" Notes
 "##########################################################
-" Jump List
+" Generate the jump tags (underscore prefix notion) for current file
+" :.!grep -oE '\s_[a-z&]+\s' % | sort -u | column | expand
+
+" Jump List File Navigation 
+" Automations Scripting Builtin Fx: 
+" 	_tempts insert code boiler plate
+" 	_py _pyv
+" 	_term terminal _redir redirect command output
+" 	_sh shell _prof profile performace
+"  	_macro _put 
+
+" Edit: _edit _e
+" 	_ap append _s&r search&replace _mc multi cursor
+"	_g global _read _cos close _y yank _reg register
+"	_w write  _imc insert mode commands _dig digraphs
+
+" Buffer Organization Aesthetics Formatting: 
+" 	_fold code fold _pytab _form format lines
+"	_ve virtual edit _split
 "
-" File Navigation 
-" (c)tags	vim & linux file jump list
+" Buffer Navigation:
+" 	_chnglst change list _h help _mov motins _f find
+" 	_netrw _win windows _jmp jump list
+" 	_tab _mark _tags
+
+" Tags waiting to sort
+" _mes            _pyv            
+" _gx             
+" _wc
+" _norc           
+"##########################################################
 " _TODO
 "##########################################################
+" - 'pop current buffer out'  into new terminal window or tab
 " - after `:'<,'>w~/new-file.vim` (new file made) the help string
 "   ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
-" 	area. Goal: goto to the newly created file. verify the the new file with
+" 	area. Goal: goto to the newly created file. verify the new file with
 " 	`:mes` or normal mode command q:
 "   - comment box
-"   - orginize this buffers table of contents
+"   - organize this buffers table of contents
 "   	+ make real jump links
 "   - turn on auto insert mode when creating a NEW buffer
 "		- write a mapping to delete the current the file and exit
 "		- a session for note taking and todos 
 "	- integrate a popup window with a `fzf` as new `find` command to look for
-"	arbirary files
+"	arbitrary files
 "##########################################################
 " View the current working directory in netrw
 :E<CR>
@@ -417,11 +445,9 @@ iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
 	" n in _pymn_ 
 ab pymn if __name__ == "__main__":
 "
-" _swc
-"
 " a normal mode function:
 " m  mark this location. the second m is the varible name of the marking
-" [s go to previous misspelled word
+" [s go to previous misspelled word (aside, ]s next mispelled word)
 " 1z= take first suggestion for the misspelled word
 " ` go back to a marked location of m
 " from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
@@ -489,10 +515,6 @@ endfunction
 "	<C>w n		new horizontally split buffer
 "						:new 						
 "
-"	Normal mode command _nmc
-"		z{n}<CR>
-"			where {n} is a positive integer. Increase current window height
-"			by n.
 "
 " fold code lines _fold
 " zf#j creates a fold from the cursor down # lines.
@@ -527,7 +549,7 @@ endfunction
 " 	(edit) mode. to repeat the most previous set of insert mode commands while
 " 	in command(edit) mode
 "
-"		Editting with grouping chracters _egc
+"		Editting with grouping chracters 
 "		Parenthesis, Square Brackets, Curly braces, Quotes
 "		d% deletes to the next parenthesis, brackets, braces
 "		y% copy 				'		'		'		'
@@ -556,7 +578,7 @@ endfunction
 "				avoid back slahing hell but still have to escape out of the
 "				special ~ tilde character
 "
-" _cp
+" _y
 " yanking to registers 
 "	"kyy 
 "		yank full line to reg k
@@ -725,8 +747,7 @@ noremap <leader>. Lztkkk
 "	set your marks by using ma and mb where ever you like
 
 " Normal Mode Command
-" _:q Command Line history to appear. Can edit previous commands inside of window
-" Normal Mode q: 
+" q: Command Line history to appear. Can edit previous commands inside of window
 "
 " The command mode counter for the above command
 " 	while in command mode (colon mode) ctrl+f
@@ -736,9 +757,14 @@ noremap <leader>. Lztkkk
 " *** no matter which one enters the command history pane ( from command mode
 " or normal) use / to search that list
 "
-" _ic Normal mode command 
+" Normal mode command _nmc
+"		z{n}<CR>
+"			where {n} is a positive integer. Increase current window height
+"			by n.
+"
+" _nmc Normal mode command 
 " <control>a over a number will increment it 
-" <control>x			'''						decrement 2
+" <control>x			'''						decrement 3
 "
 " Sequential Increment over visual block
 " https://httpbin.org/delay/1
@@ -757,59 +783,36 @@ noremap <leader>. Lztkkk
 " 		and you just entered a random file to go back to the file explorer view enter the Ex command :E[xplore]
 " File Management
 " d 	Create Directory: Prompts for a new directory name.
-" 
 " % 	Create File: Prompts for a new filename.
-" 
 " R 	Rename: Rename the file/directory under the cursor.
-" 
 " D 	Delete: Delete the file/directory (requires confirmation).
 " 
 " Navigation & "Zooming"
-" 
 " <CR> 	Open: Enter directory or open file.
-" 
 " - 	Up: Go up one directory level.
-" 
 " c 	Make Root: Set current directory as the browsing root (CWD).
-" 
 " gn 	Zoom In: Make the directory under cursor the top of the tree.
-" 
 " u 	History: Go back to the previously browsed directory.
 " 
 " Opening Files
-" 
 " p 	Preview: Open file in a preview window (cursor stays in netrw).
-" 
 " t 	Tab: Open file/directory in a new tab.
-" 
 " v 	V-Split: Open file/directory in a vertical split.
-" 
 " o 	H-Split: Open file/directory in a horizontal split.
 " 
 " View Customization
-" 
 " i 	Cycle View: Thin → Long → Wide → Tree.
-" 
 " s 	Sort: Cycle sorting by Name → Time → Size → Extension.
-" 
 " r 	Reverse: Reverse the current sort order.
-" 
 " a 	Hiding: Toggle hiding of files matching g:netrw_list_hide.
-" 
 " Ctrl-l 	Refresh: Redraw the directory listing.
-" 
+"
 " Marking & Bulk Actions
-" 
 " mf 	Mark: Mark the file/directory under the cursor.
-" 
 " mu 	Unmark: Remove marks from all files.
-" 
 " mt 	Target: Set the target directory for copy/move operations.
-" 
 " mc 	Copy: Copy marked files to the target directory.
-" 
 " mm 	Move: Move marked files to the target directory.
-
 "
 " 	the built-in mapping `cd` will change the current working directory 
 " 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 

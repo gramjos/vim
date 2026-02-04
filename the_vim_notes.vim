@@ -5,6 +5,10 @@
 " :.!grep -oE '\s_[a-z&]+\s' % | sort -u | column | expand
 
 " Jump List File Navigation 
+
+" Sets and Options: _sets
+" 	_spell
+
 " Automations Scripting Builtin Fx: 
 " 	_tempts insert code boiler plate
 " 	_py _pyv
@@ -37,6 +41,11 @@
 "##########################################################
 " _TODO
 "##########################################################
+" - visualize buffer size with clickable zoom to page features. Relative to the
+"   current buffer dimensions, a new split appears off to the side that is a
+"   data visualiation of the bytes/words per page (page size relative to
+"   current buffer). The data visualization schema is, for each line in the
+"   new split buffer proportionaly repersents each pages bytes and words. 
 " - 'pop current buffer out'  into new terminal window or tab
 " - after `:'<,'>w~/new-file.vim` (new file made) the help string
 "   ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
@@ -165,21 +174,6 @@ import math;
 print(math.pi);
 3.141592653589793
 "
-" _pytab Common Python Identation error
-" fixing the python indentation error
-:set listchars=tab:>-,trail:-,nbsp:
-:set list
-" the above pair of commands dislpays those hidden character
-:set invlist
-" invert to undo
-" search and replace to fix botch files
-:%s/\t/    /g
-" also try 
-:retab
-
-" Formatting Issue: meta character ^M replaces newlines...
-:%s/\r/\r/g
-
 " _redir _mes Re-Direct Mes
 " Below is a one liner to filter the mes
 :redir => g:vim_messages | silent messages | redir END | let g:message_lines = split(g:vim_messages, "\n") | put =g:message_lines[-2]
@@ -220,8 +214,27 @@ print(math.pi);
 :'<,'>w file
 
 "##########################################################
-" Sets
+" Options and Sets _sets
 "##########################################################
+" to toggle a set option just end with a bang '!'
+:set cursorline		# turn on
+:set cursorline!	# toggle option
+
+" _pytab Common Python Identation error
+" fixing the python indentation error
+:set listchars=tab:>-,trail:-,nbsp:
+:set list
+" the above pair of commands dislpays those hidden character
+:set invlist
+" invert to undo
+" search and replace to fix botch files
+:%s/\t/    /g
+" also try 
+:retab
+
+" Formatting Issue: meta character ^M replaces newlines...
+:%s/\r/\r/g
+
 " Term information
 echo $TERM  
 " -> xterm-color256
@@ -262,6 +275,9 @@ set path+=.,,**,./**,../**
 " always switch to VIM from VI
 set nocompatible
 set belloff=all
+"##########################################################
+" Auto Commands
+"##########################################################
 " Templates C Java HTML _tempts 
 " create a template for c files
 autocmd BufNewFile *.c 0r ~/.vim/templates/c.skel
@@ -447,6 +463,8 @@ iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
 	" of usage preferences. i plan to hit <CR> after the
 	" n in _pymn_ 
 ab pymn if __name__ == "__main__":
+
+" Spell Checker _spell
 "
 " a normal mode function:
 " m  mark this location. the second m is the varible name of the marking
@@ -459,7 +477,7 @@ function! FixLastSpellingError()
 endfunction
 nnoremap <leader>sp :call FixLastSpellingError()<cr>
 
-autocmd BufNewFile *.txt		set spell spelllang=en_us
+autocmd BufNewFile *.txts set spell spelllang=en_us
 
 " Normal Mode Mapping - spell check for this file
 :nmap <F5> :setlocal spell! spelllang=en_us<CR>
@@ -538,7 +556,7 @@ endfunction
 
 " _form Re-Formmat Lines
 " 	visual select the lines then the normal sequence gw to adjust trailing
-" 	lines. If this is not aesthetic try nicemice.net/par
+" 	lines. 
 
 "Record Macro	_macro
 "in normal mode press q then the register to store the macro (n)
@@ -586,7 +604,7 @@ endfunction
 "	"kyy 
 "		yank full line to reg k
 "	"Ky
-" 		append highlighted section to reg k
+" 		append to reg k
 "	"kp
 "		paste from reg k
 "
@@ -877,3 +895,10 @@ $ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist
 
 " Fullscreen:
 :Windows!
+
+" Update v. Redraw
+:update " deals with File I/O (Data Persistence).
+	" Executes only if the buffer has been modified (&modified is set)
+
+:redraw  " deals with Screen Rendering (Visual Display).
+

@@ -16,14 +16,20 @@ vim9script
 ###########################################################
 # Sets
 ###########################################################
+g:mapleader = ' '
 filetype plugin indent on
 packadd! matchit
 # time out on mapping after two seconds, time out on key codes after a ninety-ninth
 set timeout timeoutlen=2000 ttimeoutlen=99
 #
-#
 set undofile # tell it to use an undo file
 set undodir=/Users/gramjos/.vimundo/ # set a directory to store the undo history
+#
+# set cursorline
+# highlight CursorLine gui=underline cterm=underline guisp=Red
+#
+# set termguicolors
+# highlight LineNr guifg=#7ff4f1
 #
 # highlight CurSearch cterm=reverse gui=reverse
 highlight CurSearch guibg=Red guifg=Black
@@ -43,7 +49,7 @@ syntax enable           # syntax highlighting
 set showcmd             # show (partial) command in status line
 set showmatch            # highlight matching bracket when cursor over it
 # set number                # static numbering OFF
-set fileformat=mac
+set fileformat=unix  # changed from mac 12/29/26
 # Tell Vim to look for tags file in current directory and upward
 set tags=./tags,tags;
 #
@@ -114,7 +120,6 @@ augroup END
 # ----------------------------------------------------------
 # Leader Key
 # ----------------------------------------------------------
-g:mapleader = ' '
 # Taken Leader combos aside, use :vimgrep /leader/ ~/.vim/*
 ### vimgrep
 # <Tab> . ? aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U vk w W x y
@@ -132,13 +137,15 @@ g:mapleader = ' '
 
 # System & External Tools
 
-# m — Copy the last system message (:1messages) to the system clipboard.
+# TODO # m — Copy the last system message (:1messages) to the system clipboard.
 # qv — Open current file with external app qkv (via job_start).
 # pv — Open current file with external app Preview.
 # o — Open the current file path (inside [[...]]) in Obsidian.
 # y — Yank current buffer/selection to the system clipboard (* register).
 # ? - search normal mode mappings with fzf
 # x - run py3do over the selected range line, linenr
+# sa - say all
+# ss - say selected
 
 # Editing & formatting
 
@@ -168,23 +175,60 @@ g:mapleader = ' '
 
 # y   — Yank the selected text to the system clipboard.
 # as   — Ask Selection: Send only the visually selected text to Gemini.
-# " --- Toggles line numbering modes ---
+
+def EchoSelection()
+    var save_reg = getreg('"')
+    var save_type = getregtype('"')
+
+    normal! gvy
+    var text = getreg('"')
+
+    # 4. Encase the text into the async job (Replaces 'echo text')
+    # We pass the command and the text as a list: ['say', text]
+    job_start(['say', text])
+
+    setreg('"', save_reg, save_type)
+enddef
+
+xnoremap <leader>ss <ScriptCmd>EchoSelection()<CR>
+nnoremap <leader>sq <ScriptCmd>system('pkill say')<CR>
 
 # Search normal mode maps using Space + ?
 nmap <Space>? <Plug>(fzf-maps-n)
 
-# " Map 'f' to move forward (Buffer Next)
-nnoremap <leader>f :bn<CR>
+def BackwardRemind()
+    bp
+    redraw
+    echo ':bp[revious] -> Path: ' .. expand('%:p')
+    timer_start(4000, (_) => execute('redraw | echo ""'))
+enddef
 
-# " Map 'b' to move backward (Buffer Previous)
-nnoremap <leader>b :bp<CR>
+nnoremap <leader>b <ScriptCmd>BackwardRemind()<CR>
 
-# Map <leader>m to copy the last message to the system clipboard
-nnoremap <leader>m :let @+ = trim(execute('1messages'))<CR>
+# def BackwardRemind()
+    # bp
+    # redraw
+    # echo ':bp[revious] -> Path: ' .. expand('%:p')
+# enddef
+# nnoremap <leader>b <ScriptCmd>BackwardRemind()<CR>
 
 # ==========================================================
 # Functions 
 # ==========================================================
+
+# --- Split Long Lines (>80 chars) ---
+# Finds lines longer than 80 chars and formats them individually using 'gqq'
+# Preserves the cursor position and view.
+def g:SplitLongLines()
+  var view = winsaveview()
+  # 'silent!' suppresses "Pattern not found" error if the file is already clean
+  # 'normal!' ensures we use built-in formatting, ignoring any custom maps
+  silent! execute 'g/.\{81\}/normal! gqq'
+  winrestview(view)
+enddef
+
+# S — Split lines longer than 80 characters (Hard Wrap)
+nnoremap <leader>S <Cmd>call g:SplitLongLines()<CR>
 
 # # --- Open File with External Application ---
 def g:OpenWith(app_name: string)
@@ -198,30 +242,6 @@ def g:OpenWith(app_name: string)
 enddef
 nnoremap <leader>qv <Cmd>call g:OpenWith('qkv')<CR>
 nnoremap <leader>pv <Cmd>call g:OpenWith('Preview')<CR>
-
-
-# --- Open Current File in Obsidian ---
-# BROKEN: cant find the right path to open in shell call
-# All files have the form [[...]] where ... is either file1 or dir/file2
-def g:OpenInObsidian()
-  # Yank the content inside the square brackets
-  execute 'normal! vi]y'
-  var file_path = getreg('"')
-
-  if empty(file_path)
-    echo "Error: Could not find a file path in [[...]] brackets."
-    return
-  endif
-
-  # Append .md if not present and construct the URL-encoded path
-  var obsidian_path = fnameescape(file_path .. '.md')
-  var safe_obsidian_path = substitute(obsidian_path, ' ', '%20', 'g')
-
-  # Use job_start with the 'open' command on macOS
-  job_start(['open', $"obsidian://open?path={safe_obsidian_path}"])
-  echomsg $"Opening {safe_obsidian_path}.md in Obsidian"
-enddef
-nnoremap <silent> <leader>o <Cmd>call g:OpenInObsidian()<CR>
 
 command! -nargs=1 -complete=help Hw OpenHelpInNewTerminal(<q-args>)
 def OpenHelpInNewTerminal(topic: string)

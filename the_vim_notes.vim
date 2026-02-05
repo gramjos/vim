@@ -13,7 +13,7 @@
 " 	_tempts insert code boiler plate
 " 	_py _pyv
 " 	_term terminal _redir redirect command output
-" 	_sh shell _prof profile performace
+" 	_sh shell _prof profile performance
 "  	_macro _put 
 
 " Edit: _edit _e
@@ -26,7 +26,7 @@
 "	_ve virtual edit _split
 "
 " Buffer Navigation:
-" 	_chnglst change list _h help _mov motins _f find
+" 	_chnglst change list _h help _mov motions _f find
 " 	_netrw _win windows _jmp jump list
 " 	_tab _mark _tags
 "
@@ -43,9 +43,9 @@
 "##########################################################
 " - visualize buffer size with clickable zoom to page features. Relative to the
 "   current buffer dimensions, a new split appears off to the side that is a
-"   data visualiation of the bytes/words per page (page size relative to
+"   data visualization of the bytes/words per page (page size relative to
 "   current buffer). The data visualization schema is, for each line in the
-"   new split buffer proportionaly repersents each pages bytes and words. 
+"   new split buffer proportionally represents each pages bytes and words. 
 " - 'pop current buffer out'  into new terminal window or tab
 " - after `:'<,'>w~/new-file.vim` (new file made) the help string
 "   ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
@@ -78,7 +78,7 @@
 "			insert a line above 
 " _h Help 
 :helpgrep [search term]
-"	this brings you to the first occurenece of [search term] 
+"	this brings you to the first occurrence of [search term] 
 "		To browse thru results use +quickfix commands
 "	to see the list of search results :cwindow
 "-----------------------------------------------------------------------------
@@ -114,7 +114,7 @@
 " "   jq .   Runs jq with the simplest filter (.), which just outputs the formatted JSON.
 "
 " _dig Digraphs 			
-"  insert special charaters from :dig menu with i_ctrl-k {char}{2}
+"  insert special characters from :dig menu with i_ctrl-k {char}{2}
 "  while in insert press control k and a question mark should appear over the
 "  cursor position. Type two characters(letter,number,punctuation). The two
 "  character codes are on the left side of the blue digraph in the :dig menu
@@ -133,20 +133,20 @@
 "
 "	<Ctrl>r =	
 "		"ctrl and r key toegether and then press ="
-"		the equal will appear at the command line and proceede to type
+"		the equal will appear at the command line and proceed to type
 "		an arithmetic expression like 2+2  OR a shell call like 
 "		system('ls')<enter> and the results are inserted at the cursor in the
-"		curtrent buffer  
+"		current buffer  
 "
 " Leave insert mode to do one normal mode command
 " 	<ctrl>o
 "
 
-"When working with Meta-charates
+"When working with Meta-Characters
 "In insert mode:
 " control v 	"to access meta character mode" " control m		"inputs " replace m with any meta
 " 
-" _prof Profiling Performace 
+" _prof Profiling Performance 
 "	displays what files are sourced at vim's startup
 :sciptnames
 "
@@ -164,7 +164,7 @@
 " select text then hit colon to enter command mode
 " you will see
 :'<,'>
-"	this repersents the selected text
+"	this represents the selected text
 :'<,'>!python
 "	this will execute the selected code snippet and REPLACE
 "		the selected with the results of the snippet
@@ -220,7 +220,7 @@ print(math.pi);
 :set cursorline		# turn on
 :set cursorline!	# toggle option
 
-" _pytab Common Python Identation error
+" _pytab Common Python Indentation error
 " fixing the python indentation error
 :set listchars=tab:>-,trail:-,nbsp:
 :set list
@@ -270,7 +270,7 @@ set dictionary+=/usr/share/dict/web2
 set wildmenu
 " the below is in-efficient
 " like :tabe [file] (or :find, :sfind, gf, etc.) and the file is not in the current directory,
-" Vim searches for that file in all directories listed in your 'path'. removed inreal vimrc
+" Vim searches for that file in all directories listed in your 'path'. removed in real vimrc
 set path+=.,,**,./**,../**
 " always switch to VIM from VI
 set nocompatible
@@ -317,7 +317,7 @@ noremap <leader>z :stop<CR>
 " Yanking from register to vim command line or while in insert mode _imc
 "		<Crtl>r reg_ref<CR>
 "			after <Ctrl>r is hit a double will appear on the vim command line
-"				then procede to enter the register refernece 
+"				then proceed to enter the register reference 
 
 
 " _reg Registers
@@ -332,7 +332,7 @@ noremap <leader>z :stop<CR>
 "		:echo getreg('"')
 "		: let @a = getreg('"')
 "
-" yank the word the curosr is over into register 8
+" yank the word the cursor is over into register 8
 " NOTE the leading double below is part of the builtin normal mode mapping
 		"8yw
 
@@ -405,7 +405,6 @@ command! -nargs=+ Qs call Qs(<f-args>)
 "	zw
 "		word the cursors on,delete this word from dictionary 
 "
-" A tree stands tall dededuplicated pdededuplicated <F5>
 "##########################################################
 " Maps
 "##########################################################
@@ -467,8 +466,8 @@ ab pymn if __name__ == "__main__":
 " Spell Checker _spell
 "
 " a normal mode function:
-" m  mark this location. the second m is the varible name of the marking
-" [s go to previous misspelled word (aside, ]s next mispelled word)
+" m  mark this location. the second m is the variable name of the marking
+" [s go to previous misspelled word (aside, ]s next misspelled word)
 " 1z= take first suggestion for the misspelled word
 " ` go back to a marked location of m
 " from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
@@ -482,7 +481,7 @@ autocmd BufNewFile *.txts set spell spelllang=en_us
 " Normal Mode Mapping - spell check for this file
 :nmap <F5> :setlocal spell! spelllang=en_us<CR>
 
-" quick open and put process in the backgorund
+" quick open and put process in the background
 function! Qkv()
   let curse_word = expand('<cfile>')
   execute '!qkv' curse_word '&'
@@ -513,7 +512,7 @@ endfunction
 " 	 Contains cursor positions
 " 	 below are both normal mode commands 
 "			g;			 cycle backward thru edit list
-"			g,			 cycle foward thru edit list
+"			g,			 cycle forward thru edit list
 
 " JumpList 			_jmp
 "  To view the jump list :ju
@@ -521,7 +520,7 @@ endfunction
 "			<ctrl>o
 "				go backwards on the buffer jump list go
 "			<ctrl>i
-"				go forewards on the buffer jump list
+"				go forewords on the buffer jump list
 "			NOTE can use a number as a range to move N many positions up or
 "			down the jump list
 
@@ -531,7 +530,7 @@ endfunction
 "
 "_win
 "Windows
-"	<C>w w 		toggle windoes focus
+"	<C>w w 		toggle windows focus
 "	<C>w r		rotate windows
 "	<C>w n		new horizontally split buffer. Like running :new 						
 "	<C>w L		move the window to the right
@@ -564,13 +563,13 @@ endfunction
 "mode press q
 "to preform macro @n
 
-"Eddting Section _edit
+" Editing Section _edit
 " .		'to repeat an edit' (period)
 " 	in the scenario of going between insert mode and command
 " 	(edit) mode. to repeat the most previous set of insert mode commands while
 " 	in command(edit) mode
 "
-"		Editting with grouping chracters 
+"		Editing with grouping characters 
 "		Parenthesis, Square Brackets, Curly braces, Quotes
 "		d% deletes to the next parenthesis, brackets, braces
 "		y% copy 				'		'		'		'
@@ -595,8 +594,8 @@ endfunction
 "	:%s:\~/Desktop/term_color::g
 "		deletes the string (happens to be a file path)
 "		~/Desktop/term_color
-"			using a different delimiter(:) than / fowards slashes helps
-"				avoid back slahing hell but still have to escape out of the
+"			using a different delimiter(:) than / forwards slashes helps
+"				avoid back slash hell but still have to escape out of the
 "				special ~ tilde character
 "
 " _y
@@ -637,7 +636,7 @@ endfunction
 	" zt    adjust scrolling in the frame. cursor to top of page
 
 " Old ideas...
-" there is a built in for paging.... find it! it is a control plus somethig...but which mode??
+" there is a built in for paging.... find it! it is a control plus something...but which mode??
 noremap <leader>, Hz-jjj
 " or the native Ctrl-b without the 3 line context
 noremap <leader>. Lztkkk
@@ -666,7 +665,7 @@ noremap <leader>. Lztkkk
 :tabfind
 "
 " Rotate the split tabs vert to hort or vice versa
-" To change two vertically split windows to horizonally split:
+" To change two vertically split windows to horizontally split:
 " Ctrl-w t Ctrl-w K
 " 
 " Horizontally to vertically:
@@ -692,7 +691,7 @@ noremap <leader>. Lztkkk
 :tabnew [new_buffer(file_name)]
 "		creates a new tab(buffer/file)
 "
-"	in commmand mode with many tabs up
+"	in command mode with many tabs up
 "		gt
 "			next tab
 "		gT
@@ -714,9 +713,9 @@ noremap <leader>. Lztkkk
 " 	<control> y
 " 		increment line up
 "
-" _f Finding a chracter in the same line 
+" _f Finding a character in the same line 
 " 	f_
-" 		where _ is a single character. move cursor to next occurence
+" 		where _ is a single character. move cursor to next occurrence
 " 			of character _ on current line
 " 	F_
 " 		find backwards
@@ -727,10 +726,10 @@ noremap <leader>. Lztkkk
 " 
 " Deleting while in Command Mode:
 " 	lowercase d means delete
-" 	d needs to be combined with movment command to know where and to
+" 	d needs to be combined with movement command to know where and to
 " 		delete
 " 	d will keep you in command mode
-" 	de
+" 	DE
 " 		delete til end of word
 " 	db
 " 		delete backward til end of word
@@ -797,7 +796,7 @@ noremap <leader>. Lztkkk
 "
 " ~
 " 	tilde will flip the casing of the letter the cursor is on
-" 		or flip casing of a highlighted sectionn
+" 		or flip casing of a highlighted section
 "
 " Netrw _netrw
 " 	netrw is for readig, writing files over  a network
@@ -836,7 +835,7 @@ noremap <leader>. Lztkkk
 " mm 	Move: Move marked files to the target directory.
 "
 " 	the built-in mapping `cd` will change the current working directory 
-" 	(NetrwTreeListing) to the directory of the curosr line. Then a colon 
+" 	(NetrwTreeListing) to the directory of the cursor line. Then a colon 
 " 	command to start a terminal at the `NetrwTreeListing` directory
 
 " ctags

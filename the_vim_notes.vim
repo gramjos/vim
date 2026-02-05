@@ -533,8 +533,8 @@ endfunction
 "Windows
 "	<C>w w 		toggle windoes focus
 "	<C>w r		rotate windows
-"	<C>w n		new horizontally split buffer
-"						:new 						
+"	<C>w n		new horizontally split buffer. Like running :new 						
+"	<C>w L		move the window to the right
 "
 "
 " fold code lines _fold

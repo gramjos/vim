@@ -122,7 +122,7 @@ augroup END
 # ----------------------------------------------------------
 # Taken Leader combos aside, use :vimgrep /leader/ ~/.vim/*
 ### vimgrep
-# <Tab> . ? aa af as b c d D ev f gf hl j k m n N o pv qv r so sp u U vk w W x y
+# <Tab> . ? aa af as b c d D ev f fc fd gf hl j k m n N o pv qv r s so sp ss u U vk w W x y
 #
 # SORT visual selected based on pattern mask      :'<,'>sort /^#\s*/
 
@@ -134,6 +134,8 @@ augroup END
 # ev   — Edit .vimrc in a new tab.
 # vk   - Edit the_vim_notes.vim in a new tab
 # so   — Source (reload) .vimrc.
+# fc   — open fzf at cfile
+# fd   — open fzf at user input
 
 # System & External Tools
 
@@ -180,18 +182,24 @@ def EchoSelection()
     var save_reg = getreg('"')
     var save_type = getregtype('"')
 
-    normal! gvy
+    normal! y
     var text = getreg('"')
 
-    # 4. Encase the text into the async job (Replaces 'echo text')
-    # We pass the command and the text as a list: ['say', text]
+    # 4. Encase the text into the async job 
     job_start(['say', text])
 
     setreg('"', save_reg, save_type)
 enddef
 
+def SpeakFile()
+    # Streams the current buffer directly to 'say'
+    # 'bufnr()' gets the ID of the current buffer
+    job_start('say', {in_io: 'buffer', in_buf: bufnr()})
+enddef
+
 xnoremap <leader>ss <ScriptCmd>EchoSelection()<CR>
-nnoremap <leader>sq <ScriptCmd>system('pkill say')<CR>
+nnoremap <leader>s <ScriptCmd>SpeakFile()<CR>
+nnoremap <F10> <ScriptCmd>system('pkill say')<CR>
 
 # Search normal mode maps using Space + ?
 nmap <Space>? <Plug>(fzf-maps-n)
@@ -215,6 +223,58 @@ nnoremap <leader>b <ScriptCmd>BackwardRemind()<CR>
 # ==========================================================
 # Functions 
 # ==========================================================
+
+# ==========================================================
+# FZF Context Search
+# ==========================================================
+def g:FzfContext(mode: string)
+    var root_dir = ''
+
+    if mode == 'cursor'
+        # Get raw string under cursor
+        var raw_path = expand('<cfile>')
+
+        # Expand ~ to home and resolve to full absolute path
+        var full_path = fnamemodify(raw_path, ':p')
+
+        if isdirectory(full_path)
+            # It is a directory, set as root
+            root_dir = full_path
+        elseif filereadable(full_path)
+            # It is a file, get the parent directory
+            root_dir = fnamemodify(full_path, ':h')
+        else
+            echo "No valid path under cursor (Must be Absolute or ~)."
+            return
+        endif
+    else
+        # Prompt user for directory
+        root_dir = input('Fzf Root: ', '', 'dir')
+        # Handle tilde expansion on user input
+        root_dir = fnamemodify(root_dir, ':p')
+    endif
+
+    if isdirectory(root_dir)
+        # Construct FZF options
+        # 'dir' sets the root for the search
+        var spec = {
+            'dir': root_dir,
+            'options': ['--preview', 'bat --color=always {}']
+        }
+        # Run FZF with the wrapped spec
+        call fzf#run(fzf#wrap(spec))
+    else
+        echoerr "Invalid Directory: " .. root_dir
+    endif
+enddef
+
+# --- FZF Context Mappings ---
+
+# <leader>fc = Fzf Cursor: Scans path under cursor
+nnoremap <leader>fc <ScriptCmd>g:FzfContext('cursor')<CR>
+
+# <leader>fd = Fzf Directory: Manually enter path
+nnoremap <leader>fd <ScriptCmd>g:FzfContext('input')<CR>
 
 # --- Split Long Lines (>80 chars) ---
 # Finds lines longer than 80 chars and formats them individually using 'gqq'

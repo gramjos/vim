@@ -179,16 +179,26 @@ augroup END
 # as   — Ask Selection: Send only the visually selected text to Gemini.
 
 def EchoSelection()
+    # 1. Save current register state to avoid polluting user's clipboard
     var save_reg = getreg('"')
     var save_type = getregtype('"')
 
+    # 2. Yank the visual selection into the unnamed register (")
     normal! y
     var text = getreg('"')
 
-    # 4. Encase the text into the async job 
-    job_start(['say', text])
-
+    # 3. Restore the register immediately
     setreg('"', save_reg, save_type)
+
+    # Start the 'say' process waiting for input on stdin (pipe)
+    var job = job_start('say', {in_io: 'pipe'})
+
+    # Send the raw text through the channel.
+    # This handles infinite length and ignores special characters.
+    ch_sendraw(job, text)
+
+    # Close the input stream so 'say' knows we are done and starts speaking
+    ch_close_in(job)
 enddef
 
 def SpeakFile()

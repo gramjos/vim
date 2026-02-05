@@ -398,14 +398,14 @@ command! -nargs=+ Qs call Qs(<f-args>)
 "	z=
 "		once cursor on a misspelled word. Brings up options 
 "		hit enter w/o a digit to leave options with no change made
-"	** once on mispelled word 'short circuit' option selection 
+"	** once on misspelled word 'short circuit' option selection 
 "			1z=   'take first option'
 "	zg
 "		word the cursors on,add this word to dictionary 
 "	zw
 "		word the cursors on,delete this word from dictionary 
 "
-
+" A tree stands tall dededuplicated pdededuplicated <F5>
 "##########################################################
 " Maps
 "##########################################################
@@ -415,7 +415,7 @@ command! -nargs=+ Qs call Qs(<f-args>)
 " Pager with with a three line context buffer
 noremap <leader>, Hz-jjj
 " H		Move cursor to top.
-" z-	Re-orient page, make curosr the bottom of page
+" z-	Re-orient page, make cursor the bottom of page
 " j{n}	Basic movement. 3 lines down.
 noremap <leader>. Lztkkk
 

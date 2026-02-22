@@ -4,22 +4,28 @@
 " Generate the jump tags (underscore prefix notion) for current file
 " :.!grep -oE '\s_[a-z&]+\s' % | sort -u | column | expand
 
+" ---
+" A note on the 'Jump List File Navigation,' structure. 
+" All categories are a bit fuzzy b/c everything can be include 
+" ---
 " Jump List File Navigation 
 
-" Sets and Options: _sets
-" 	_spell
+" Options: _opts
+"   _sets  _timeoutlen
 
 " Automations Scripting Builtin Fx: 
+" 	_maps _spell
 " 	_tempts insert code boiler plate
 " 	_py _pyv
 " 	_term terminal _redir redirect command output
 " 	_sh shell _prof profile performance
-"  	_macro _put 
+"  	_macro _put _ac auto-commands
 
 " Edit: _edit _e
 " 	_ap append _s&r search&replace _mc multi cursor
 "	_g global _read _cos close _y yank _reg register
 "	_w write  _imc insert mode commands _dig digraphs
+"	ar_ args _do argdo and cdo
 
 " Buffer Organization Aesthetics Formatting: 
 " 	_fold code fold _pytab _form format lines
@@ -28,8 +34,9 @@
 " Buffer Navigation:
 " 	_chnglst change list _h help _mov motions _f find
 " 	_netrw _win windows _jmp jump list
-" 	_tab _mark _tags
-"
+" 	_tab _mark _tags _lst_match current file pattern match
+" 	_jmp_bracket jump to next open/close bracket
+" 
 " Plugins:
 " 	_fzf _tag
 
@@ -48,7 +55,7 @@
 "   new split buffer proportionally represents each pages bytes and words. 
 " - 'pop current buffer out'  into new terminal window or tab
 " - after `:'<,'>w~/new-file.vim` (new file made) the help string
-"   ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
+"  ""~/.vim/plugin/gfcreate.vim" [New] 16L, 450B written" appears in the mes
 " 	area. Goal: goto to the newly created file. verify the new file with
 " 	`:mes` or normal mode command q:
 "   - comment box
@@ -60,12 +67,69 @@
 "	- integrate a popup window with a `fzf` as new `find` command to look for
 "	arbitrary files
 "##########################################################
-" View the current working directory in netrw
-:E<CR>
-" Vertical, Side
-:Vex[plore]
-:Sex[plore]
+"
+" Options: _opts
+"##########################################################
+"
+" to toggle a set option just end with a bang '!'
+:set cursorline		# turn on
+:set cursorline!	# toggle option
 
+" _pytab Common Python Indentation error
+" fixing the python indentation error
+:set listchars=tab:>-,trail:-,nbsp:
+:set list
+" the above pair of commands dislpays those hidden character
+:set invlist
+" invert to undo
+" search and replace to fix botch files
+:%s/\t/    /g
+" also try 
+:retab
+
+" Formatting Issue: meta character ^M replaces newlines...
+:%s/\r/\r/g
+
+" Term information
+echo $TERM  
+" -> xterm-color256
+" Virtual Edit _ve 
+" visual select strictly tabular
+set ve=block
+" To standardize width. Make the 81st column magenta 
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn','\%81v',100)
+" '\%81v' -> regex "once at the 81st column virtually"
+" turn off capitalization 
+set spellcapcheck=<CR>
+" ruler: displays the line number, the column number, the virtual column 
+" number,and the relative position of the cursor in the file (as a percentage)
+set ruler               " show line and column number
+syntax enable           " syntax highlighting
+set showcmd             " show (partial) command in status line
+set autoindent          " copy indent from current line when starting a new line
+set smartindent
+set shiftwidth=4        " number of spaces to use for auto indent
+set tabstop=4           " use 4 spaces to represent tab
+set relativenumber		" show current line number with surrounding offsets
+set number				" static numbering OFF
+" _sh Change Vim's shell from bash to zsh
+set shell=/usr/local/bin/zsh
+" Leader key - namespace for customised keyboard shortcuts
+let mapleader=' '
+set encoding=utf-8
+" set the dictionary paths. to activate pop-up window. Control xk. 
+" Control buton = ^
+set dictionary+=/usr/share/dict/web2
+" finding files:  Display all matching files when we tab complete
+set wildmenu
+" the below is in-efficient
+" like :tabe [file] (or :find, :sfind, gf, etc.) and the file is not in the current directory,
+" Vim searches for that file in all directories listed in your 'path'. removed in real vimrc
+set path+=.,,**,./**,../**
+" always switch to VIM from VI
+set nocompatible
+set belloff=all
 " _imc Insert Mode Command 
 "
 " <Ctrl>c
@@ -121,9 +185,9 @@
 "  9S ⁹  8313 ... zh ㄓ 12563  
 " aside, sub super script are intuitive big s for super and little s for sub
 "  ²₂2
-
+ǟ
 "Enter meta character (digraph) mode with 
-" <Ctrl>k
+" <Ctrl>k   
 "then, below denotes the format to pick specific character 
 " 	___S
 " 		where the three under scores are characters/digits that wiil
@@ -213,70 +277,7 @@ print(math.pi);
 " write to file that does NOT exist yet
 :'<,'>w file
 
-"##########################################################
-" Options and Sets _sets
-"##########################################################
-" to toggle a set option just end with a bang '!'
-:set cursorline		# turn on
-:set cursorline!	# toggle option
-
-" _pytab Common Python Indentation error
-" fixing the python indentation error
-:set listchars=tab:>-,trail:-,nbsp:
-:set list
-" the above pair of commands dislpays those hidden character
-:set invlist
-" invert to undo
-" search and replace to fix botch files
-:%s/\t/    /g
-" also try 
-:retab
-
-" Formatting Issue: meta character ^M replaces newlines...
-:%s/\r/\r/g
-
-" Term information
-echo $TERM  
-" -> xterm-color256
-" Virtual Edit _ve 
-" visual select strictly tabular
-set ve=block
-" To standardize width. Make the 81st column magenta 
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn','\%81v',100)
-" '\%81v' -> regex "once at the 81st column virtually"
-" turn off capitalization 
-set spellcapcheck=<CR>
-" ruler: displays the line number, the column number, the virtual column 
-" number,and the relative position of the cursor in the file (as a percentage)
-set ruler               " show line and column number
-syntax enable           " syntax highlighting
-set showcmd             " show (partial) command in status line
-set autoindent          " copy indent from current line when starting a new line
-set smartindent
-set shiftwidth=4        " number of spaces to use for auto indent
-set tabstop=4           " use 4 spaces to represent tab
-set relativenumber		" show current line number with surrounding offsets
-set number				" static numbering OFF
-" _sh Change Vim's shell from bash to zsh
-set shell=/usr/local/bin/zsh
-" Leader key - namespace for customised keyboard shortcuts
-let mapleader=' '
-set encoding=utf-8
-" set the dictionary paths. to activate pop-up window. Control xk. 
-" Control buton = ^
-set dictionary+=/usr/share/dict/web2
-" finding files:  Display all matching files when we tab complete
-set wildmenu
-" the below is in-efficient
-" like :tabe [file] (or :find, :sfind, gf, etc.) and the file is not in the current directory,
-" Vim searches for that file in all directories listed in your 'path'. removed in real vimrc
-set path+=.,,**,./**,../**
-" always switch to VIM from VI
-set nocompatible
-set belloff=all
-"##########################################################
-" Auto Commands
+" Auto Commands _ac
 "##########################################################
 " Templates C Java HTML _tempts 
 " create a template for c files
@@ -292,16 +293,6 @@ autocmd BufNewFile *.java execute '%!cat ~/.vim/templates/java.skel | sed "s/CLA
 " globally replace the hardcoded `CLASSNAME' for the file name
 	sed "s/CLASSNAME/' . expand('%:r') . '/g"'
 
-"##########################################################
-" Maps
-"##########################################################
-
-" # Builtin/Default #
-
-" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
-" to bring back, but now just ctrl-z to throw to background
-noremap <leader>z :stop<CR> 
-
 " _wc Counting Col,Ln,Wrd,Byte
 " Get the word count, lines, and bytes of current file or selection while in normal
 " mode. 
@@ -313,12 +304,28 @@ noremap <leader>z :stop<CR>
 " _gx call the system `open` on the path the cursor is on. 
 
 " _y Yank
+" yanking to registers 
+"	"kyy 
+"		yank full line to reg k
+"	"Ky
+" 		append to reg k
+"	"kp
+"		paste from reg k
+"
+"	relative yank from cursor position
+"	:-13y
+"	relative range yank
+"	:+8,+14y		
+"		yanks ahead
+" :-2,+2y
+" 	yank around cursor
+" :-5,y
+" 	yank everything from 5 line back to current line
 
 " Yanking from register to vim command line or while in insert mode _imc
 "		<Crtl>r reg_ref<CR>
 "			after <Ctrl>r is hit a double will appear on the vim command line
 "				then proceed to enter the register reference 
-
 
 " _reg Registers
 " to see what is currently being stored
@@ -391,24 +398,13 @@ command! -nargs=+ Qs call Qs(<f-args>)
 "	:help mark-motions
 "	:help jump-motions
 "	
-" when opening a text file set spell check on with <F5>
-" In command mode 
-"	[s and ]s 
-"		will move back and forth, respectively thru misspelled words 
-"	z=
-"		once cursor on a misspelled word. Brings up options 
-"		hit enter w/o a digit to leave options with no change made
-"	** once on misspelled word 'short circuit' option selection 
-"			1z=   'take first option'
-"	zg
-"		word the cursors on,add this word to dictionary 
-"	zw
-"		word the cursors on,delete this word from dictionary 
 "
-"##########################################################
-" Maps
+" Maps: _maps
 "##########################################################
 
+" normal mode mapping to 'background' the editor. sends one to terminal. 'fg'
+" to bring back, but now just ctrl-z to throw to background
+noremap <leader>z :stop<CR> 
 " # User Defined #
 
 " Pager with with a three line context buffer
@@ -426,7 +422,6 @@ noremap <leader>. Lztkkk
 " Line Scrolling	<C-e> (Control-E)	Scrolls the screen one line down (eel up).
 " <C-y> (Control-Y)	Scrolls the screen one line up (eye down).
 
-
 " Snippet
 " n     -> Normal Mode. Snippet for when in n
 " nore  -> Not Recursive.
@@ -438,9 +433,60 @@ noremap <leader>. Lztkkk
 "when in normal mode hit F4 and it will read in the contents of pt.txt
 nnoremap <F4> :read ~/pt.txt<CR>
 
-
 " short cut back to Normal mode 
 imap ;; <Esc>
+
+" Spell Checker _spell
+" a normal mode function:
+" m  mark this location. the second m is the variable name of the marking
+" [s go to previous misspelled word (aside, ]s next misspelled word)
+" 1z= take first suggestion for the misspelled word
+" ` go back to a marked location of m
+" from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
+function! FixLastSpellingError()
+  normal! mm[s1z=`m
+endfunction
+nnoremap <leader>sp :call FixLastSpellingError()<cr>
+
+autocmd BufNewFile *.txts set spell spelllang=en_us
+
+" Normal Mode Mapping - spell check for this file
+:nmap <F5> :setlocal spell! spelllang=en_us<CR>
+"
+" when opening a text file set spell check on with <F5>
+" In command mode 
+"	[s and ]s 
+"		will move back and forth, respectively thru misspelled words 
+"	z=
+"		once cursor on a misspelled word. Brings up options 
+"		hit enter w/o a digit to leave options with no change made
+"	** once on misspelled word 'short circuit' option selection 
+"			1z=   'take first option'
+"	zg
+"		word the cursors on,add this word to dictionary 
+"	zw
+"		word the cursors on,delete this word from dictionary 
+
+" quick open and put process in the background
+function! Qkv()
+  let curse_word = expand('<cfile>')
+  execute '!qkv' curse_word '&'
+endfunction
+
+nnoremap <leader>qv :call Qkv()<CR>
+
+function! Pkv()
+  let curse_word = expand('<cfile>')
+  execute '!open -a "Preview" ' curse_word '&'
+endfunction
+
+"	Two ways to skin a cat: 1.) builtin  2.) nmap
+"	jump to an editor session for the file that the cursor is on
+"go to file cursor is over (must be a full path)
+:nmap ;e :execute 'next ' . expand('<cfile>')<CR>
+" a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
+" <control> o takes bake to previous buffer. 
+" aside :ls to view available buffers. :b _some_buff_
 
 "##########################################################
 " Abbreviations
@@ -463,44 +509,6 @@ iabbr <expr> ^^- getline(search('\S\_.*\n\_.*\%#','b'))
 	" n in _pymn_ 
 ab pymn if __name__ == "__main__":
 
-" Spell Checker _spell
-"
-" a normal mode function:
-" m  mark this location. the second m is the variable name of the marking
-" [s go to previous misspelled word (aside, ]s next misspelled word)
-" 1z= take first suggestion for the misspelled word
-" ` go back to a marked location of m
-" from https://github.com/christoomey/your-first-vim-plugin/tree/master/spelling-error
-function! FixLastSpellingError()
-  normal! mm[s1z=`m
-endfunction
-nnoremap <leader>sp :call FixLastSpellingError()<cr>
-
-autocmd BufNewFile *.txts set spell spelllang=en_us
-
-" Normal Mode Mapping - spell check for this file
-:nmap <F5> :setlocal spell! spelllang=en_us<CR>
-
-" quick open and put process in the background
-function! Qkv()
-  let curse_word = expand('<cfile>')
-  execute '!qkv' curse_word '&'
-endfunction
-
-nnoremap <leader>qv :call Qkv()<CR>
-
-function! Pkv()
-  let curse_word = expand('<cfile>')
-  execute '!open -a "Preview" ' curse_word '&'
-endfunction
-
-"	Two ways to skin a cat: 1.) builtin  2.) nmap
-"	jump to an editor session for the file that the cursor is on
-"go to file cursor is over (must be a full path)
-:nmap ;e :execute 'next ' . expand('<cfile>')<CR>
-" a normal mode mapping. when ;e is hit when the cursor is on a path. go to path
-" <control> o takes bake to previous buffer. 
-" aside :ls to view available buffers. :b _some_buff_
 " 
 "
 "
@@ -569,27 +577,28 @@ endfunction
 " 	(edit) mode. to repeat the most previous set of insert mode commands while
 " 	in command(edit) mode
 "
-"		Editing with grouping characters 
-"		Parenthesis, Square Brackets, Curly braces, Quotes
-"		d% deletes to the next parenthesis, brackets, braces
-"		y% copy 				'		'		'		'
-"		ci' change inside the single quotes 
-"				or: (,[,{
+"	Editing with grouping characters 
+"	Parenthesis, Square Brackets, Curly braces, Quotes
+"	d% deletes to the next parenthesis, brackets, braces
+"	y% copy 				'		'		'		'
+"	ci' change inside the single quotes 
+"			or: (,[,{
 "
-"		_d^
-"		In noraml mode, d^  to Delete Backwards til FirstCharOnLine (relative)
-"		or d0 delete til the first position on line (absolute)
-"		or d| same effects do not know it works
+"	_d^
+"	In noraml mode, d^  to Delete Backwards til FirstCharOnLine (relative)
+"	or d0 delete til the first position on line (absolute)
+"	or d| same effects do not know it works
 "
-"		*NOTE*
-"		^, | and 0 are defined as exclusive in Vim
-"		dv_		where _ is ^, 0, or | 
-"			v is flag for inclusive bounds on motion 
+"	*NOTE*
+"	^, | and 0 are defined as exclusive in Vim
+"	dv_		where _ is ^, 0, or | 
+"	v is flag for inclusive bounds on motion 
 
 " 	CTRL-u
 " 	In insert mode, control u to delete from cursor to beginning of the line
 
-"_s&r
+" Search and Replace
+" _s&r
 "	Search and replace Example. In this case, replace with nothing
 "	:%s:\~/Desktop/term_color::g
 "		deletes the string (happens to be a file path)
@@ -598,24 +607,26 @@ endfunction
 "				avoid back slash hell but still have to escape out of the
 "				special ~ tilde character
 "
-" _y
-" yanking to registers 
-"	"kyy 
-"		yank full line to reg k
-"	"Ky
-" 		append to reg k
-"	"kp
-"		paste from reg k
+" Non-recursive (Specific extension in the current folder): _args _do
+" add all files in the current folder to the args list.
+" see args list with :ar
+:args *.txt
+" update is like a write (save)
+:argdo %s/old_word/new_word/g | update
+" OR
+" Recursive (Specific extension in all subfolders):
+:args **/*.txt 
+:argdo %s/old_word/new_word/g | update
 "
-"	relative yank from cursor position
-"	:-13y
-"	relative range yank
-"	:+8,+14y		
-"		yanks ahead
-" :-2,+2y
-" 	yank around cursor
-" :-5,y
-" 	yank everything from 5 line back to current line
+" NOTE, about the above command. After the args list is populates the next
+" command `argdo` tires to do a find and replace on all arg list items, but if
+" the if the searched is not found in one of the files it will given a warning
+" ...to avoid that warning you could only populate the quickfix menu (instead
+" of args list like above) with targeted results. 
+" Targeted recursive (Only replace in files that actually contain the match):
+" _cdo
+:vimgrep /old_word/ **/*
+:cdo s/old_word/new_word/g | update
 "
 " _g
 " Global (g) command - 
@@ -838,6 +849,12 @@ noremap <leader>. Lztkkk
 " 	(NetrwTreeListing) to the directory of the cursor line. Then a colon 
 " 	command to start a terminal at the `NetrwTreeListing` directory
 
+" View the current working directory in netrw
+:E<CR>
+" Vertical, Side
+:Vex[plore]
+:Sex[plore]
+
 " ctags
 " given my project for vanilla web dev
 " $ tree
@@ -876,24 +893,21 @@ $ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist
 " _fzf
 " Switch buffer
 :Buffers
-
 " Project text search (ripgrep)
 :Rg someFunctionName
-
 " Interactive “search as you type” ripgrep
 :RG
-
 " Search within current buffer
 :BLines
-
 " Search across all open buffers
 :Lines
-
 " Jump to any window across tabs
 :Windows
-
 " Fullscreen:
 :Windows!
+" FZF hot keys in finder mode
+" Ctrl-J or Down Arrow: Move selection down.
+" Ctrl-K or Up Arrow: Move selection up.
 
 " Update v. Redraw
 :update " deals with File I/O (Data Persistence).
@@ -901,3 +915,15 @@ $ ctags -R --languages=JavaScript,HTML,CSS --exclude=node_modules --exclude=dist
 
 :redraw  " deals with Screen Rendering (Visual Display).
 
+" List Matches  _lst_match
+" In normal mode, search for the <cfile> cursor word in the open file and then list matches in the message area
+[I    " hard open braket and the capital I in normal mode.
+
+" _jmp_bracket jump Forward/Backward to next/previous open
+" bracket/parenthesis/brace
+# Jump to next/prev opening bracket: [, (, or {
+# 'm'' adds current spot to jumplist so Ctrl-o works.
+# ] goes forward, [ goes backward.
+
+nnoremap <silent> <leader>] :mark '<CR>:call search('[\[({]')<CR>
+nnoremap <silent> <leader>[ :mark '<CR>:call search('[\[({]', 'b')<CR>

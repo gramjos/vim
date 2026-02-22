@@ -450,13 +450,19 @@ export def AskMultipleFiles()
     # --- Step 3: Run FZF File Picker ---
     # fzf#run() invokes fzf with the given configuration and returns selected items
     # 'source': The shell command that generates the list of candidates
-    #           shellescape() handles paths with spaces or special characters
-    # 'options': fzf command-line options
+    # 'options': Array of fzf command-line options
     #           --multi: Allow selecting multiple files with Tab
     #           --prompt: Custom prompt text shown in fzf
+    #           --preview: Show file preview using bat with syntax highlighting
+    # Note: We use fzf#run() directly (not fzf#wrap) because fzf#wrap adds a
+    # default sink that opens files, but we need to capture selections ourselves
     var files = fzf#run({
         'source': $"find {shellescape(search_path)} -type f {ignore_flags}",
-        'options': '--multi --prompt="Select files > "'
+        'options': [
+            '--multi',
+            '--prompt=Select files > ',
+            '--preview', 'bat --color=always {}'
+        ]
     })
 
     # fzf#run() returns an empty list if user cancels (Esc) or selects nothing

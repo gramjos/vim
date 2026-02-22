@@ -146,8 +146,10 @@ augroup END
 # y — Yank current buffer/selection to the system clipboard (* register).
 # ? - search normal mode mappings with fzf
 # x - run py3do over the selected range line, linenr
-# sa - say all
+# s - say entire file
 # ss - say selected
+# sx - Kill say command
+# o - open current buffer in Obsidian OR if in netrw open the file on <cfile> in Obsidian
 
 # Editing & formatting
 
@@ -177,6 +179,40 @@ augroup END
 
 # y   — Yank the selected text to the system clipboard.
 # as   — Ask Selection: Send only the visually selected text to Gemini.
+
+# ==========================================================
+# Open in Obsidian
+# ==========================================================
+def g:OpenInObsidian()
+    var target_path = ''
+
+    if &filetype == 'netrw'
+        # In netrw, join the current netrw directory with the filename under cursor
+        var netrw_dir = exists('b:netrw_curdir') ? b:netrw_curdir : getcwd()
+        target_path = netrw_dir .. '/' .. expand('<cfile>')
+    else
+        # In normal buffers, use the absolute path of the current file
+        target_path = expand('%:p')
+    endif
+
+    if target_path == ''
+        echo "No file found."
+        return
+    endif
+
+    # 1. Ensure path is strictly absolute (resolve .. and symlinks if needed)
+    # 2. URL-encode spaces to %20 so the URI scheme doesn't break
+    var clean_path = fnamemodify(target_path, ':p')->substitute(' ', '%20', 'g')
+
+    # Construct URI: obsidian://open?path=/absolute/path/to/file.md
+    var uri = "obsidian://open?path=" .. clean_path
+
+    # Execute asynchronously
+    job_start(['open', uri])
+enddef
+
+# Map <leader>o to the function
+nnoremap <leader>o <ScriptCmd>g:OpenInObsidian()<CR>
 
 def EchoSelection()
     # 1. Save current register state to avoid polluting user's clipboard
@@ -209,9 +245,9 @@ enddef
 
 xnoremap <leader>ss <ScriptCmd>EchoSelection()<CR>
 nnoremap <leader>s <ScriptCmd>SpeakFile()<CR>
-nnoremap <F10> <ScriptCmd>system('pkill say')<CR>
+nnoremap <leader>sx <ScriptCmd>system('pkill say')<CR>
 
-# Search normal mode maps using Space + ?
+# Search normal mode maps 
 nmap <Space>? <Plug>(fzf-maps-n)
 
 def BackwardRemind()
@@ -235,7 +271,7 @@ nnoremap <leader>b <ScriptCmd>BackwardRemind()<CR>
 # ==========================================================
 
 # ==========================================================
-# FZF Context Search
+# FZF, 'just looking around' 
 # ==========================================================
 def g:FzfContext(mode: string)
     var root_dir = ''
@@ -272,14 +308,14 @@ def g:FzfContext(mode: string)
             'options': ['--preview', 'bat --color=always {}']
         }
         # Run FZF with the wrapped spec
-        call fzf#run(fzf#wrap(spec))
+		call fzf#run(spec)
+        # call fzf#run(fzf#wrap(spec)) 
     else
         echoerr "Invalid Directory: " .. root_dir
     endif
 enddef
 
 # --- FZF Context Mappings ---
-
 # <leader>fc = Fzf Cursor: Scans path under cursor
 nnoremap <leader>fc <ScriptCmd>g:FzfContext('cursor')<CR>
 
@@ -335,6 +371,14 @@ enddef
 # # ==========================================================
 # # Mappings
 # # ==========================================================
+# # --- Navigating ad jumping ---
+#
+# Jump to next/prev opening bracket: [, (, or {
+# 'm'' adds current spot to jumplist so Ctrl-o works.
+# ] goes forward, [ goes backward.
+nnoremap <silent> <leader>] :mark '<CR>:call search('[\[({]')<CR>
+nnoremap <silent> <leader>[ :mark '<CR>:call search('[\[({]', 'b')<CR>
+
 # # --- General ---
 noremap <leader><Tab> mzI<Tab><Esc>`z
 noremap <leader>hl <Cmd>nohlsearch<CR>
@@ -357,8 +401,17 @@ noremap <leader>n <Cmd>vertical resize -2<CR>
 noremap <leader>N <Cmd>vertical resize -10<CR>
 # 
 # # --- Yank to System Clipboard ---
-nnoremap <leader>y <Cmd>let @* = @0<CR>
-vnoremap <leader>y <Cmd>let @* = @0<CR>
+# nnoremap <leader>y <Cmd>let @* = @0<CR>
+# Function to copy register 0 to system clipboard (*) and report line count
+def CopyAndReport()
+  @* = @0
+  # getreg(..., 1, 1) returns the content as a List of strings
+  var count = len(getreg('0', 1, 1))
+  echo $"Copied {count} lines to system clipboard"
+enddef
+
+nnoremap <leader>y <ScriptCmd>CopyAndReport()<CR>
+
 # 
 # # --- Spelling ---
 nnoremap <leader>sp mz[s1z=`z
@@ -367,7 +420,7 @@ nmap <F5> <Cmd>setlocal spell! spelllang=en_us<CR>
 imap ;; <Esc>
 tnoremap <Esc> <C-W>N
 # alt-s
-nmap ß :%s//g<Left><Left> 	
+nmap ß :%s//g<Left><Left>
 # 
 # # ==========================================================
 # # Abbreviations

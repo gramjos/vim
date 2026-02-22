@@ -6,3 +6,6 @@ $ cd vim/
 $ cp -r ../.vim/* ../.vimrc .
 ```
 Then commit to GitHub
+
+TODO: 
+*   [ ] change the sync command to the `rclone` rather than `cp`
